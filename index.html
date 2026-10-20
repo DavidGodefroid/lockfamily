@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>lock family — Your AI does the work. You hold the key.</title>
-<meta name="description" content="locksql, lockmq, lockfile and lea: open-source tools that let AI agents query your databases, inspect your queues, check your files and write your code without ever holding your credentials.">
+<meta name="description" content="locksql, lockmq, lockfile and lea: open-source tools that let AI agents query your databases, inspect your queues, check your files and write your code. You keep the credentials, the personal data and the last word.">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="lock family">
 <meta property="og:title" content="lock family — Your AI does the work. You hold the key.">
-<meta property="og:description" content="locksql, lockmq, lockfile and lea: AI agents work on your databases, queues, files and code without ever holding your credentials.">
+<meta property="og:description" content="locksql, lockmq, lockfile and lea: AI agents work on your databases, queues, files and code. You keep the credentials, the personal data and the last word.">
 <meta property="og:url" content="https://lockfamily.dev/">
 <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
@@ -44,7 +44,7 @@
   <section class="hero wrap" aria-labelledby="hero-title">
     <p class="eyebrow">Open source · Apache 2.0 · four tools, one rule</p>
     <h1 id="hero-title">Your AI does the work. <span class="key">You hold the key.</span></h1>
-    <p class="lead">Let AI agents query your databases, inspect your queues, check your files and write your code — without ever holding your credentials.</p>
+    <p class="lead">Let AI agents query your databases, inspect your queues, check your files and write your code. You keep the credentials, the personal data and the last word.</p>
 
     <ul class="products" aria-label="The four tools">
       <li class="product p-sql" style="--i:0">
@@ -99,9 +99,9 @@
         </svg>
         <div class="product-text">
           <p class="kind">Files</p>
-          <h2><a href="https://github.com/DavidGodefroid/lockfile">lockfile</a></h2>
+          <h2><a href="https://lockfile.pro/">lockfile</a></h2>
           <p class="benefit">Agents ask yes/no questions about a file and get 1 or 0 — never a byte, a name or a size.</p>
-          <p class="go" aria-hidden="true">GitHub <span>→</span></p>
+          <p class="go" aria-hidden="true">lockfile.pro <span>→</span></p>
         </div>
       </li>
       <li class="product p-lea" style="--i:3">
@@ -290,21 +290,33 @@ lea</code></pre>
 
 <footer class="site-footer">
   <div class="wrap footer-grid">
-    <div>
+    <div class="footer-about">
       <a class="brand" href="./"><img src="assets/mark.svg" alt="" width="26" height="26"><span class="wordmark">lock<span>family</span></span></a>
-      <p>Local and open source. Every project is licensed under the Apache License 2.0.</p>
+      <p>AI agents work on your databases, queues, files and code. You keep the credentials, the personal data and the last word. Local and open source.</p>
     </div>
-    <ul aria-label="Projects">
-      <li><a href="https://github.com/DavidGodefroid/locksql">locksql</a></li>
-      <li><a href="https://github.com/DavidGodefroid/lockmq">lockmq</a></li>
-      <li><a href="https://github.com/DavidGodefroid/lockfile">lockfile</a></li>
-      <li><a href="https://github.com/DavidGodefroid/lea">lea</a></li>
-      <li><a href="https://github.com/DavidGodefroid/lockkit">lockkit</a></li>
-    </ul>
-    <ul aria-label="This site">
-      <li><a href="https://github.com/DavidGodefroid/lockfamily">Site source</a></li>
-      <li><a href="https://github.com/DavidGodefroid/lockfamily/blob/main/LICENSE">Apache License 2.0</a></li>
-    </ul>
+    <nav aria-labelledby="footer-projects">
+      <h2 id="footer-projects">Projects</h2>
+      <ul class="footer-projects">
+        <li class="p-sql"><a href="https://locksql.com/">locksql</a><span>Databases</span></li>
+        <li class="p-mq"><a href="https://lockmq.com/">lockmq</a><span>Queues</span></li>
+        <li class="p-file"><a href="https://lockfile.pro/">lockfile</a><span>Files</span></li>
+        <li class="p-lea"><a href="https://leadeck.dev/">lea</a><span>Code</span></li>
+      </ul>
+    </nav>
+    <nav aria-labelledby="footer-source">
+      <h2 id="footer-source">Source code</h2>
+      <ul>
+        <li><a href="https://github.com/DavidGodefroid/locksql">locksql</a></li>
+        <li><a href="https://github.com/DavidGodefroid/lockmq">lockmq</a></li>
+        <li><a href="https://github.com/DavidGodefroid/lockfile">lockfile</a></li>
+        <li><a href="https://github.com/DavidGodefroid/lea">lea</a></li>
+        <li><a href="https://github.com/DavidGodefroid/lockkit">lockkit</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="wrap footer-bottom">
+    <p>Every project is licensed under the <a href="https://github.com/DavidGodefroid/lockfamily/blob/main/LICENSE">Apache License 2.0</a>.</p>
+    <p><a href="https://github.com/DavidGodefroid/lockfamily">Site source on GitHub</a></p>
   </div>
 </footer>
 </body>

@@ -365,11 +365,23 @@ main { position: relative; outline: none; }
 .limits p { max-width: 52rem; color: var(--muted); }
 
 /* footer */
-.site-footer { margin-top: clamp(56px, 8vw, 96px); padding: 32px 0 40px; border-top: 1px solid var(--border); background: var(--surface); }
-.footer-grid { display: grid; gap: 20px; }
-@media (min-width: 768px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr; } }
-.footer-grid p { margin: 10px 0 0; color: var(--muted); font-size: 0.92rem; max-width: 34rem; }
-.footer-grid ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; align-content: start; }
+.site-footer { margin-top: clamp(56px, 8vw, 96px); border-top: 1px solid var(--border); background: var(--surface); font-size: 0.94rem; }
+.footer-grid { display: grid; gap: 32px; padding-top: 40px; padding-bottom: 32px; }
+@media (min-width: 640px) { .footer-grid { grid-template-columns: 1fr 1fr; } .footer-about { grid-column: 1 / -1; } }
+@media (min-width: 960px) { .footer-grid { grid-template-columns: 2fr 1fr 1fr; } .footer-about { grid-column: auto; } }
+.footer-about p { margin: 12px 0 0; color: var(--muted); max-width: 30rem; }
+.site-footer h2 { margin: 0 0 12px; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.site-footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.site-footer ul a { color: var(--text); text-decoration: none; font-family: var(--mono); }
+.site-footer ul a:hover { color: var(--link); text-decoration: underline; }
+.footer-projects li { display: flex; align-items: baseline; gap: 10px; }
+.footer-projects .p-sql { --c: var(--sql); }
+.footer-projects li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--c); transform: translateY(-1px); }
+.footer-projects span { color: var(--muted); font-size: 0.85rem; }
+.footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-top: 20px; padding-bottom: 28px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.86rem; }
+.footer-bottom p { margin: 0; }
+.footer-bottom a { color: inherit; }
+.footer-bottom a:hover { color: var(--text); }
 
 /* reduced motion: everything still, all content visible */
 @media (prefers-reduced-motion: reduce) {
