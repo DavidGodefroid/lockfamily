@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lock family — Your AI does the work. You hold the key.</title>
+<meta name="description" content="locksql, lockmq, lockfile and lea: open-source tools that let AI agents query your databases, inspect your queues, check your files and write your code without ever holding your credentials.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://lockfamily.dev/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="lock family">
+<meta property="og:title" content="lock family — Your AI does the work. You hold the key.">
+<meta property="og:description" content="locksql, lockmq, lockfile and lea: AI agents work on your databases, queues, files and code without ever holding your credentials.">
+<meta property="og:url" content="https://lockfamily.dev/">
+<link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script src="assets/main.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="brand" href="./" aria-label="lock family, home">
+      <img src="assets/mark.svg" alt="" width="30" height="30">
+      <span class="wordmark">lock<span>family</span></span>
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        <li class="nav-wide"><a href="#principle">Principle</a></li>
+        <li class="nav-wide"><a href="#fit">How they fit</a></li>
+        <li><a href="#quick-start">Quick start</a></li>
+        <li><a href="https://github.com/DavidGodefroid/lockfamily">GitHub</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <div class="glow" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+  <section class="hero wrap" aria-labelledby="hero-title">
+    <p class="eyebrow">Open source · Apache 2.0 · four tools, one rule</p>
+    <h1 id="hero-title">Your AI does the work. <span class="key">You hold the key.</span></h1>
+    <p class="lead">Let AI agents query your databases, inspect your queues, check your files and write your code — without ever holding your credentials.</p>
+
+    <ul class="products" aria-label="The four tools">
+      <li class="product p-sql" style="--i:0">
+        <svg class="logo" viewBox="0 0 128 128" aria-hidden="true">
+          <defs>
+            <linearGradient id="sql-body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8B5CF6"/><stop offset="1" stop-color="#4338CA"/></linearGradient>
+            <linearGradient id="sql-top" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#A78BFA"/></linearGradient>
+            <linearGradient id="sh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5EEAD4"/><stop offset="1" stop-color="#14B8A6"/></linearGradient>
+          </defs>
+          <path class="shackle" d="M42 56 V38 a22 22 0 0 1 44 0 V56" fill="none" stroke="url(#sh)" stroke-width="11" stroke-linecap="round"/>
+          <path d="M24 56 V102 a40 11 0 0 0 80 0 V56 Z" fill="url(#sql-body)"/>
+          <path d="M24 79 a40 11 0 0 0 80 0" fill="none" stroke="#C4B5FD" stroke-opacity=".45" stroke-width="2.5"/>
+          <ellipse cx="64" cy="56" rx="40" ry="11" fill="url(#sql-top)"/>
+          <circle cx="64" cy="88" r="7" fill="#0F172A"/><path d="M60.5 91 L58.5 104 H69.5 L67.5 91 Z" fill="#0F172A"/>
+        </svg>
+        <div class="product-text">
+          <p class="kind">SQL databases</p>
+          <h2><a href="https://locksql.com/">locksql</a></h2>
+          <p class="benefit">Every SQL statement your agent writes is parsed and weighed before it runs; personal data comes back masked.</p>
+          <p class="go" aria-hidden="true">locksql.com <span>→</span></p>
+        </div>
+      </li>
+      <li class="product p-mq" style="--i:1">
+        <svg class="logo" viewBox="0 0 128 128" aria-hidden="true">
+          <defs><linearGradient id="mq-body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#C2410C"/></linearGradient></defs>
+          <path class="shackle" d="M42 54 V38 a22 22 0 0 1 44 0 V54" fill="none" stroke="url(#sh)" stroke-width="11" stroke-linecap="round"/>
+          <rect x="20" y="54" width="88" height="58" rx="12" fill="url(#mq-body)"/>
+          <g class="queue">
+            <rect x="32" y="70" width="14" height="10" rx="2" fill="#FFEDD5"/>
+            <rect x="50" y="70" width="14" height="10" rx="2" fill="#FFEDD5" fill-opacity=".8"/>
+            <rect x="68" y="70" width="14" height="10" rx="2" fill="#FFEDD5" fill-opacity=".6"/>
+            <rect x="86" y="70" width="10" height="10" rx="2" fill="#FFEDD5" fill-opacity=".4"/>
+          </g>
+          <circle cx="64" cy="92" r="6" fill="#0F172A"/><path d="M61 95 L59.5 104 H68.5 L67 95 Z" fill="#0F172A"/>
+        </svg>
+        <div class="product-text">
+          <p class="kind">RabbitMQ</p>
+          <h2><a href="https://lockmq.com/">lockmq</a></h2>
+          <p class="benefit">Agents inspect your brokers through read-only operations; every message read approved, bodies masked.</p>
+          <p class="go" aria-hidden="true">lockmq.com <span>→</span></p>
+        </div>
+      </li>
+      <li class="product p-file" style="--i:2">
+        <svg class="logo" viewBox="0 0 128 128" aria-hidden="true">
+          <defs><linearGradient id="file-body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EC4899"/><stop offset="1" stop-color="#BE185D"/></linearGradient></defs>
+          <path class="shackle" d="M42 54 V38 a22 22 0 0 1 44 0 V54" fill="none" stroke="url(#sh)" stroke-width="11" stroke-linecap="round"/>
+          <path d="M32 54 H86 L108 76 V102 a10 10 0 0 1 -10 10 H30 a10 10 0 0 1 -10 -10 V66 a12 12 0 0 1 12 -12 Z" fill="url(#file-body)"/>
+          <path d="M86 54 V68 a8 8 0 0 0 8 8 H108 Z" fill="#FBCFE8"/>
+          <rect x="32" y="68" width="34" height="6" rx="3" fill="#FCE7F3" fill-opacity=".8"/>
+          <rect x="32" y="78" width="22" height="6" rx="3" fill="#FCE7F3" fill-opacity=".5"/>
+          <circle cx="64" cy="92" r="6" fill="#0F172A"/><path d="M61 95 L59.5 104 H68.5 L67 95 Z" fill="#0F172A"/>
+        </svg>
+        <div class="product-text">
+          <p class="kind">Files</p>
+          <h2><a href="https://github.com/DavidGodefroid/lockfile">lockfile</a></h2>
+          <p class="benefit">Agents ask yes/no questions about a file and get 1 or 0 — never a byte, a name or a size.</p>
+          <p class="go" aria-hidden="true">GitHub <span>→</span></p>
+        </div>
+      </li>
+      <li class="product p-lea" style="--i:3">
+        <svg class="logo" viewBox="0 0 128 128" aria-hidden="true">
+          <rect x="6" y="6" width="116" height="116" rx="28" fill="#1e1e2e"/>
+          <rect class="boundary" x="6" y="6" width="116" height="116" rx="28" fill="none" stroke="#89b4fa" stroke-width="5"/>
+          <circle class="dot d1" cx="36" cy="40" r="8" fill="#f38ba8"/>
+          <rect x="52" y="34" width="44" height="12" rx="6" fill="#cdd6f4"/>
+          <circle class="dot d2" cx="36" cy="64" r="8" fill="#fab387"/>
+          <rect x="52" y="58" width="32" height="12" rx="6" fill="#cdd6f4" opacity=".75"/>
+          <circle class="dot d3" cx="36" cy="88" r="8" fill="#a6e3a1"/>
+          <rect x="52" y="82" width="40" height="12" rx="6" fill="#cdd6f4" opacity=".5"/>
+        </svg>
+        <div class="product-text">
+          <p class="kind">Claude Code agents</p>
+          <h2><a href="https://leadeck.dev/">lea</a></h2>
+          <p class="benefit">Run many agents in a container that never sees your SSH keys or your private network, all from one deck.</p>
+          <p class="go" aria-hidden="true">leadeck.dev <span>→</span></p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <section id="principle" class="section wrap" aria-labelledby="principle-title">
+    <p class="section-kicker">The shared principle</p>
+    <h2 id="principle-title">The agent asks. A console you hold answers.</h2>
+    <p class="section-lead">In-agent approval is a convenience; a separate approval process is a boundary. The credentials and the only connections live in a console that runs under its own OS account, in a terminal you keep in view.</p>
+
+    <div class="flow" data-flow>
+      <div class="flow-tabs" role="group" aria-label="Show the example of">
+        <button type="button" class="t-sql" aria-pressed="true" data-product="sql">locksql</button>
+        <button type="button" class="t-mq" aria-pressed="false" data-product="mq">lockmq</button>
+        <button type="button" class="t-file" aria-pressed="false" data-product="file">lockfile</button>
+        <button type="button" class="flow-pause" data-pause>Pause</button>
+      </div>
+
+      <div class="flow-stage" data-step="3" aria-live="off">
+        <div class="node node-agent">
+          <p class="node-title"><span class="node-icon" aria-hidden="true">🤖</span> AI agent</p>
+          <p class="node-sub">your account · no credential, no connection</p>
+          <pre class="bubble b-ask"><code data-field="ask">locksql run PLAN_ID
+SELECT id, email FROM customers
+WHERE country = 'BE' LIMIT 20</code></pre>
+          <pre class="bubble b-answer"><code data-field="answer">id | email
+ 1 | &lt;redacted:r1.1.2&gt;
+ 2 | &lt;redacted:r1.2.2&gt;</code></pre>
+        </div>
+
+        <div class="wire w1" aria-hidden="true"><span class="packet"></span></div>
+
+        <div class="node node-console">
+          <p class="node-title"><span class="node-icon" aria-hidden="true">🔑</span> Console</p>
+          <p class="node-sub">its own OS account · holds the keys · asks you</p>
+          <pre class="bubble b-approve"><code data-field="approve">class READ · est. 410 rows examined
+PII columns touched: customers.email
+╰─ Approve? [y/N] <b>y</b></code></pre>
+        </div>
+
+        <div class="wire w2" aria-hidden="true"><span class="packet"></span></div>
+
+        <div class="node node-source">
+          <p class="node-title"><span class="node-icon" aria-hidden="true">🗄️</span> <span data-field="source">Database</span></p>
+          <p class="node-sub" data-field="source-sub">MariaDB · MySQL · PostgreSQL · SQLite</p>
+        </div>
+      </div>
+
+      <ol class="steps">
+        <li><strong>Ask.</strong> The agent proposes a query, a read or a plan. It has no password and opens no connection.</li>
+        <li><strong>Approve.</strong> The console checks it, shows you exactly what will run and waits for your approval. No answer means denied.</li>
+        <li><strong>Answer.</strong> Only the answer goes back: masked rows, masked messages, or a 1 / 0. The audit log keeps who asked what.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="fit" class="section wrap" aria-labelledby="fit-title">
+    <p class="section-kicker">How the four fit together</p>
+    <h2 id="fit-title">One boundary around the agent, one console per data source.</h2>
+
+    <div class="layers">
+      <div class="layer layer-lea">
+        <p class="layer-label">Where agents run</p>
+        <div class="layer-body">
+          <img src="assets/lea.svg" alt="" width="40" height="40">
+          <div><h3>lea</h3><p>Claude Code agents in a container that sees one projects directory. They reach the internet only through an egress proxy that refuses your private network.</p></div>
+        </div>
+      </div>
+      <div class="layer-arrow" aria-hidden="true"></div>
+      <div class="layer layer-consoles">
+        <p class="layer-label">What agents reach, through a console you hold</p>
+        <div class="consoles">
+          <div class="console c-sql"><img src="assets/locksql.svg" alt="" width="36" height="36"><div><h3>locksql</h3><p>SQL databases</p></div></div>
+          <div class="console c-mq"><img src="assets/lockmq.svg" alt="" width="36" height="36"><div><h3>lockmq</h3><p>RabbitMQ brokers</p></div></div>
+          <div class="console c-file"><img src="assets/lockfile.svg" alt="" width="36" height="36"><div><h3>lockfile</h3><p>Files on S3, SFTP or disk</p></div></div>
+        </div>
+      </div>
+      <div class="layer-arrow" aria-hidden="true"></div>
+      <div class="layer layer-kit">
+        <p class="layer-label">Shared core</p>
+        <div class="layer-body">
+          <span class="kit-icon" aria-hidden="true">⚙︎</span>
+          <div><h3><a href="https://github.com/DavidGodefroid/lockkit">lockkit</a></h3><p>The console, its isolated account and socket, policies the AI may tighten and only you loosen, the approval screen, the audit log, credentials from a prompt, the OS keychain or Vault, personal-data masks, MCP and agent wiring.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fit-notes">
+      <p><strong>Each tool works alone.</strong> locksql works with any agent; lea runs without locksql. Together, <code>lea init</code> builds the locksql console image and wires it for your agents.</p>
+      <figure class="lea-demo">
+        <img src="assets/lea-demo.svg" alt="Three Claude Code agents work in the lea container. One pushes to github.com through the proxy; its attempts to read ~/.ssh and to reach 192.168.1.10 are blocked. Another asks for a permission, answered from the deck." width="1200" height="640" loading="lazy">
+        <figcaption>lea: an agent pushes to GitHub through the proxy; reading <code>~/.ssh</code> and reaching <code>192.168.1.10</code> are blocked.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="quick-start" class="section wrap" aria-labelledby="qs-title">
+    <p class="section-kicker">Quick start</p>
+    <h2 id="qs-title">Pick one. Running in a few commands.</h2>
+
+    <div class="qs" data-tabs>
+      <div class="qs-tabs" role="tablist" aria-label="Product">
+        <button type="button" role="tab" id="qs-tab-sql" aria-controls="qs-sql" aria-selected="true" class="t-sql">locksql</button>
+        <button type="button" role="tab" id="qs-tab-mq" aria-controls="qs-mq" aria-selected="false" tabindex="-1" class="t-mq">lockmq</button>
+        <button type="button" role="tab" id="qs-tab-file" aria-controls="qs-file" aria-selected="false" tabindex="-1" class="t-file">lockfile</button>
+        <button type="button" role="tab" id="qs-tab-lea" aria-controls="qs-lea" aria-selected="false" tabindex="-1" class="t-lea">lea</button>
+      </div>
+
+      <div class="qs-panel" role="tabpanel" id="qs-sql" aria-labelledby="qs-tab-sql">
+        <p class="qs-meta">Linux and macOS (Windows through WSL2), or Docker · MariaDB, MySQL, PostgreSQL, SQLite · v0.8 pre-release</p>
+        <pre class="term" tabindex="0"><code><span class="c"># 1. Install</span>
+curl -fsSL https://raw.githubusercontent.com/DavidGodefroid/locksql/main/scripts/install.sh | sh
+<span class="c"># 2. In your project: the console account, your agents, a database profile</span>
+locksql setup
+<span class="c"># 3. In a session of the locksql account, start the console and keep it open</span>
+locksql console --project DIR</code></pre>
+        <p>Then ask your agent: “how many orders were placed yesterday?”. <a href="https://locksql.com/install/">Install options, checksums and signatures</a></p>
+      </div>
+
+      <div class="qs-panel" role="tabpanel" id="qs-mq" aria-labelledby="qs-tab-mq">
+        <p class="qs-meta">Linux and macOS · RabbitMQ 3.13 and 4.x · v0.1 pre-release</p>
+        <pre class="term" tabindex="0"><code><span class="c"># 1. Install</span>
+curl -fsSL https://raw.githubusercontent.com/DavidGodefroid/lockmq/main/scripts/install.sh | sh
+<span class="c"># 2. Separate the console from the agent (once per machine)</span>
+lockmq install
+<span class="c"># 3. In your project: a broker profile and your agents</span>
+lockmq setup
+lockmq init
+<span class="c"># 4. In a session of the lockmq account, start the console and keep it open</span>
+lockmq console --profile dev --project DIR</code></pre>
+        <p><a href="https://github.com/DavidGodefroid/lockmq/blob/main/docs/usage.md">Usage guide</a></p>
+      </div>
+
+      <div class="qs-panel" role="tabpanel" id="qs-file" aria-labelledby="qs-tab-file">
+        <p class="qs-meta">Console on Linux (Landlock and seccomp sandbox the plugins); agent side on Linux and macOS · v0.2 pre-release</p>
+        <pre class="term" tabindex="0"><code><span class="c"># 1. Install (checks the release signature with cosign)</span>
+curl -fsSL https://raw.githubusercontent.com/DavidGodefroid/lockfile/main/scripts/install.sh -o install.sh
+sh install.sh
+<span class="c"># 2. The separated setup: console account `lockfile`</span>
+sudo lockfile install
+<span class="c"># 3. In the lockfile account: a source, two plugins, the console</span>
+lockfile profile add samples --source local --path /srv/samples --prefix invoices/
+lockfile plugin install format.is-pdf@1.0.0
+lockfile console --profile samples
+<span class="c"># 4. In your account: wire your agent, then ask</span>
+lockfile init claude</code></pre>
+        <p><a href="https://github.com/DavidGodefroid/lockfile#quick-start-linux">Full quick start</a></p>
+      </div>
+
+      <div class="qs-panel" role="tabpanel" id="qs-lea" aria-labelledby="qs-tab-lea">
+        <p class="qs-meta">Linux, macOS, or Windows with WSL2 · Docker · a Claude subscription or API key · v0.1</p>
+        <pre class="term" tabindex="0"><code>curl -fsSL https://leadeck.dev/install.sh | sh
+lea</code></pre>
+        <p>In the first agent, run <code>/login</code> once. Press <kbd>n</kbd> for another agent. <a href="https://leadeck.dev/">leadeck.dev</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap limits" aria-labelledby="limits-title">
+    <h2 id="limits-title">Know the limits</h2>
+    <p>All four are pre-release. The console is the enforcement point; skills and tool descriptions only guide the agent. Masking is best effort. Each project documents what the agent can see and its residual risks in its security model:
+      <a href="https://locksql.com/security/">locksql</a>,
+      <a href="https://github.com/DavidGodefroid/lockmq/blob/main/docs/security-model.md">lockmq</a>,
+      <a href="https://github.com/DavidGodefroid/lockfile/blob/main/docs/security-model.md">lockfile</a>,
+      <a href="https://github.com/DavidGodefroid/lea#how-lea-keeps-your-machine-safe">lea</a>.</p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <a class="brand" href="./"><img src="assets/mark.svg" alt="" width="26" height="26"><span class="wordmark">lock<span>family</span></span></a>
+      <p>Local and open source. Every project is licensed under the Apache License 2.0.</p>
+    </div>
+    <ul aria-label="Projects">
+      <li><a href="https://github.com/DavidGodefroid/locksql">locksql</a></li>
+      <li><a href="https://github.com/DavidGodefroid/lockmq">lockmq</a></li>
+      <li><a href="https://github.com/DavidGodefroid/lockfile">lockfile</a></li>
+      <li><a href="https://github.com/DavidGodefroid/lea">lea</a></li>
+      <li><a href="https://github.com/DavidGodefroid/lockkit">lockkit</a></li>
+    </ul>
+    <ul aria-label="This site">
+      <li><a href="https://github.com/DavidGodefroid/lockfamily">Site source</a></li>
+      <li><a href="https://github.com/DavidGodefroid/lockfamily/blob/main/LICENSE">Apache License 2.0</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>

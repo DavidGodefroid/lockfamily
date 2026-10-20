@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="lock family logo">
+  <defs>
+    <linearGradient id="shackle" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5EEAD4"/>
+      <stop offset="1" stop-color="#14B8A6"/>
+    </linearGradient>
+    <clipPath id="b"><rect x="20" y="54" width="88" height="58" rx="12"/></clipPath>
+  </defs>
+  <!-- one shackle, four products in the body -->
+  <path d="M42 54 V38 a22 22 0 0 1 44 0 V54" fill="none" stroke="url(#shackle)" stroke-width="11" stroke-linecap="round"/>
+  <g clip-path="url(#b)">
+    <rect x="20" y="54" width="22" height="58" fill="#8B5CF6"/>
+    <rect x="42" y="54" width="22" height="58" fill="#F97316"/>
+    <rect x="64" y="54" width="22" height="58" fill="#EC4899"/>
+    <rect x="86" y="54" width="22" height="58" fill="#3B82F6"/>
+  </g>
+  <circle cx="64" cy="80" r="9" fill="#0F172A"/>
+  <path d="M59.5 84 L57 100 H71 L68.5 84 Z" fill="#0F172A"/>
+</svg>
