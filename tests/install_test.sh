@@ -65,8 +65,13 @@ run() {
 	STUB_LOG="$root/stub.log"
 	: >"$STUB_LOG"
 	export STUB_LOG
+	# Some shells (bash as sh) keep a function's prefix assignments
+	# (COSIGN_RC=1 run ...) after the call: read them, then drop them.
+	rc=${COSIGN_RC:-0}
+	tpath=${TPATH:-$root/stub:$PATH}
+	unset COSIGN_RC TPATH
 	code=0
-	PATH="${TPATH:-$root/stub:$PATH}" LOCK_RELEASE_BASE="$root/rel" sh "$installer" "$@" >"$root/out" 2>&1 || code=$?
+	COSIGN_RC=$rc PATH=$tpath LOCK_RELEASE_BASE="$root/rel" sh "$installer" "$@" >"$root/out" 2>&1 || code=$?
 }
 bin() { printf '%s' "$HOME/.local/bin/lock"; }
 
@@ -176,8 +181,7 @@ run dirw --version v1.2.3
 if [ "$code" != 0 ] && [ ! -e "$(bin)" ] && grep -q 'writable by others' "$root/out"; then pass "world-writable ~/.local/bin refused"; else fail "world-writable ~/.local/bin refused"; fi
 
 # 18. No PATH hint when ~/.local/bin is on PATH.
-HOME="$root/home/onpath"
-TPATH="$HOME/.local/bin:$root/stub:$PATH" run onpath --version v1.2.3
+TPATH="$root/home/onpath/.local/bin:$root/stub:$PATH" run onpath --version v1.2.3
 if [ "$code" = 0 ] && ! grep -q 'not on your PATH' "$root/out"; then pass "no PATH hint when on PATH"; else fail "no PATH hint when on PATH"; fi
 
 # 19. With a real cosign: the fake bundle does not verify, the install aborts.
