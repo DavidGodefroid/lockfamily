@@ -1,0 +1,71 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: shellcheck
+        run: shellcheck -s sh install.sh tests/install_test.sh
+
+  # install.sh in clean containers, as a non-root user with no cosign and no
+  # docker: busybox sh (alpine) and dash (debian), against a fake release.
+  install-clean:
+    name: install.sh (${{ matrix.image }})
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ["alpine:3.22", "debian:13-slim", "ubuntu:24.04"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: tests
+        run: docker run --rm -v "$PWD:/src:ro" -w /src --user 1000:1000 -e HOME=/tmp/h "${{ matrix.image }}" sh tests/install_test.sh
+
+  # The same tests on the runners, with a real cosign: a bundle that does not
+  # verify must abort the install.
+  install-cosign:
+    name: install.sh + cosign (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
+        with:
+          cosign-release: v2.6.1
+      - name: tests
+        run: COSIGN_REAL="$(command -v cosign)" sh tests/install_test.sh
+
+  # The latest lockhub release, installed for real from GitHub (signature,
+  # checksum, lock version). Before the first release with lock archives,
+  # the job says so and stops.
+  install-release:
+    name: install.sh (latest lockhub release)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
+        with:
+          cosign-release: v2.6.1
+      - name: install
+        run: |
+          code=0; sh install.sh 2>out.txt || code=$?
+          cat out.txt
+          if [ "$code" != 0 ] && grep -Eq "no published lockhub release|download failed" out.txt; then
+            echo "::notice::no lockhub release with lock archives yet"
+            exit 0
+          fi
+          test "$code" = 0
+          "$HOME/.local/bin/lock" version
