@@ -84,7 +84,13 @@ https://*)
 		fetch() { curl -fsSL --proto '=https' --tlsv1.2 -o "$2" "$1"; }
 		latest() { curl -fsSLI --proto '=https' --tlsv1.2 -o /dev/null -w '%{url_effective}' "https://github.com/$repo/releases/latest"; }
 	elif command -v wget >/dev/null 2>&1; then
-		fetch() { wget -q -O "$2" "$1"; }
+		# GNU wget refuses non-https redirects with --https-only; busybox wget
+		# has no such option (the cosign signature still guards the content).
+		if wget --help 2>&1 | grep -q -- --https-only; then
+			fetch() { wget -q --https-only -O "$2" "$1"; }
+		else
+			fetch() { wget -q -O "$2" "$1"; }
+		fi
 		latest() { wget -q -S --spider "https://github.com/$repo/releases/latest" 2>&1 | sed -n 's/^ *[Ll]ocation: *//p' | tail -n 1 | tr -d '\r'; }
 	else
 		die "curl or wget is required"
@@ -178,8 +184,10 @@ reported="$("$tmp/x/lock" version 2>/dev/null || true)"
 
 # Written next to the target, then renamed over it: a link there is
 # replaced, never written through.
-mkdir -p "$dir"
-chmod 0755 "$dir" 2>/dev/null || true
+if [ ! -d "$dir" ]; then
+	mkdir -p "$dir"
+	chmod 0755 "$dir"
+fi
 new="$(mktemp "$dir/.lock.XXXXXX")"
 if ! { cp "$tmp/x/lock" "$new" && chmod 0755 "$new" && mv -f "$new" "$target"; }; then
 	rm -f "$new"
