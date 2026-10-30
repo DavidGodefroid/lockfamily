@@ -267,7 +267,7 @@ curl -fsSL https://lockfamily.dev/install.sh | sh
 <span class="c">#    digest to its latest signed release; the hub's image is pinned with it</span>
 cd ~/projects
 lock add locksql crm
-<span class="c"># 3. The lock's profile, in the workspace (your own files, not group-writable)</span>
+<span class="c"># 3. The lock's profile, in the workspace</span>
 mkdir -p .locksql
 cat &gt; .locksql/config.toml &lt;&lt;'TOML'
 [profiles.crm]
@@ -276,14 +276,16 @@ host = "host.docker.internal"
 port = 5432
 user = "ro"
 database = "app"
+tls = "disable"          <span class="c"># host.docker.internal is not loopback: TLS defaults to verify-full</span>
 TOML
+chmod -R go-w .locksql   <span class="c"># lock up refuses a profile others can write</span>
 <span class="c"># 4. Review everything, then start the hub and the lock</span>
 lock up
 <span class="c"># 5. The console's start-up questions (policy, password); detach: Ctrl-P Ctrl-Q</span>
 lock attach crm
 <span class="c"># 6. Answer tickets here, or from the lea deck</span>
 lock approve</code></pre>
-        <p>Then ask an agent in lea: “how many orders were placed yesterday?”. Its query waits on the hub for your <kbd>y</kbd>. <code>lock doctor</code> checks the setup and changes nothing. <a href="https://github.com/DavidGodefroid/lockhub/blob/main/docs/lock-up.md">How lock up and lea fit</a></p>
+        <p>On Linux the database must listen on the Docker bridge, not only on 127.0.0.1. Then ask an agent that lea started after <code>lock up</code>: “how many orders were placed yesterday?”. Its query waits on the hub for your <kbd>y</kbd>. <code>lock doctor</code> checks the setup and changes nothing. <a href="https://github.com/DavidGodefroid/lockhub/blob/main/docs/lock-up.md">How lock up and lea fit</a></p>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="hub-cli" aria-labelledby="hub-tab-cli">
@@ -297,7 +299,7 @@ lock up [--dry-run] [--pin sha256:DIGEST] [--rotate hub|INSTANCE|all]
                   <span class="c"># review, then start; --pin restores a hub version by digest;</span>
                   <span class="c"># --rotate (repeatable) replaces the hub's or a lock's key</span>
 lock attach INSTANCE     <span class="c"># a console's start-up questions; detach: Ctrl-P Ctrl-Q</span>
-lock approve [--once]    <span class="c"># y, n reason, s, q; o or Ctrl-O: clear values;</span>
+lock approve [--once]    <span class="c"># y, n reason, s, q; o (Ctrl-O + Enter, not macOS): clear values;</span>
                   <span class="c"># r on an expired ticket: approve again</span>
 lock mobile pair --name phone   <span class="c"># one-time code, confirmed at this terminal; then lock up</span>
 lock mobile list
@@ -331,12 +333,12 @@ locks:
     image: ghcr.io/davidgodefroid/locksql@sha256:…
     devices: true                       <span class="c"># pins the paired phones</span>
     reveal: true                        <span class="c"># o / Ctrl-O on the terminal and the deck</span></code></pre>
-        <p><code>lock up</code> writes <code>.lockfamily/up.json</code> for lea and keeps the hub's data, keys and audit log under <code>$XDG_STATE_HOME/lockfamily/</code>, out of the workspace. A <code>lockfamily.yaml</code> at the workspace's root (the older layout) is still read, with a warning.</p>
+        <p><code>lock up</code> writes <code>.lockfamily/up.json</code> for lea and keeps the hub's data, keys and audit log under <code>$XDG_STATE_HOME/lockfamily/</code> (default <code>~/.local/state/lockfamily/</code>), out of the workspace. A <code>lockfamily.yaml</code> at the workspace's root (the older layout) is still read, with a warning, until <code>.lockfamily/</code> exists.</p>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="hub-routes" aria-labelledby="hub-tab-routes">
         <p class="qs-meta">Who may answer which risk class: the hub enforces it, whatever a facade does</p>
-        <div class="routes-wrap">
+        <div class="routes-wrap" tabindex="0" role="region" aria-label="Routing table">
           <table class="routes">
             <thead><tr><th scope="col">Risk class</th><th scope="col">Terminal, deck</th><th scope="col">Phone</th><th scope="col">Slack, Telegram</th></tr></thead>
             <tbody>
@@ -347,7 +349,7 @@ locks:
             </tbody>
           </table>
         </div>
-        <p>A production ticket asks for the instance name before an approval. Chat facades show masked screens only, every agent-supplied string escaped: a chat account is only as safe as the devices signed in to it.</p>
+        <p>A chat facade never answers a production ticket, whatever its risk class. Chat facades show masked screens only, every agent-supplied string escaped: a chat account is only as safe as the devices signed in to it.</p>
       </div>
     </div>
   </section>
