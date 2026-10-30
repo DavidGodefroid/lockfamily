@@ -245,22 +245,21 @@ PII columns touched: customers.email
     <h2 id="hub-title">Every lock, answered from one place.</h2>
     <p class="section-lead">With <a href="https://github.com/DavidGodefroid/lockhub">lockhub</a>, a lock no longer needs you at its own terminal. It sends a signed ticket with the masked screen of the request; you answer from a facade; the hub signs your decision, bound to the exact plan you saw. The lock runs only on that signed decision. The hub never runs a request, never sees its results and never sees values in clear.</p>
 
-    <div class="fit-notes">
-      <p><strong>Facades.</strong> A terminal (<code>lock approve</code>), the <a href="https://leadeck.dev/">lea</a> deck, Slack and Telegram. Chat facades show masked screens only and answer reads and writes, never production writes, loosened policies or unlocks: those stay in the terminal or the deck. Your workspace can narrow this, never widen it.</p>
-    </div>
+    <p class="section-lead"><strong>Facades.</strong> A terminal (<code>lock approve</code>), the <a href="https://leadeck.dev/">lea</a> deck, Slack and Telegram. Chat facades show masked screens only and answer only non-production reads and writes: production tickets, loosened policies and unlocks are answered in the terminal or the deck. Your workspace can narrow this, never widen it.</p>
 
     <div class="qs">
       <div class="qs-panel">
-        <p class="qs-meta">The <code>lock</code> CLI · Linux and macOS · Docker · pre-release</p>
+        <p class="qs-meta">The <code>lock</code> CLI · Linux and macOS · Docker · pre-release: locks need their hub-mode releases</p>
         <pre class="term" tabindex="0"><code><span class="c"># 1. Install the lock CLI (checks the release signature with cosign)</span>
 curl -fsSL https://lockfamily.dev/install.sh | sh
-<span class="c"># 2. Declare the locks of your workspace, pinned to signed images</span>
-lock add locksql crm-prod --image ghcr.io/davidgodefroid/locksql@sha256:…
+<span class="c"># 2. Declare the hub and the locks of your workspace, pinned to signed images</span>
+lock add lockmq events --image ghcr.io/davidgodefroid/lockmq@sha256:… \
+  --hub-image ghcr.io/davidgodefroid/lockhub@sha256:…
 <span class="c"># 3. Review the configuration, then start the hub and the locks</span>
 lock up
 <span class="c"># 4. Answer tickets in a terminal (or from the deck, Slack, Telegram)</span>
 lock approve</code></pre>
-        <p><code>lock doctor</code> checks the hub, the locks, their keys, the socket and the network, and changes nothing. <code>lock audit verify</code> checks the hub's audit chain and every decision's signature. <code>lock add slack</code> and <code>lock add telegram</code> enable a chat facade (tokens asked at the terminal, never written to your projects); <code>lock import</code> merges the <code>lockfamily.yaml</code> of sub-projects, keeping the strictest routing. <code>lock add</code> and <code>lock import</code> only edit the file: the next <code>lock up</code> reviews every change with you. <a href="https://github.com/DavidGodefroid/lockhub">lockhub</a></p>
+        <p><code>lock doctor</code> checks the hub, the locks, their keys, the socket and the network, and changes nothing. <code>lock audit verify --data DIR --hub-key-file FILE</code> checks the hub's audit chain and every decision's signature. <code>lock add slack</code> and <code>lock add telegram</code> enable a chat facade (tokens asked at the terminal, never written to your projects); <code>lock import</code> merges the <code>lockfamily.yaml</code> of sub-projects, keeping the strictest routing. <code>lock add</code> and <code>lock import</code> only edit the file: the next <code>lock up</code> reviews every change with you. <a href="https://github.com/DavidGodefroid/lockhub">lockhub</a></p>
       </div>
     </div>
   </section>
@@ -334,7 +333,7 @@ lea</code></pre>
       <a href="https://github.com/DavidGodefroid/lockmq/blob/main/docs/security-model.md">lockmq</a>,
       <a href="https://github.com/DavidGodefroid/lockfile/blob/main/docs/security-model.md">lockfile</a>,
       <a href="https://github.com/DavidGodefroid/lockhttp">lockhttp</a>,
-      <a href="https://github.com/DavidGodefroid/lea#how-lea-keeps-your-machine-safe">lea</a>. Chat facades never answer production writes: a chat account is only as safe as the devices signed in to it.</p>
+      <a href="https://github.com/DavidGodefroid/lea#how-lea-keeps-your-machine-safe">lea</a>. Chat facades never answer production tickets: a chat account is only as safe as the devices signed in to it.</p>
   </section>
 </main>
 
@@ -363,6 +362,7 @@ lea</code></pre>
         <li><a href="https://github.com/DavidGodefroid/lockhttp">lockhttp</a></li>
         <li><a href="https://github.com/DavidGodefroid/lea">lea</a></li>
         <li><a href="https://github.com/DavidGodefroid/lockkit">lockkit</a></li>
+        <li><a href="https://github.com/DavidGodefroid/lockhub">lockhub</a></li>
       </ul>
     </nav>
   </div>

@@ -28,21 +28,22 @@ The `lock` CLI (installed by `install.sh`, below):
 
 | Command | What it does |
 |---|---|
-| `lock add TYPE INSTANCE --image REF` | declare a lock (locksql, lockmq, lockfile, lockhttp), pinned to a signed image |
+| `lock add TYPE INSTANCE --image REF [--hub-image REF]` | declare a lock (locksql, lockmq, lockfile, lockhttp), pinned to a signed image; the first one also pins the hub's image |
 | `lock add slack …`, `lock add telegram …` | enable a chat facade; its tokens are asked at the terminal and kept out of the projects |
 | `lock import [SUB…]` | merge sub-projects' `lockfamily.yaml`, keeping the strictest routing |
 | `lock up` | review the configuration (all of it the first time, the change afterwards), then start the hub and the locks |
 | `lock approve` | answer tickets in this terminal |
 | `lock doctor` | check the hub, the locks, keys, the facade socket and the network; changes nothing |
-| `lock audit verify` | check the hub's audit chain and every decision's signature |
+| `lock audit verify --data DIR --hub-key-file FILE` | check the hub's audit chain and every decision's signature |
 
 `lock add` and `lock import` only edit `lockfamily.yaml`: the next `lock up`
 reviews the change with you.
 
 Facades: the terminal (`lock approve`), the [lea](https://github.com/DavidGodefroid/lea)
-deck, Slack and Telegram. Chat facades show masked screens and answer reads
-and writes only: production writes, policy loosening and unlocks are answered
-in the terminal or the deck. A workspace can narrow this routing, never widen it.
+deck, Slack and Telegram. Chat facades show masked screens and answer only
+non-production reads and writes: production tickets, policy loosening and
+unlocks are answered in the terminal or the deck. A workspace can narrow this
+routing, never widen it. Locks need their hub-mode releases.
 
 ## install.sh
 
