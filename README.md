@@ -2,7 +2,8 @@
 
 The one-page site of the lock family: [locksql](https://github.com/DavidGodefroid/locksql),
 [lockmq](https://github.com/DavidGodefroid/lockmq),
-[lockfile](https://github.com/DavidGodefroid/lockfile) and
+[lockfile](https://github.com/DavidGodefroid/lockfile),
+[lockhttp](https://github.com/DavidGodefroid/lockhttp) and
 [lea](https://github.com/DavidGodefroid/lea).
 
 Static HTML, CSS and vanilla JavaScript: no build step, no tracking. Served by GitHub Pages
