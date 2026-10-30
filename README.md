@@ -3,8 +3,9 @@
 The one-page site of the lock family: [locksql](https://github.com/DavidGodefroid/locksql),
 [lockmq](https://github.com/DavidGodefroid/lockmq),
 [lockfile](https://github.com/DavidGodefroid/lockfile),
-[lockhttp](https://github.com/DavidGodefroid/lockhttp) and
-[lea](https://github.com/DavidGodefroid/lea).
+[lockhttp](https://github.com/DavidGodefroid/lockhttp),
+[lea](https://github.com/DavidGodefroid/lea), and the approval hub
+[lockhub](https://github.com/DavidGodefroid/lockhub) with its `lock` CLI.
 
 Static HTML, CSS and vanilla JavaScript: no build step, no tracking. Served by GitHub Pages
 from the repository root (`CNAME`: `lockfamily.dev`).
@@ -14,6 +15,34 @@ Preview locally:
 ```sh
 python3 -m http.server -d . 8080
 ```
+
+## The approval hub and the `lock` CLI
+
+[lockhub](https://github.com/DavidGodefroid/lockhub) lets every lock of a
+workspace hand its approvals to one hub: the lock sends a signed ticket with
+the masked screen of the request, the human answers from a facade, the hub
+signs the decision, bound to the exact plan, and the lock runs only on it. The
+hub never runs a request, never sees its results, never sees values in clear.
+
+The `lock` CLI (installed by `install.sh`, below):
+
+| Command | What it does |
+|---|---|
+| `lock add TYPE INSTANCE --image REF` | declare a lock (locksql, lockmq, lockfile, lockhttp), pinned to a signed image |
+| `lock add slack …`, `lock add telegram …` | enable a chat facade; its tokens are asked at the terminal and kept out of the projects |
+| `lock import [SUB…]` | merge sub-projects' `lockfamily.yaml`, keeping the strictest routing |
+| `lock up` | review the configuration (all of it the first time, the change afterwards), then start the hub and the locks |
+| `lock approve` | answer tickets in this terminal |
+| `lock doctor` | check the hub, the locks, keys, the facade socket and the network; changes nothing |
+| `lock audit verify` | check the hub's audit chain and every decision's signature |
+
+`lock add` and `lock import` only edit `lockfamily.yaml`: the next `lock up`
+reviews the change with you.
+
+Facades: the terminal (`lock approve`), the [lea](https://github.com/DavidGodefroid/lea)
+deck, Slack and Telegram. Chat facades show masked screens and answer reads
+and writes only: production writes, policy loosening and unlocks are answered
+in the terminal or the deck. A workspace can narrow this routing, never widen it.
 
 ## install.sh
 
