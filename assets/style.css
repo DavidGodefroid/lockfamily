@@ -390,6 +390,15 @@ main { position: relative; outline: none; }
 .footer-bottom a:hover { color: var(--text); }
 
 /* reduced motion: everything still, all content visible */
+/* the hub: its tab colour, the routing table */
+.t-hub { --c: var(--teal); --ct: var(--key); }
+.hub-points { max-width: 52rem; color: var(--muted); margin: 14px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.routes-wrap { overflow-x: auto; }
+.routes { width: 100%; min-width: 30rem; border-collapse: collapse; font-size: 0.9rem; }
+.routes th, .routes td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.routes thead th { font-weight: 600; color: var(--muted); }
+.routes tbody th { font: 600 0.88rem var(--mono); }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }

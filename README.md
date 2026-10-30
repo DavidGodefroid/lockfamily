@@ -18,32 +18,123 @@ python3 -m http.server -d . 8080
 
 ## The approval hub and the `lock` CLI
 
-[lockhub](https://github.com/DavidGodefroid/lockhub) lets every lock of a
-workspace hand its approvals to one hub: the lock sends a signed ticket with
-the masked screen of the request, the human answers from a facade, the hub
-signs the decision, bound to the exact plan, and the lock runs only on it. The
-hub never runs a request, never sees its results, never sees values in clear.
+[lockhub](https://github.com/DavidGodefroid/lockhub) (v0.2, pre-release) lets
+every lock of a workspace hand its approvals to one hub. The lock sends a
+signed ticket with the masked screen of the request, the human answers from a
+facade, and the hub signs the decision, bound to the exact plan. The lock runs
+only on that signed decision. The hub never runs a request, never sees its
+results, and never sees values in clear.
 
-The `lock` CLI (installed by `install.sh`, below):
+### Quick start, with locksql
+
+```sh
+curl -fsSL https://lockfamily.dev/install.sh | sh   # the lock CLI (needs cosign)
+cd ~/projects                  # the workspace: lea's projects directory
+lock add locksql crm           # latest signed locksql, by digest; pins the hub's image too
+mkdir -p .locksql              # the lock's profile: your own files, not group-writable
+cat > .locksql/config.toml <<'TOML'
+[profiles.crm]
+engine = "postgres"
+host = "host.docker.internal"
+port = 5432
+user = "ro"
+database = "app"
+TOML
+lock up                        # review everything, then start the hub and the lock
+lock attach crm                # the console's start-up questions; detach: Ctrl-P Ctrl-Q
+lock approve                   # answer tickets (or from the lea deck)
+```
+
+Docker and cosign are required: `lock add` and `lock up` check every image's
+signature against its release workflow.
+
+### Commands (lock v0.2.2)
 
 | Command | What it does |
 |---|---|
-| `lock add TYPE INSTANCE --image REF [--hub-image REF]` | declare a lock (locksql, lockmq, lockfile, lockhttp), pinned to a signed image; the first one also pins the hub's image |
-| `lock add slack …`, `lock add telegram …` | enable a chat facade; its tokens are asked at the terminal and kept out of the projects |
+| `lock add TYPE INSTANCE [--version vX.Y.Z \| --image REF] [--profile P] [--hub-image REF]` | declare a lock (locksql, lockmq, lockfile, lockhttp), pinned by digest to its latest (or the given) signed release; the first one also pins the hub's latest release |
+| `lock add slack --team T… --channel C… --user U…` | enable the Slack facade; its tokens are asked at the terminal and kept with the hub's data, never in the workspace |
+| `lock add telegram --chat ID --from ID` | enable the Telegram facade (bot token asked at the terminal) |
 | `lock import [SUB…]` | merge sub-projects' `lockfamily.yaml`, keeping the strictest routing |
-| `lock up` | review the configuration (all of it the first time, the change afterwards), then start the hub and the locks |
-| `lock approve` | answer tickets in this terminal |
+| `lock up [--dry-run] [--pin sha256:DIGEST] [--rotate hub\|INSTANCE\|all]` | review the configuration (all of it the first time, the change afterwards), then start the hub and the locks; `--pin` runs the hub on a previous image (by digest), `--rotate` (repeatable) replaces the hub's or a lock's key |
+| `lock attach INSTANCE` | answer a lock console's start-up questions (policy, credentials) |
+| `lock approve [--once]` | answer tickets in this terminal: `y`, `n reason`, `s`, `q`; `o` (or Ctrl-O) shows clear values; `r` approves an expired ticket again |
+| `lock mobile pair --name NAME`, `lock mobile list`, `lock mobile revoke NAME` | pair a phone (one-time code, confirmed at the terminal), list or revoke phones; `lock up` then pins or unpins them at the locks |
 | `lock doctor` | check the hub, the locks, keys, the facade socket and the network; changes nothing |
-| `lock audit verify --data DIR --hub-key-file FILE` | check the hub's audit chain and every decision's signature |
+| `lock audit verify --data DIR --hub-key-file FILE [--lock INSTANCE=PATH] [--anchors FILE]` | check the hub's audit chain and every decision's signature, and optionally a lock's own log against them |
 
-`lock add` and `lock import` only edit `lockfamily.yaml`: the next `lock up`
-reviews the change with you.
+The workspace commands (`add`, `import`, `up`, `attach`, `doctor`, `mobile`)
+take `--file` to name another `lockfamily.yaml`. `lock add` and `lock import`
+only edit it: the next `lock up` reviews the change with you.
 
-Facades: the terminal (`lock approve`), the [lea](https://github.com/DavidGodefroid/lea)
-deck, Slack and Telegram. Chat facades show masked screens and answer only
-non-production reads and writes: production tickets, policy loosening and
-unlocks are answered in the terminal or the deck. A workspace can narrow this
-routing, never widen it. Locks need their hub-mode releases.
+### Facades and routing
+
+Facades: the terminal (`lock approve`), the
+[lea](https://github.com/DavidGodefroid/lea) deck, Slack, Telegram, and a
+paired phone (an installable web app the hub serves; optional Web Push with no
+payload). The hub routes each risk class:
+
+| Risk class | Terminal, deck | Phone | Slack, Telegram |
+|---|---|---|---|
+| read, read-pii, write | yes | yes | yes, never a production ticket |
+| prod-write, policy-loosen | yes | yes | no |
+| unlock | yes | no | no |
+| clear values | on demand, `o` / Ctrl-O (`reveal: true`) | sealed to it (`seal_clear`) | never |
+
+A production ticket asks for the instance name before an approval. A
+workspace's `hub.routing` can narrow this per instance, never widen it.
+
+- **Reveal.** With `reveal: true` on a lock, the terminal and the deck can ask
+  for a ticket's clear values: the lock seals them to that facade's key, which
+  it pins, and the hub relays ciphertext.
+- **Devices.** With `devices: true` a lock pins the paired phones, and each
+  decision taken on a phone is signed by the phone itself (WebAuthn).
+  `hub.mobile.require_device` lists the risk classes only a phone's signature
+  may approve; `hub.mobile.seal_clear` seals clear screens to the phones. The
+  phone reaches the hub through your own TLS proxy or tunnel to
+  `127.0.0.1:8444` (`hub.mobile.origin`).
+
+### `.lockfamily/lockfamily.yaml`
+
+```yaml
+version: 1
+hub:
+  image: ghcr.io/davidgodefroid/lockhub@sha256:…
+  facades: [tty, deck, mobile, slack]   # default: tty, deck
+  routing:
+    crm: [tty, deck, mobile]            # narrows an instance, never widens
+  slack: {team: T0123, channel: C0123, users: [U0123]}
+  mobile:
+    origin: https://hub.example.ts.net
+    seal_clear: true
+    require_device: [prod-write]
+    push: true
+locks:
+  crm:
+    type: locksql
+    image: ghcr.io/davidgodefroid/locksql@sha256:…
+    devices: true
+    reveal: true
+```
+
+It lives in the workspace's `.lockfamily/`, which lea mounts read-only in its
+agents. A `lockfamily.yaml` at the workspace's root (the older layout) is
+still read, with a warning, and copied there by the first confirmed `lock up`.
+A lock's target, production flag and credentials stay in its own profile
+(`.locksql/`, `.lockmq/`, …), which `lock up` reviews and copies.
+`lock up` writes `.lockfamily/up.json` for lea and keeps the hub's data, keys
+and audit log under `$XDG_STATE_HOME/lockfamily/`.
+
+### lea
+
+lea follows the hub by default (`LEA_HUB=1`, from lea v0.3.0). An agent whose
+Lock call waits for a decision is suspended until the decision comes, and
+lea's deck shows and answers the hub's tickets. lea gives its agents the
+locks' sockets named in `up.json`, never the hub. `LEA_HUB=0` switches it
+off. The contract between the two is lockhub's
+[docs/lock-up.md](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lock-up.md).
+Locks need their hub-mode releases; each lock's docs list the lockhub
+versions it supports.
 
 ## install.sh
 
