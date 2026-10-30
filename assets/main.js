@@ -125,9 +125,8 @@
     syncMotion();
   }
 
-  // Quick-start tabs (without JS, every panel shows).
-  var qs = document.querySelector("[data-tabs]");
-  if (qs) {
+  // Tab sets: the quick start, the hub (without JS, every panel shows).
+  Array.prototype.forEach.call(document.querySelectorAll("[data-tabs]"), function (qs) {
     var qtabs = Array.prototype.slice.call(qs.querySelectorAll("[role=tab]"));
     var panels = qtabs.map(function (t) { return document.getElementById(t.getAttribute("aria-controls")); });
     function select(i, focus) {
@@ -150,5 +149,5 @@
       });
     });
     select(0, false);
-  }
+  });
 })();
