@@ -1,14 +1,17 @@
 #!/bin/sh
 # Tests of install.sh against a fake lockhub release in a temporary
 # directory (LOCK_RELEASE_BASE), with a stub cosign: no network, nothing
-# outside the temporary HOME. With COSIGN_REAL set to a real cosign binary,
+# outside the temporary HOME. Without cosign on PATH, install.sh downloads
+# cosign-<os>-<arch> from the cosign release it pins: a stub curl serves a
+# fake cosign under that name, and $installer is a copy of install.sh that
+# pins the fake's sha256 instead ($real_installer is install.sh itself). With COSIGN_REAL set to a real cosign binary,
 # one more test checks that a bundle that does not verify aborts.
 #
 #   sh tests/install_test.sh
 set -u
 
 here=$(cd "$(dirname "$0")/.." && pwd)
-installer="$here/install.sh"
+real_installer="$here/install.sh"
 root=$(mktemp -d)
 trap 'chmod -R u+w "$root" 2>/dev/null; rm -rf "$root"' EXIT INT TERM
 
@@ -38,8 +41,9 @@ release() {
 release 1.2.3
 
 # Stub tools, first on PATH: cosign logs its arguments and exits with
-# $COSIGN_RC; docker logs that it was called (install.sh must never call it).
-mkdir -p "$root/stub" "$root/nocosign"
+# $COSIGN_RC; docker logs that it was called (install.sh must never call it);
+# curl logs its URL and serves $root/dl/<file name> (exit 22 when missing).
+mkdir -p "$root/stub" "$root/nocosign" "$root/dl"
 cat >"$root/stub/cosign" <<'STUB'
 #!/bin/sh
 printf '%s\n' "$*" >>"$STUB_LOG"
@@ -50,12 +54,41 @@ cat >"$root/stub/docker" <<'STUB'
 echo "docker $*" >>"$STUB_LOG"
 exit 1
 STUB
-chmod 0755 "$root/stub/cosign" "$root/stub/docker"
+cat >"$root/stub/curl" <<'STUB'
+#!/bin/sh
+out='' url=''
+while [ $# -gt 0 ]; do
+	case "$1" in -o) out=$2; shift ;; --proto | -w) shift ;; -*) ;; *) url=$1 ;; esac
+	shift
+done
+echo "curl $url" >>"$STUB_LOG"
+[ -f "$DL_DIR/${url##*/}" ] || exit 22
+cp "$DL_DIR/${url##*/}" "$out"
+STUB
+chmod 0755 "$root/stub/cosign" "$root/stub/docker" "$root/stub/curl"
+# The cosign served for download: it logs "downloaded cosign ARGS".
+cosign_url="https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-$os-$arch"
+cat >"$root/dl/cosign-$os-$arch" <<'STUB'
+#!/bin/sh
+printf 'downloaded cosign %s\n' "$*" >>"$STUB_LOG"
+exit "${COSIGN_RC:-0}"
+STUB
+cosign_pin=$(sha256 "$root/dl/cosign-$os-$arch")
+installer="$root/install-test.sh"
+sed "s/^\($os-$arch) cosign_pin=\)[0-9a-f]*/\1$cosign_pin/" "$real_installer" >"$installer"
+if ! grep -qx "$os-$arch) cosign_pin=$cosign_pin ;;" "$installer"; then
+	echo "could not re-pin cosign-$os-$arch in a copy of install.sh" >&2
+	exit 1
+fi
 # A PATH without cosign: the system tools only, linked one by one.
 for t in sh cat cp mv rm mkdir mktemp chmod tar gzip gunzip awk sed grep tr uname find id dirname basename head tail printf sha256sum shasum ls ln readlink cut; do
 	p=$(command -v "$t" 2>/dev/null) && case "$p" in /*) ln -sf "$p" "$root/nocosign/$t" ;; esac
 done
 ln -sf "$root/stub/docker" "$root/nocosign/docker"
+ln -sf "$root/stub/curl" "$root/nocosign/curl"
+# The same without any downloader (no curl, no wget).
+mkdir -p "$root/nonet"
+for p in "$root/nocosign"/*; do [ "${p##*/}" = curl ] || ln -sf "$(readlink "$p")" "$root/nonet/${p##*/}"; done
 
 # run NAME ARGS...: install.sh in a fresh HOME; status in $code, output in $root/out.
 run() {
@@ -69,9 +102,11 @@ run() {
 	# (COSIGN_RC=1 run ...) after the call: read them, then drop them.
 	rc=${COSIGN_RC:-0}
 	tpath=${TPATH:-$root/stub:$PATH}
-	unset COSIGN_RC TPATH
+	inst=${INSTALLER:-$installer}
+	dl=${DL_DIR:-$root/dl}
+	unset COSIGN_RC TPATH INSTALLER DL_DIR
 	code=0
-	COSIGN_RC=$rc PATH=$tpath LOCK_RELEASE_BASE="$root/rel" sh "$installer" "$@" >"$root/out" 2>&1 || code=$?
+	COSIGN_RC=$rc PATH=$tpath DL_DIR=$dl LOCK_RELEASE_BASE="$root/rel" sh "$inst" "$@" >"$root/out" 2>&1 || code=$?
 }
 bin() { printf '%s' "$HOME/.local/bin/lock"; }
 
@@ -84,6 +119,7 @@ if [ "$code" = 0 ] && [ -x "$(bin)" ] && [ "$("$(bin)")" = "lock 1.2.3" ] &&
 	grep -q -- "--bundle" "$STUB_LOG"; then
 	pass "verified install of v1.2.3 into ~/.local/bin/lock (0755)"
 else fail "verified install"; fi
+if ! grep -q '^curl' "$STUB_LOG" && ! grep -q '^downloaded cosign' "$STUB_LOG"; then pass "cosign on PATH preferred: no cosign download"; else fail "cosign on PATH preferred: no cosign download"; fi
 if grep -q '^docker' "$STUB_LOG"; then fail "docker was called"; else pass "no docker call (no image pulled)"; fi
 if grep -q 'not on your PATH' "$root/out" && grep -q 'export PATH=' "$root/out"; then pass "PATH hint"; else fail "PATH hint"; fi
 
@@ -100,14 +136,40 @@ run keep --version v1.2.3
 COSIGN_RC=1 run keep --version v1.2.3
 if [ "$code" != 0 ] && [ "$("$(bin)")" = "lock 1.2.3" ]; then pass "failure keeps the former lock"; else fail "failure keeps the former lock"; fi
 
-# 5. Without cosign and without --sha256: refused.
+# 5. Without cosign on PATH: the pinned cosign is downloaded, checked and
+# used from the temporary directory, never installed.
 TPATH="$root/nocosign" run nocosign --version v1.2.3
-if [ "$code" != 0 ] && [ ! -e "$(bin)" ] && grep -q 'cosign is required' "$root/out"; then pass "no cosign: refused"; else fail "no cosign: refused"; fi
+if [ "$code" = 0 ] && [ "$("$(bin)")" = "lock 1.2.3" ] &&
+	grep -qx "curl $cosign_url" "$STUB_LOG" &&
+	grep -q -- "^downloaded cosign verify-blob --bundle .* --certificate-identity https://github.com/DavidGodefroid/lockhub/.github/workflows/release.yml@refs/tags/v1.2.3" "$STUB_LOG" &&
+	[ ! -e "$HOME/.local/bin/cosign" ]; then
+	pass "no cosign: verified with the downloaded pinned cosign"
+else fail "no cosign: verified with the downloaded pinned cosign"; fi
+TPATH="$root/nocosign" COSIGN_RC=1 run nocosignbad --version v1.2.3
+if [ "$code" != 0 ] && [ ! -e "$(bin)" ] && grep -q 'does not verify' "$root/out"; then pass "no cosign: a bad signature still aborts"; else fail "no cosign: a bad signature still aborts"; fi
 
-# 6. Without cosign, with the right --sha256: installed.
+# 5b. A downloaded cosign that does not match its pin (here the real
+# install.sh, which pins the real cosign): aborts, never runs it.
+TPATH="$root/nocosign" INSTALLER="$real_installer" run cosignpin --version v1.2.3
+if [ "$code" != 0 ] && [ ! -e "$(bin)" ] && grep -q 'does not match its pinned sha256' "$root/out" &&
+	! grep -q '^downloaded cosign' "$STUB_LOG"; then
+	pass "cosign with a wrong sha256 aborts, not run"
+else fail "cosign with a wrong sha256 aborts, not run"; fi
+
+# 5c. cosign cannot be downloaded (not served, or no curl/wget): aborts.
+mkdir -p "$root/dl-empty"
+TPATH="$root/nocosign" DL_DIR="$root/dl-empty" run cosigndl --version v1.2.3
+if [ "$code" != 0 ] && [ ! -e "$(bin)" ] && grep -q 'cannot download cosign' "$root/out"; then pass "cosign download failure aborts"; else fail "cosign download failure aborts"; fi
+TPATH="$root/nonet" run cosignnonet --version v1.2.3
+if [ "$code" != 0 ] && [ ! -e "$(bin)" ] && grep -q 'cannot download cosign' "$root/out"; then pass "no cosign and no curl/wget: aborts"; else fail "no cosign and no curl/wget: aborts"; fi
+
+# 6. Without cosign, with the right --sha256: installed, nothing downloaded
+# but the archive (works offline, without any cosign).
 want=$(sha256 "$root/rel/v1.2.3/lock_1.2.3_${os}_${arch}.tar.gz")
-TPATH="$root/nocosign" run sha --version v1.2.3 --sha256 "$want"
-if [ "$code" = 0 ] && [ "$("$(bin)")" = "lock 1.2.3" ]; then pass "--sha256 without cosign"; else fail "--sha256 without cosign"; fi
+TPATH="$root/nonet" run sha --version v1.2.3 --sha256 "$want"
+if [ "$code" = 0 ] && [ "$("$(bin)")" = "lock 1.2.3" ] && [ ! -s "$STUB_LOG" ]; then pass "--sha256 without cosign"; else fail "--sha256 without cosign"; fi
+TPATH="$root/nocosign" run sha2 --version v1.2.3 --sha256 "$want"
+if [ "$code" = 0 ] && ! grep -q '^curl' "$STUB_LOG"; then pass "--sha256: no cosign download"; else fail "--sha256: no cosign download"; fi
 
 # 7. A wrong --sha256 aborts.
 TPATH="$root/nocosign" run badsha --version v1.2.3 --sha256 "$(printf '0%.0s' $(seq 1 64))"
@@ -167,7 +229,7 @@ if [ "$code" != 0 ] && [ "$(cat "$root/sharedd/lock")" = old ] && grep -q 'writa
 # 16. A link to the user's own, private file is replaced by the binary
 # (the link itself, never the file it pointed to).
 mkdir -p "$root/home/linkok/.local/bin" "$root/home/linkok/opt"
-chmod 0755 "$root/home/linkok/opt"
+chmod 0755 "$root/home/linkok/.local/bin" "$root/home/linkok/opt"
 echo old >"$root/home/linkok/opt/lock"
 chmod 0755 "$root/home/linkok/opt/lock"
 ln -s "$root/home/linkok/opt/lock" "$root/home/linkok/.local/bin/lock"
