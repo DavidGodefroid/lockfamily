@@ -21,6 +21,7 @@
   --mq: #f97316;   --mq-text: #c2410c;
   --file: #ec4899; --file-text: #be185d;
   --http: #22c55e; --http-text: #15803d;
+  --log: #0ea5e9;  --log-text: #0369a1;
   --lea: #1e66f5;  --lea-text: #1e66f5;
   --teal: #14b8a6;
 
@@ -50,6 +51,7 @@
     --mq-text: #fdba74;
     --file-text: #f9a8d4;
     --http-text: #4ade80;
+    --log-text: #7dd3fc;
     --lea: #89b4fa;
     --lea-text: #89b4fa;
     color-scheme: dark;
@@ -160,7 +162,6 @@ main { position: relative; outline: none; }
 }
 @media (min-width: 600px) { .products { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; } }
 @media (min-width: 1024px) { .products { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (min-width: 1180px) { .products { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 .product {
   --c: var(--sql); --ct: var(--sql-text);
   position: relative; min-width: 0;
@@ -179,6 +180,7 @@ main { position: relative; outline: none; }
 .p-mq { --c: var(--mq); --ct: var(--mq-text); }
 .p-file { --c: var(--file); --ct: var(--file-text); }
 .p-http { --c: var(--http); --ct: var(--http-text); }
+.p-log { --c: var(--log); --ct: var(--log-text); }
 .p-lea { --c: var(--lea); --ct: var(--lea-text); }
 .product:hover, .product:focus-within {
   transform: translateY(-4px);
@@ -242,6 +244,7 @@ main { position: relative; outline: none; }
 .t-sql { --c: var(--sql); --ct: var(--sql-text); }
 .t-mq { --c: var(--mq); --ct: var(--mq-text); }
 .t-file { --c: var(--file); --ct: var(--file-text); }
+.t-log { --c: var(--log); --ct: var(--log-text); }
 .t-lea { --c: var(--lea); --ct: var(--lea-text); }
 [role="tab"][aria-selected="true"], .flow-tabs [data-product][aria-pressed="true"] { color: var(--ct); border-color: var(--c); background: var(--surface-2); }
 .flow-pause { margin-left: auto; font-family: var(--sans) !important; }
@@ -328,13 +331,15 @@ main { position: relative; outline: none; }
 .kit-icon { width: 40px; height: 40px; flex: none; display: grid; place-items: center; font-size: 1.5rem; border-radius: 10px; background: var(--surface-2); color: var(--key); }
 .consoles { display: grid; gap: 10px; grid-template-columns: 1fr; }
 @media (min-width: 600px) { .consoles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 900px) { .consoles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 900px) { .consoles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1180px) { .consoles { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 .console { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); min-width: 0; }
 .console img { flex: none; }
 .c-sql { border-left: 3px solid var(--sql); }
 .c-mq { border-left: 3px solid var(--mq); }
 .c-file { border-left: 3px solid var(--file); }
 .c-http { border-left: 3px solid var(--http); }
+.c-log { border-left: 3px solid var(--log); }
 .layer-arrow { height: 26px; position: relative; }
 .layer-arrow::before { content: ""; position: absolute; left: 50%; top: 3px; bottom: 3px; width: 2px; background: var(--border); }
 .layer-arrow::after {

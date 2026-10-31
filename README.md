@@ -4,6 +4,7 @@ The one-page site of the lock family: [locksql](https://github.com/DavidGodefroi
 [lockmq](https://github.com/DavidGodefroid/lockmq),
 [lockfile](https://github.com/DavidGodefroid/lockfile),
 [lockhttp](https://github.com/DavidGodefroid/lockhttp),
+[locklog](https://github.com/DavidGodefroid/locklog),
 [lea](https://github.com/DavidGodefroid/lea), and the approval hub
 [lockhub](https://github.com/DavidGodefroid/lockhub) with its `lock` CLI.
 

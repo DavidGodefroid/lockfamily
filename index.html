@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>lock family — Your AI does the work. You hold the key.</title>
-<meta name="description" content="locksql, lockmq, lockfile, lockhttp and lea: open-source tools that let AI agents query your databases, inspect your queues, check your files, browse the web and write your code. You keep the credentials, the personal data and the last word.">
+<meta name="description" content="locksql, lockmq, lockfile, lockhttp, locklog and lea: open-source tools that let AI agents query your databases, inspect your queues, check your files, browse the web, investigate your logs and write your code. You keep the credentials, the personal data and the last word.">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="lock family">
 <meta property="og:title" content="lock family — Your AI does the work. You hold the key.">
-<meta property="og:description" content="locksql, lockmq, lockfile, lockhttp and lea: AI agents work on your databases, queues, files, the web and code. You keep the credentials, the personal data and the last word.">
+<meta property="og:description" content="locksql, lockmq, lockfile, lockhttp, locklog and lea: AI agents work on your databases, queues, files, the web, logs and code. You keep the credentials, the personal data and the last word.">
 <meta property="og:url" content="https://lockfamily.dev/">
 <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
@@ -43,11 +43,11 @@
   <div class="glow" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
 
   <section class="hero wrap" aria-labelledby="hero-title">
-    <p class="eyebrow">Open source · Apache 2.0 · five tools, one rule</p>
+    <p class="eyebrow">Open source · Apache 2.0 · six tools, one rule</p>
     <h1 id="hero-title">Your AI does the work. <span class="key">You hold the key.</span></h1>
-    <p class="lead">Let AI agents query your databases, inspect your queues, check your files, browse the web and write your code. You keep the credentials, the personal data and the last word.</p>
+    <p class="lead">Let AI agents query your databases, inspect your queues, check your files, browse the web, investigate your logs and write your code. You keep the credentials, the personal data and the last word.</p>
 
-    <ul class="products" aria-label="The five tools">
+    <ul class="products" aria-label="The six tools">
       <li class="product p-sql" style="--i:0">
         <svg class="logo" viewBox="0 0 128 128" aria-hidden="true">
           <defs>
@@ -127,7 +127,27 @@
           <p class="go" aria-hidden="true">lockhttp.com <span>→</span></p>
         </div>
       </li>
-      <li class="product p-lea" style="--i:4">
+      <li class="product p-log" style="--i:4">
+        <svg class="logo" viewBox="0 0 128 128" aria-hidden="true">
+          <defs>
+            <linearGradient id="log-body" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0EA5E9"/><stop offset="1" stop-color="#0369A1"/></linearGradient>
+            <clipPath id="log-lines"><circle cx="64" cy="84" r="38"/></clipPath>
+          </defs>
+          <path class="shackle" d="M42 60 V38 a22 22 0 0 1 44 0 V60" fill="none" stroke="url(#sh)" stroke-width="11" stroke-linecap="round"/>
+          <circle cx="64" cy="84" r="38" fill="url(#log-body)"/>
+          <g clip-path="url(#log-lines)" stroke="#E0F2FE" stroke-opacity=".6" stroke-width="4" stroke-linecap="round">
+            <path d="M34 66 H70"/><path d="M78 66 H90"/><path d="M34 84 H48"/><path d="M80 84 H94"/><path d="M34 102 H94"/>
+          </g>
+          <circle cx="64" cy="80" r="7" fill="#0F172A"/><path d="M60.5 83 L58.5 96 H69.5 L67.5 83 Z" fill="#0F172A"/>
+        </svg>
+        <div class="product-text">
+          <p class="kind">Logs · files, journald, Docker, Loki</p>
+          <h2><a href="https://locklog.dev/">locklog</a></h2>
+          <p class="benefit">Your AI finds when it broke, in logs it never reads in clear. Personal data and secrets are masked before the model.</p>
+          <p class="go" aria-hidden="true">locklog.dev <span>→</span></p>
+        </div>
+      </li>
+      <li class="product p-lea" style="--i:5">
         <svg class="logo" viewBox="0 0 128 128" aria-hidden="true">
           <rect x="6" y="6" width="116" height="116" rx="28" fill="#1e1e2e"/>
           <rect class="boundary" x="6" y="6" width="116" height="116" rx="28" fill="none" stroke="#89b4fa" stroke-width="5"/>
@@ -200,7 +220,7 @@ PII columns touched: customers.email
   </section>
 
   <section id="fit" class="section wrap" aria-labelledby="fit-title">
-    <p class="section-kicker">How the five fit together</p>
+    <p class="section-kicker">How the six fit together</p>
     <h2 id="fit-title">One boundary around the agent, one console per data source.</h2>
 
     <div class="layers">
@@ -219,6 +239,7 @@ PII columns touched: customers.email
           <div class="console c-mq"><img src="assets/lockmq.svg" alt="" width="36" height="36"><div><h3>lockmq</h3><p>RabbitMQ brokers</p></div></div>
           <div class="console c-file"><img src="assets/lockfile.svg" alt="" width="36" height="36"><div><h3>lockfile</h3><p>Files on S3, SFTP or disk</p></div></div>
           <div class="console c-http"><img src="assets/lockhttp.svg" alt="" width="36" height="36"><div><h3>lockhttp</h3><p>Outbound HTTP(S)</p></div></div>
+          <div class="console c-log"><img src="assets/locklog.svg" alt="" width="36" height="36"><div><h3>locklog</h3><p>Logs, masked</p></div></div>
         </div>
       </div>
       <div class="layer-arrow" aria-hidden="true"></div>
@@ -363,6 +384,7 @@ locks:
         <button type="button" role="tab" id="qs-tab-sql" aria-controls="qs-sql" aria-selected="true" class="t-sql">locksql</button>
         <button type="button" role="tab" id="qs-tab-mq" aria-controls="qs-mq" aria-selected="false" tabindex="-1" class="t-mq">lockmq</button>
         <button type="button" role="tab" id="qs-tab-file" aria-controls="qs-file" aria-selected="false" tabindex="-1" class="t-file">lockfile</button>
+        <button type="button" role="tab" id="qs-tab-log" aria-controls="qs-log" aria-selected="false" tabindex="-1" class="t-log">locklog</button>
         <button type="button" role="tab" id="qs-tab-lea" aria-controls="qs-lea" aria-selected="false" tabindex="-1" class="t-lea">lea</button>
       </div>
 
@@ -407,6 +429,18 @@ lockfile init claude</code></pre>
         <p><a href="https://github.com/DavidGodefroid/lockfile#quick-start-linux">Full quick start</a></p>
       </div>
 
+      <div class="qs-panel" role="tabpanel" id="qs-log" aria-labelledby="qs-tab-log">
+        <p class="qs-meta">Linux host with the logs · Docker ≥ 19.03 · cosign · the trial on a non-production profile · v0.1 pre-release</p>
+        <pre class="term" tabindex="0"><code><span class="c"># 1. Install (checks the release and the image with cosign)</span>
+curl -fsSL https://locklog.dev/install.sh | sh
+<span class="c"># 2. Describe your logs and wire your agent (answer "no" to production)</span>
+locklog setup --agent host
+<span class="c"># 3. The console, in a terminal you keep in view</span>
+locklog console
+<span class="c"># 4. In another terminal, ask your agent: "when did the 502s start?"</span></code></pre>
+        <p>For production, run the agent in lea or in its own container. <a href="https://github.com/DavidGodefroid/locklog#quick-start">Full quick start</a></p>
+      </div>
+
       <div class="qs-panel" role="tabpanel" id="qs-lea" aria-labelledby="qs-tab-lea">
         <p class="qs-meta">Linux, macOS, or Windows with WSL2 · Docker · a Claude subscription or API key · v0.1</p>
         <pre class="term" tabindex="0"><code>curl -fsSL https://leadeck.dev/install.sh | sh
@@ -423,6 +457,7 @@ lea</code></pre>
       <a href="https://github.com/DavidGodefroid/lockmq/blob/main/docs/security-model.md">lockmq</a>,
       <a href="https://github.com/DavidGodefroid/lockfile/blob/main/docs/security-model.md">lockfile</a>,
       <a href="https://github.com/DavidGodefroid/lockhttp">lockhttp</a>,
+      <a href="https://github.com/DavidGodefroid/locklog/blob/main/docs/security-model.md">locklog</a>,
       <a href="https://github.com/DavidGodefroid/lea#how-lea-keeps-your-machine-safe">lea</a>. Chat facades never answer production tickets: a chat account is only as safe as the devices signed in to it.</p>
   </section>
 </main>
@@ -440,6 +475,7 @@ lea</code></pre>
         <li class="p-mq"><a href="https://lockmq.com/">lockmq</a><span>Queues</span></li>
         <li class="p-file"><a href="https://lockfile.pro/">lockfile</a><span>Files</span></li>
         <li class="p-http"><a href="https://lockhttp.com/">lockhttp</a><span>Web</span></li>
+        <li class="p-log"><a href="https://locklog.dev/">locklog</a><span>Logs</span></li>
         <li class="p-lea"><a href="https://leadeck.dev/">lea</a><span>Code</span></li>
       </ul>
     </nav>
@@ -450,6 +486,7 @@ lea</code></pre>
         <li><a href="https://github.com/DavidGodefroid/lockmq">lockmq</a></li>
         <li><a href="https://github.com/DavidGodefroid/lockfile">lockfile</a></li>
         <li><a href="https://github.com/DavidGodefroid/lockhttp">lockhttp</a></li>
+        <li><a href="https://github.com/DavidGodefroid/locklog">locklog</a></li>
         <li><a href="https://github.com/DavidGodefroid/lea">lea</a></li>
         <li><a href="https://github.com/DavidGodefroid/lockkit">lockkit</a></li>
         <li><a href="https://github.com/DavidGodefroid/lockhub">lockhub</a></li>
