@@ -28,7 +28,7 @@ results, and never sees values in clear.
 ### Quick start, with locksql
 
 ```sh
-curl -fsSL https://lockfamily.dev/install.sh | sh   # the lock CLI (needs cosign)
+curl -fsSL https://lockfamily.dev/install.sh | sh   # the lock CLI
 cd ~/projects                  # the workspace: lea's projects directory
 lock add locksql crm           # latest signed locksql, by digest; pins the hub's image too
 mkdir -p .locksql              # the lock's profile, in the workspace
@@ -156,12 +156,15 @@ curl -fsSL https://lockfamily.dev/install.sh | sh
 curl -fsSL https://lockfamily.dev/install.sh | sh -s -- --version vX.Y.Z
 ```
 
-It needs cosign: the keyless signature of the release's `checksums.txt` must
-come from the lockhub release workflow run for that tag, and the archive must
-match it. Without cosign it refuses, unless you pass `--version` and
-`--sha256 <hash>` with a hash you trust. The per-tool install scripts stay.
+The keyless signature of the release's `checksums.txt` must come from the
+lockhub release workflow run for that tag, and the archive must match it. It
+checks the signature with the cosign on your PATH; without one, it downloads
+cosign v3.0.6 to a temporary directory, checks it against the sha256 pinned in
+`install.sh`, uses it for that check only and never installs it. Offline, pass
+`--version` and `--sha256 <hash>` with a hash you trust. The per-tool install
+scripts stay.
 
-Tests (fake release, stub cosign, no network): `sh tests/install_test.sh`
+Tests (fake release, stub cosign, fake cosign download, no network): `sh tests/install_test.sh`
 (`COSIGN_REAL=$(command -v cosign)` adds a real cosign check).
 
 Logos and the lea demo come from each project's own repository.

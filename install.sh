@@ -17,10 +17,12 @@
 #                     lock_X.Y.Z_<os>_<arch>.tar.gz, which you obtained
 #                     yourself from a source you trust (needs --version)
 #
-# cosign is required (https://docs.sigstore.dev/cosign/system_config/installation/):
-# the keyless signature of the release's checksums.txt must come from the
+# The keyless signature of the release's checksums.txt must come from the
 # lockhub release workflow run for that very tag, and the archive must match
-# checksums.txt. Nothing unverified is ever installed.
+# checksums.txt. Nothing unverified is ever installed. The signature is
+# checked with the cosign on PATH; without one, a pinned cosign release is
+# downloaded to a temporary directory, checked against its pinned sha256,
+# used for this check only and never installed.
 #
 # Environment:
 #   LOCK_RELEASE_BASE  a mirror of the releases (an https URL or a local
@@ -73,6 +75,27 @@ aarch64 | arm64) arch=arm64 ;;
 *) die "unsupported architecture $(uname -m): amd64 and arm64 only" ;;
 esac
 
+# https downloads (the releases, and cosign when it is not on PATH).
+if command -v curl >/dev/null 2>&1; then
+	net=curl
+	fetch_https() { curl -fsSL --proto '=https' --tlsv1.2 -o "$2" "$1"; }
+	latest() { curl -fsSLI --proto '=https' --tlsv1.2 -o /dev/null -w '%{url_effective}' "https://github.com/$repo/releases/latest"; }
+elif command -v wget >/dev/null 2>&1; then
+	net=wget
+	# GNU wget refuses non-https redirects with --https-only; busybox wget
+	# has no such option (the cosign signature, or cosign's pinned sha256,
+	# still guards the content).
+	if wget --help 2>&1 | grep -q -- --https-only; then
+		fetch_https() { wget -q --https-only -O "$2" "$1"; }
+	else
+		fetch_https() { wget -q -O "$2" "$1"; }
+	fi
+	latest() { wget -q -S --spider "https://github.com/$repo/releases/latest" 2>&1 | sed -n 's/^ *[Ll]ocation: *//p' | tail -n 1 | tr -d '\r'; }
+else
+	net=''
+	fetch_https() { say "curl or wget is required to download $1"; return 1; }
+fi
+
 base="${LOCK_RELEASE_BASE:-https://github.com/$repo/releases/download}"
 case "$base" in
 /*)
@@ -80,31 +103,29 @@ case "$base" in
 	latest() { die "no latest release in a local mirror: pass --version"; }
 	;;
 https://*)
-	if command -v curl >/dev/null 2>&1; then
-		fetch() { curl -fsSL --proto '=https' --tlsv1.2 -o "$2" "$1"; }
-		latest() { curl -fsSLI --proto '=https' --tlsv1.2 -o /dev/null -w '%{url_effective}' "https://github.com/$repo/releases/latest"; }
-	elif command -v wget >/dev/null 2>&1; then
-		# GNU wget refuses non-https redirects with --https-only; busybox wget
-		# has no such option (the cosign signature still guards the content).
-		if wget --help 2>&1 | grep -q -- --https-only; then
-			fetch() { wget -q --https-only -O "$2" "$1"; }
-		else
-			fetch() { wget -q -O "$2" "$1"; }
-		fi
-		latest() { wget -q -S --spider "https://github.com/$repo/releases/latest" 2>&1 | sed -n 's/^ *[Ll]ocation: *//p' | tail -n 1 | tr -d '\r'; }
-	else
-		die "curl or wget is required"
-	fi
+	[ -n "$net" ] || die "curl or wget is required"
+	fetch() { fetch_https "$1" "$2"; }
 	;;
 *) die "LOCK_RELEASE_BASE must be an https URL or an absolute directory" ;;
 esac
+
+# Without cosign on PATH, this cosign release is downloaded and checked
+# against its sha256, pinned here (the digests of the release's
+# cosign_checksums.txt, the same pins as lea's installer). Never "latest":
+# a new version changes these lines.
+cosign_version=v3.0.6
+case "$os-$arch" in
+linux-amd64) cosign_pin=c956e5dfcac53d52bcf058360d579472f0c1d2d9b69f55209e256fe7783f4c74 ;;
+linux-arm64) cosign_pin=bedac92e8c3729864e13d4a17048007cfafa79d5deca993a43a90ffe018ef2b8 ;;
+darwin-amd64) cosign_pin=4c3e7af8372d3ca3296e62fa56f23fcbb5721cc6ac1827900d398f110d7cd280 ;;
+darwin-arm64) cosign_pin=5fadd012ae6381a6a29ff86a7d39aa873878852f1073fc90b15995961ecfb084 ;;
+esac
+cosign_url="https://github.com/sigstore/cosign/releases/download/$cosign_version/cosign-$os-$arch"
 
 if [ -n "$sum" ]; then
 	printf '%s\n' "$sum" | grep -Eqx '[0-9a-fA-F]{64}' || die "--sha256 takes the 64 hex digits of the archive's sha256"
 	sum=$(printf '%s' "$sum" | tr 'A-F' 'a-f')
 	[ -n "$tag" ] || die "--sha256 needs --version: the hash is the hash of one release's archive"
-elif ! command -v cosign >/dev/null 2>&1; then
-	die "cosign is required to check the release's signature (https://docs.sigstore.dev/cosign/system_config/installation/); without it, pass --version and --sha256 with a hash you trust"
 fi
 
 if [ -z "$tag" ]; then
@@ -148,11 +169,14 @@ trap 'rm -rf "$tmp"' EXIT INT TERM
 say "downloading $archive ($tag)"
 fetch "$url/$archive" "$tmp/$archive" || die "download failed: $url/$archive"
 
-if command -v sha256sum >/dev/null 2>&1; then
-	got="$(sha256sum "$tmp/$archive" | awk '{ print $1 }')"
-else
-	got="$(shasum -a 256 "$tmp/$archive" | awk '{ print $1 }')"
-fi
+sha256() {
+	if command -v sha256sum >/dev/null 2>&1; then
+		sha256sum "$1" | awk '{ print $1 }'
+	else
+		shasum -a 256 "$1" | awk '{ print $1 }'
+	fi
+}
+got="$(sha256 "$tmp/$archive")"
 
 if [ -n "$sum" ]; then
 	[ "$sum" = "$got" ] || die "checksum mismatch for $archive: expected $sum, got $got"
@@ -161,10 +185,21 @@ else
 	fetch "$url/checksums.txt" "$tmp/checksums.txt" || die "download failed: checksums.txt"
 	fetch "$url/checksums.txt.sigstore.json" "$tmp/checksums.txt.sigstore.json" ||
 		die "download failed: checksums.txt.sigstore.json"
+	if command -v cosign >/dev/null 2>&1; then
+		cosign=cosign
+	else
+		say "cosign is not installed: downloading cosign $cosign_version to check the signature (not installed)"
+		fetch_https "$cosign_url" "$tmp/cosign" ||
+			die "cannot download cosign from $cosign_url: install cosign (https://docs.sigstore.dev/cosign/system_config/installation/), or pass --version and --sha256 with a hash you trust; nothing installed"
+		[ "$(sha256 "$tmp/cosign")" = "$cosign_pin" ] ||
+			die "the cosign downloaded from $cosign_url does not match its pinned sha256: install cosign (https://docs.sigstore.dev/cosign/system_config/installation/), then rerun; nothing installed"
+		chmod 0755 "$tmp/cosign"
+		cosign="$tmp/cosign"
+	fi
 	# The release workflow run for this very tag: a tag moved to an older
 	# release's signed files does not verify.
 	identity="https://github.com/$repo/.github/workflows/release.yml@refs/tags/$tag"
-	cosign verify-blob --bundle "$tmp/checksums.txt.sigstore.json" \
+	"$cosign" verify-blob --bundle "$tmp/checksums.txt.sigstore.json" \
 		--certificate-identity "$identity" \
 		--certificate-oidc-issuer "$issuer" \
 		"$tmp/checksums.txt" >"$tmp/cosign.log" 2>&1 ||
