@@ -1,7 +1,7 @@
 #!/bin/sh
-# Installs the lock CLI of the Lock Family on Linux or macOS (WSL 2 on
-# Windows): only ~/.local/bin/lock, without sudo, without pulling any image.
-# `lock up` later pulls and verifies the images of the hub and the locks.
+# Installs the lox CLI of the Lock Family on Linux or macOS (WSL 2 on
+# Windows): only ~/.local/bin/lox, without sudo, without pulling any image.
+# `lox up` later pulls and verifies the images of the hub and the locks.
 #
 #   curl -fsSL https://lockfamily.dev/install.sh | sh
 #
@@ -14,7 +14,7 @@
 # Options:
 #   --version vX.Y.Z  the lockhub release to install (default: the latest)
 #   --sha256 HASH     install without cosign: the sha256 of the archive
-#                     lock_X.Y.Z_<os>_<arch>.tar.gz, which you obtained
+#                     lox_X.Y.Z_<os>_<arch>.tar.gz, which you obtained
 #                     yourself from a source you trust (needs --version)
 #
 # The keyless signature of the release's checksums.txt must come from the
@@ -30,13 +30,13 @@
 #                      checked against the same identity
 #
 # The per-tool install scripts (locksql, lockmq, lockfile, lockhttp) stay
-# as they are; with the hub, `lock add` and `lock up` set the locks up.
+# as they are; with the hub, `lox add` and `lox up` set the locks up.
 set -eu
 
 repo="DavidGodefroid/lockhub"
 issuer="https://token.actions.githubusercontent.com"
 
-say() { printf 'lock: %s\n' "$*" >&2; }
+say() { printf 'lox: %s\n' "$*" >&2; }
 die() { say "$*"; exit 1; }
 usage() {
 	cat >&2 <<'USAGE'
@@ -62,7 +62,7 @@ done
 
 [ -n "${HOME:-}" ] || die "HOME is not set"
 dir="$HOME/.local/bin"
-target="$dir/lock"
+target="$dir/lox"
 
 case "$(uname -s)" in
 Linux) os=linux ;;
@@ -142,7 +142,7 @@ printf '%s\n' "$tag" | grep -Eqx 'v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?' ||
 	die "invalid version $tag: a release tag, vX.Y.Z"
 version="${tag#v}"
 
-# ~/.local/bin and what ~/.local/bin/lock points to must be the user's own,
+# ~/.local/bin and what ~/.local/bin/lox points to must be the user's own,
 # not writable by others: someone else could swap the binary.
 others_can_write() { [ -n "$(find -H "$1" -maxdepth 0 \( -perm -0020 -o -perm -0002 -o ! -user "$(id -u)" \) 2>/dev/null)" ]; }
 if [ -e "$dir" ]; then
@@ -160,7 +160,7 @@ elif [ -e "$target" ] && [ ! -f "$target" ]; then
 	die "$target exists and is not a file"
 fi
 
-archive="lock_${version}_${os}_${arch}.tar.gz"
+archive="lox_${version}_${os}_${arch}.tar.gz"
 url="$base/$tag"
 
 tmp="$(mktemp -d)"
@@ -211,11 +211,11 @@ else
 fi
 
 mkdir "$tmp/x"
-tar -xzf "$tmp/$archive" -C "$tmp/x" lock 2>/dev/null || die "$archive holds no lock binary"
-if [ ! -f "$tmp/x/lock" ] || [ -L "$tmp/x/lock" ]; then die "$archive: lock is not a regular file"; fi
-chmod 0755 "$tmp/x/lock"
-reported="$("$tmp/x/lock" version 2>/dev/null || true)"
-[ "$reported" = "lock $version" ] || die "the lock of $archive reports \"$reported\", not \"lock $version\""
+tar -xzf "$tmp/$archive" -C "$tmp/x" lox 2>/dev/null || die "$archive holds no lox binary"
+if [ ! -f "$tmp/x/lox" ] || [ -L "$tmp/x/lox" ]; then die "$archive: lox is not a regular file"; fi
+chmod 0755 "$tmp/x/lox"
+reported="$("$tmp/x/lox" version 2>/dev/null || true)"
+[ "$reported" = "lox $version" ] || die "the lox of $archive reports \"$reported\", not \"lox $version\""
 
 # Written next to the target, then renamed over it: a link there is
 # replaced, never written through.
@@ -223,13 +223,13 @@ if [ ! -d "$dir" ]; then
 	mkdir -p "$dir"
 	chmod 0755 "$dir"
 fi
-new="$(mktemp "$dir/.lock.XXXXXX")"
-if ! { cp "$tmp/x/lock" "$new" && chmod 0755 "$new" && mv -f "$new" "$target"; }; then
+new="$(mktemp "$dir/.lox.XXXXXX")"
+if ! { cp "$tmp/x/lox" "$new" && chmod 0755 "$new" && mv -f "$new" "$target"; }; then
 	rm -f "$new"
 	die "could not write $target"
 fi
 
-say "installed lock $tag to $target"
+say "installed lox $tag to $target"
 case ":$PATH:" in
 *":$dir:"*) ;;
 *)
@@ -237,4 +237,4 @@ case ":$PATH:" in
 	say "  export PATH=\"\$HOME/.local/bin:\$PATH\""
 	;;
 esac
-command -v docker >/dev/null 2>&1 || say "docker is not installed: lock up needs it"
+command -v docker >/dev/null 2>&1 || say "docker is not installed: lox up needs it"

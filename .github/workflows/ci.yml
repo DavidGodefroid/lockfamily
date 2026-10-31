@@ -49,8 +49,9 @@ jobs:
         run: COSIGN_REAL="$(command -v cosign)" sh tests/install_test.sh
 
   # The latest lockhub release, installed for real from GitHub (signature,
-  # checksum, lock version). Before the first release with lock archives,
-  # the job says so and stops.
+  # checksum, lox version). Before the first published lockhub release, the
+  # job says so and stops. A release without lox_* archives (lockhub v0.2.7
+  # and earlier ship lock_*) fails the job: the download fails.
   install-release:
     name: install.sh (latest lockhub release)
     runs-on: ubuntu-latest
@@ -63,9 +64,9 @@ jobs:
         run: |
           code=0; sh install.sh 2>out.txt || code=$?
           cat out.txt
-          if [ "$code" != 0 ] && grep -Eq "no published lockhub release|download failed" out.txt; then
-            echo "::notice::no lockhub release with lock archives yet"
+          if [ "$code" != 0 ] && grep -q "no published lockhub release" out.txt; then
+            echo "::notice::no published lockhub release yet"
             exit 0
           fi
           test "$code" = 0
-          "$HOME/.local/bin/lock" version
+          "$HOME/.local/bin/lox" version

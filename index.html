@@ -243,10 +243,10 @@ PII columns touched: customers.email
   <section id="hub" class="section wrap" aria-labelledby="hub-title">
     <p class="section-kicker">The approval hub</p>
     <h2 id="hub-title">Every lock, answered from one place.</h2>
-    <p class="section-lead">With <a href="https://github.com/DavidGodefroid/lockhub">lockhub</a>, a lock no longer needs you at its own terminal. It sends the hub a signed ticket with the masked screen of the request; you answer from a facade; the hub signs your decision, bound to the exact plan you saw, and the lock runs only on that signed decision. The hub never runs a request, never sees its results and never sees values in clear. The <code>lock</code> CLI declares the hub and a workspace's locks, reviews every change with you, and runs them with Docker Compose.</p>
+    <p class="section-lead">With <a href="https://github.com/DavidGodefroid/lockhub">lockhub</a>, a lock no longer needs you at its own terminal. It sends the hub a signed ticket with the masked screen of the request; you answer from a facade; the hub signs your decision, bound to the exact plan you saw, and the lock runs only on that signed decision. The hub never runs a request, never sees its results and never sees values in clear. The <code>lox</code> CLI declares the hub and a workspace's locks, reviews every change with you, and runs them with Docker Compose.</p>
     <ul class="hub-points">
-      <li><strong>Facades.</strong> Your terminal (<code>lock approve</code>), the <a href="https://leadeck.dev/">lea</a> deck, Slack, Telegram, and a paired phone (an installable web app the hub serves, with optional Web Push). Each risk class goes only where it is safe to answer (see “routing” below); a workspace can narrow the routing, never widen it.</li>
-      <li><strong>Clear values.</strong> Screens are masked everywhere. With <code>reveal: true</code> on a lock, <kbd>o</kbd> (or <kbd>Ctrl-O</kbd>, where the terminal passes it) in <code>lock approve</code> or the deck shows a ticket's clear values, sealed by the lock to that facade: the hub relays ciphertext. Never on chat.</li>
+      <li><strong>Facades.</strong> Your terminal (<code>lox approve</code>), the <a href="https://leadeck.dev/">lea</a> deck, Slack, Telegram, and a paired phone (an installable web app the hub serves, with optional Web Push). Each risk class goes only where it is safe to answer (see “routing” below); a workspace can narrow the routing, never widen it.</li>
+      <li><strong>Clear values.</strong> Screens are masked everywhere. With <code>reveal: true</code> on a lock, <kbd>o</kbd> (or <kbd>Ctrl-O</kbd>, where the terminal passes it) in <code>lox approve</code> or the deck shows a ticket's clear values, sealed by the lock to that facade: the hub relays ciphertext. Never on chat.</li>
       <li><strong>Phones.</strong> With <code>devices: true</code> a lock pins the paired phones, and a decision taken on a phone is signed by the phone itself (WebAuthn): the hub's key alone cannot pass for it. <code>require_device</code> lists the risk classes only a phone's signature may approve; <code>seal_clear</code> seals the clear screen to the phones.</li>
       <li><strong>lea.</strong> lea follows the hub by default (<code>LEA_HUB=1</code>): an agent whose Lock call waits for a decision is suspended until it comes, and the deck shows and answers the hub's tickets. lea mounts <code>.lockfamily/</code> read-only in its agents and gives them the locks' sockets named in <code>.lockfamily/up.json</code>; no agent reaches the hub.</li>
     </ul>
@@ -254,19 +254,19 @@ PII columns touched: customers.email
     <div class="qs" data-tabs>
       <div class="qs-tabs" role="tablist" aria-label="The hub">
         <button type="button" role="tab" id="hub-tab-qs" aria-controls="hub-qs" aria-selected="true" class="t-hub">quick start</button>
-        <button type="button" role="tab" id="hub-tab-cli" aria-controls="hub-cli" aria-selected="false" tabindex="-1" class="t-hub">lock CLI</button>
+        <button type="button" role="tab" id="hub-tab-cli" aria-controls="hub-cli" aria-selected="false" tabindex="-1" class="t-hub">lox CLI</button>
         <button type="button" role="tab" id="hub-tab-yaml" aria-controls="hub-yaml" aria-selected="false" tabindex="-1" class="t-hub">lockfamily.yaml</button>
         <button type="button" role="tab" id="hub-tab-routes" aria-controls="hub-routes" aria-selected="false" tabindex="-1" class="t-hub">routing</button>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="hub-qs" aria-labelledby="hub-tab-qs">
         <p class="qs-meta">Linux and macOS · Docker and cosign · lockhub v0.2 pre-release · locksql v0.11 or later</p>
-        <pre class="term" tabindex="0"><code><span class="c"># 1. Install the lock CLI (checks the release signature with cosign)</span>
+        <pre class="term" tabindex="0"><code><span class="c"># 1. Install the lox CLI (checks the release signature with cosign)</span>
 curl -fsSL https://lockfamily.dev/install.sh | sh
 <span class="c"># 2. In your workspace (lea's projects directory): a locksql lock, pinned by</span>
 <span class="c">#    digest to its latest signed release; the hub's image is pinned with it</span>
 cd ~/projects
-lock add locksql crm
+lox add locksql crm
 <span class="c"># 3. The lock's profile, in the workspace</span>
 mkdir -p .locksql
 cat &gt; .locksql/config.toml &lt;&lt;'TOML'
@@ -278,34 +278,34 @@ user = "ro"
 database = "app"
 tls = "disable"          <span class="c"># host.docker.internal is not loopback: TLS defaults to verify-full</span>
 TOML
-chmod -R go-w .locksql   <span class="c"># lock up refuses a profile others can write</span>
+chmod -R go-w .locksql   <span class="c"># lox up refuses a profile others can write</span>
 <span class="c"># 4. Review everything, then start the hub and the lock</span>
-lock up
+lox up
 <span class="c"># 5. The console's start-up questions (policy, password); detach: Ctrl-P Ctrl-Q</span>
-lock attach crm
+lox attach crm
 <span class="c"># 6. Answer tickets here, or from the lea deck</span>
-lock approve</code></pre>
-        <p>On Linux the database must listen on the Docker bridge, not only on 127.0.0.1. Then ask an agent that lea started after <code>lock up</code>: “how many orders were placed yesterday?”. Its query waits on the hub for your <kbd>y</kbd>. <code>lock doctor</code> checks the setup and changes nothing. <a href="https://github.com/DavidGodefroid/lockhub/blob/main/docs/lock-up.md">How lock up and lea fit</a></p>
+lox approve</code></pre>
+        <p>On Linux the database must listen on the Docker bridge, not only on 127.0.0.1. Then ask an agent that lea started after <code>lox up</code>: “how many orders were placed yesterday?”. Its query waits on the hub for your <kbd>y</kbd>. <code>lox doctor</code> checks the setup and changes nothing. <a href="https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-up.md">How lox up and lea fit</a></p>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="hub-cli" aria-labelledby="hub-tab-cli">
-        <p class="qs-meta"><code>lock add</code> and <code>lock import</code> only edit <code>.lockfamily/lockfamily.yaml</code>: the next <code>lock up</code> reviews every change with you</p>
-        <pre class="term" tabindex="0"><code>lock add TYPE INSTANCE [--version vX.Y.Z | --image REF] [--profile P] [--hub-image REF]
+        <p class="qs-meta"><code>lox add</code> and <code>lox import</code> only edit <code>.lockfamily/lockfamily.yaml</code>: the next <code>lox up</code> reviews every change with you</p>
+        <pre class="term" tabindex="0"><code>lox add TYPE INSTANCE [--version vX.Y.Z | --image REF] [--profile P] [--hub-image REF]
                   <span class="c"># locksql, lockmq, lockfile, lockhttp: pinned by digest, cosign-verified</span>
-lock add slack --team T… --channel C… --user U…   <span class="c"># tokens asked at the terminal</span>
-lock add telegram --chat ID --from ID              <span class="c"># bot token asked at the terminal</span>
-lock import [SUB…]       <span class="c"># merge sub-projects' lockfamily.yaml, strictest routing kept</span>
-lock up [--dry-run] [--pin sha256:DIGEST] [--rotate hub|INSTANCE|all]
+lox add slack --team T… --channel C… --user U…    <span class="c"># tokens asked at the terminal</span>
+lox add telegram --chat ID --from ID               <span class="c"># bot token asked at the terminal</span>
+lox import [SUB…]        <span class="c"># merge sub-projects' lockfamily.yaml, strictest routing kept</span>
+lox up [--dry-run] [--pin sha256:DIGEST] [--rotate hub|INSTANCE|all]
                   <span class="c"># review, then start; --pin restores a hub version by digest;</span>
                   <span class="c"># --rotate (repeatable) replaces the hub's or a lock's key</span>
-lock attach INSTANCE     <span class="c"># a console's start-up questions; detach: Ctrl-P Ctrl-Q</span>
-lock approve [--once]    <span class="c"># y, n reason, s, q; o (Ctrl-O + Enter, not macOS): clear values;</span>
+lox attach INSTANCE      <span class="c"># a console's start-up questions; detach: Ctrl-P Ctrl-Q</span>
+lox approve [--once]     <span class="c"># y, n reason, s, q; o (Ctrl-O + Enter, not macOS): clear values;</span>
                   <span class="c"># r on an expired ticket: approve again</span>
-lock mobile pair --name phone   <span class="c"># one-time code, confirmed at this terminal; then lock up</span>
-lock mobile list
-lock mobile revoke NAME  <span class="c"># then lock up</span>
-lock doctor              <span class="c"># hub, locks, keys, socket, network; changes nothing</span>
-lock audit verify --data DIR --hub-key-file FILE [--lock INSTANCE=PATH] [--anchors FILE]
+lox mobile pair --name phone    <span class="c"># one-time code, confirmed at this terminal; then lox up</span>
+lox mobile list
+lox mobile revoke NAME   <span class="c"># then lox up</span>
+lox doctor               <span class="c"># hub, locks, keys, socket, network; changes nothing</span>
+lox audit verify --data DIR --hub-key-file FILE [--lock INSTANCE=PATH] [--anchors FILE]
                   <span class="c"># the hub's audit chain and every decision's signature</span></code></pre>
         <p>The workspace commands take <code>--file</code> to name another <code>lockfamily.yaml</code>. <a href="https://github.com/DavidGodefroid/lockhub">lockhub</a></p>
       </div>
@@ -333,7 +333,7 @@ locks:
     image: ghcr.io/davidgodefroid/locksql@sha256:…
     devices: true                       <span class="c"># pins the paired phones</span>
     reveal: true                        <span class="c"># o / Ctrl-O on the terminal and the deck</span></code></pre>
-        <p><code>lock up</code> writes <code>.lockfamily/up.json</code> for lea and keeps the hub's data, keys and audit log under <code>$XDG_STATE_HOME/lockfamily/</code> (default <code>~/.local/state/lockfamily/</code>), out of the workspace. A <code>lockfamily.yaml</code> at the workspace's root (the older layout) is still read, with a warning, until <code>.lockfamily/</code> exists.</p>
+        <p><code>lox up</code> writes <code>.lockfamily/up.json</code> for lea and keeps the hub's data, keys and audit log under <code>$XDG_STATE_HOME/lockfamily/</code> (default <code>~/.local/state/lockfamily/</code>), out of the workspace. A <code>lockfamily.yaml</code> at the workspace's root (the older layout) is still read, with a warning, until <code>.lockfamily/</code> exists.</p>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="hub-routes" aria-labelledby="hub-tab-routes">

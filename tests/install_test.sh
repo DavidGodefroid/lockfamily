@@ -26,17 +26,17 @@ case "$(uname -m)" in x86_64 | amd64) arch=amd64 ;; aarch64 | arm64) arch=arm64 
 sha256() { if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1" | awk '{print $1}'; else shasum -a 256 "$1" | awk '{print $1}'; fi; }
 
 # A fake release vVERSION: the archive for this host, checksums.txt and a
-# bundle. Its "lock" is a script that prints its version.
+# bundle. Its "lox" is a script that prints its version.
 release() {
 	v=$1
 	d="$root/rel/v$v"
 	mkdir -p "$d" "$root/pkg"
-	printf '#!/bin/sh\necho "lock %s"\n' "$v" >"$root/pkg/lock"
-	chmod 0755 "$root/pkg/lock"
+	printf '#!/bin/sh\necho "lox %s"\n' "$v" >"$root/pkg/lox"
+	chmod 0755 "$root/pkg/lox"
 	echo license >"$root/pkg/LICENSE"
-	(cd "$root/pkg" && tar -czf "$d/lock_${v}_${os}_${arch}.tar.gz" lock LICENSE)
+	(cd "$root/pkg" && tar -czf "$d/lox_${v}_${os}_${arch}.tar.gz" lox LICENSE)
 	echo "not a real bundle" >"$d/checksums.txt.sigstore.json"
-	(cd "$d" && for f in lock_*.tar.gz; do printf '%s  %s\n' "$(sha256 "$f")" "$f"; done >checksums.txt)
+	(cd "$d" && for f in lox_*.tar.gz; do printf '%s  %s\n' "$(sha256 "$f")" "$f"; done >checksums.txt)
 }
 release 1.2.3
 
@@ -108,16 +108,16 @@ run() {
 	code=0
 	COSIGN_RC=$rc PATH=$tpath DL_DIR=$dl LOCK_RELEASE_BASE="$root/rel" sh "$inst" "$@" >"$root/out" 2>&1 || code=$?
 }
-bin() { printf '%s' "$HOME/.local/bin/lock"; }
+bin() { printf '%s' "$HOME/.local/bin/lox"; }
 
 # 1. A verified install.
 run ok --version v1.2.3
-if [ "$code" = 0 ] && [ -x "$(bin)" ] && [ "$("$(bin)")" = "lock 1.2.3" ] &&
+if [ "$code" = 0 ] && [ -x "$(bin)" ] && [ "$("$(bin)")" = "lox 1.2.3" ] &&
 	[ "$(find "$(bin)" -maxdepth 0 -perm 0755 | wc -l)" -eq 1 ] &&
 	grep -q -- "--certificate-identity https://github.com/DavidGodefroid/lockhub/.github/workflows/release.yml@refs/tags/v1.2.3" "$STUB_LOG" &&
 	grep -q -- "--certificate-oidc-issuer https://token.actions.githubusercontent.com" "$STUB_LOG" &&
 	grep -q -- "--bundle" "$STUB_LOG"; then
-	pass "verified install of v1.2.3 into ~/.local/bin/lock (0755)"
+	pass "verified install of v1.2.3 into ~/.local/bin/lox (0755)"
 else fail "verified install"; fi
 if ! grep -q '^curl' "$STUB_LOG" && ! grep -q '^downloaded cosign' "$STUB_LOG"; then pass "cosign on PATH preferred: no cosign download"; else fail "cosign on PATH preferred: no cosign download"; fi
 if grep -q '^docker' "$STUB_LOG"; then fail "docker was called"; else pass "no docker call (no image pulled)"; fi
@@ -125,7 +125,7 @@ if grep -q 'not on your PATH' "$root/out" && grep -q 'export PATH=' "$root/out";
 
 # 2. The version without its v.
 run nov --version 1.2.3
-if [ "$code" = 0 ] && [ "$("$(bin)")" = "lock 1.2.3" ]; then pass "--version without v"; else fail "--version without v"; fi
+if [ "$code" = 0 ] && [ "$("$(bin)")" = "lox 1.2.3" ]; then pass "--version without v"; else fail "--version without v"; fi
 
 # 3. A signature that does not verify aborts and installs nothing.
 COSIGN_RC=1 run badsig --version v1.2.3
@@ -134,12 +134,12 @@ if [ "$code" != 0 ] && [ ! -e "$(bin)" ] && grep -q 'does not verify' "$root/out
 # 4. A failed signature leaves a former install in place.
 run keep --version v1.2.3
 COSIGN_RC=1 run keep --version v1.2.3
-if [ "$code" != 0 ] && [ "$("$(bin)")" = "lock 1.2.3" ]; then pass "failure keeps the former lock"; else fail "failure keeps the former lock"; fi
+if [ "$code" != 0 ] && [ "$("$(bin)")" = "lox 1.2.3" ]; then pass "failure keeps the former lox"; else fail "failure keeps the former lox"; fi
 
 # 5. Without cosign on PATH: the pinned cosign is downloaded, checked and
 # used from the temporary directory, never installed.
 TPATH="$root/nocosign" run nocosign --version v1.2.3
-if [ "$code" = 0 ] && [ "$("$(bin)")" = "lock 1.2.3" ] &&
+if [ "$code" = 0 ] && [ "$("$(bin)")" = "lox 1.2.3" ] &&
 	grep -qx "curl $cosign_url" "$STUB_LOG" &&
 	grep -q -- "^downloaded cosign verify-blob --bundle .* --certificate-identity https://github.com/DavidGodefroid/lockhub/.github/workflows/release.yml@refs/tags/v1.2.3" "$STUB_LOG" &&
 	[ ! -e "$HOME/.local/bin/cosign" ]; then
@@ -165,9 +165,9 @@ if [ "$code" != 0 ] && [ ! -e "$(bin)" ] && grep -q 'cannot download cosign' "$r
 
 # 6. Without cosign, with the right --sha256: installed, nothing downloaded
 # but the archive (works offline, without any cosign).
-want=$(sha256 "$root/rel/v1.2.3/lock_1.2.3_${os}_${arch}.tar.gz")
+want=$(sha256 "$root/rel/v1.2.3/lox_1.2.3_${os}_${arch}.tar.gz")
 TPATH="$root/nonet" run sha --version v1.2.3 --sha256 "$want"
-if [ "$code" = 0 ] && [ "$("$(bin)")" = "lock 1.2.3" ] && [ ! -s "$STUB_LOG" ]; then pass "--sha256 without cosign"; else fail "--sha256 without cosign"; fi
+if [ "$code" = 0 ] && [ "$("$(bin)")" = "lox 1.2.3" ] && [ ! -s "$STUB_LOG" ]; then pass "--sha256 without cosign"; else fail "--sha256 without cosign"; fi
 TPATH="$root/nocosign" run sha2 --version v1.2.3 --sha256 "$want"
 if [ "$code" = 0 ] && ! grep -q '^curl' "$STUB_LOG"; then pass "--sha256: no cosign download"; else fail "--sha256: no cosign download"; fi
 
@@ -181,7 +181,7 @@ if [ "$code" != 0 ] && [ ! -e "$(bin)" ]; then pass "malformed --sha256 refused"
 
 # 9. An archive that does not match checksums.txt aborts.
 release 1.2.4
-echo tampered >>"$root/rel/v1.2.4/lock_1.2.4_${os}_${arch}.tar.gz"
+echo tampered >>"$root/rel/v1.2.4/lox_1.2.4_${os}_${arch}.tar.gz"
 run tampered --version v1.2.4
 if [ "$code" != 0 ] && [ ! -e "$(bin)" ] && grep -q 'checksum mismatch' "$root/out"; then pass "tampered archive aborts"; else fail "tampered archive aborts"; fi
 
@@ -191,11 +191,11 @@ release 1.2.5
 run unlisted --version v1.2.5
 if [ "$code" != 0 ] && [ ! -e "$(bin)" ] && grep -q 'not listed' "$root/out"; then pass "unlisted archive aborts"; else fail "unlisted archive aborts"; fi
 
-# 11. A lock whose version differs from the release's aborts.
+# 11. A lox whose version differs from the release's aborts.
 release 1.2.6
 release 1.2.7
-cp "$root/rel/v1.2.6/lock_1.2.6_${os}_${arch}.tar.gz" "$root/rel/v1.2.7/lock_1.2.7_${os}_${arch}.tar.gz"
-(cd "$root/rel/v1.2.7" && printf '%s  %s\n' "$(sha256 "lock_1.2.7_${os}_${arch}.tar.gz")" "lock_1.2.7_${os}_${arch}.tar.gz" >checksums.txt)
+cp "$root/rel/v1.2.6/lox_1.2.6_${os}_${arch}.tar.gz" "$root/rel/v1.2.7/lox_1.2.7_${os}_${arch}.tar.gz"
+(cd "$root/rel/v1.2.7" && printf '%s  %s\n' "$(sha256 "lox_1.2.7_${os}_${arch}.tar.gz")" "lox_1.2.7_${os}_${arch}.tar.gz" >checksums.txt)
 run wrongver --version v1.2.7
 if [ "$code" != 0 ] && [ ! -e "$(bin)" ] && grep -q 'reports' "$root/out"; then pass "version mismatch aborts"; else fail "version mismatch aborts"; fi
 
@@ -209,32 +209,32 @@ done
 run badopt --frobnicate
 if [ "$code" = 2 ]; then pass "unknown option: exit 2"; else fail "unknown option: exit 2"; fi
 
-# 14. ~/.local/bin/lock as a link to a file others can write: refused.
+# 14. ~/.local/bin/lox as a link to a file others can write: refused.
 mkdir -p "$root/shared" "$root/home/linkw/.local/bin"
-echo old >"$root/shared/lock"
-chmod 0666 "$root/shared/lock"
-ln -s "$root/shared/lock" "$root/home/linkw/.local/bin/lock"
+echo old >"$root/shared/lox"
+chmod 0666 "$root/shared/lox"
+ln -s "$root/shared/lox" "$root/home/linkw/.local/bin/lox"
 run linkw --version v1.2.3
-if [ "$code" != 0 ] && [ "$(cat "$root/shared/lock")" = old ] && [ -L "$(bin)" ] && grep -q 'writable by others' "$root/out"; then pass "link to a world-writable file refused"; else fail "link to a world-writable file refused"; fi
+if [ "$code" != 0 ] && [ "$(cat "$root/shared/lox")" = old ] && [ -L "$(bin)" ] && grep -q 'writable by others' "$root/out"; then pass "link to a world-writable file refused"; else fail "link to a world-writable file refused"; fi
 
 # 15. ... or in a directory others can write: refused.
 mkdir -p "$root/sharedd" "$root/home/linkd/.local/bin"
 chmod 0777 "$root/sharedd"
-echo old >"$root/sharedd/lock"
-chmod 0644 "$root/sharedd/lock"
-ln -s "$root/sharedd/lock" "$root/home/linkd/.local/bin/lock"
+echo old >"$root/sharedd/lox"
+chmod 0644 "$root/sharedd/lox"
+ln -s "$root/sharedd/lox" "$root/home/linkd/.local/bin/lox"
 run linkd --version v1.2.3
-if [ "$code" != 0 ] && [ "$(cat "$root/sharedd/lock")" = old ] && grep -q 'writable by others' "$root/out"; then pass "link into a world-writable directory refused"; else fail "link into a world-writable directory refused"; fi
+if [ "$code" != 0 ] && [ "$(cat "$root/sharedd/lox")" = old ] && grep -q 'writable by others' "$root/out"; then pass "link into a world-writable directory refused"; else fail "link into a world-writable directory refused"; fi
 
 # 16. A link to the user's own, private file is replaced by the binary
 # (the link itself, never the file it pointed to).
 mkdir -p "$root/home/linkok/.local/bin" "$root/home/linkok/opt"
 chmod 0755 "$root/home/linkok/.local/bin" "$root/home/linkok/opt"
-echo old >"$root/home/linkok/opt/lock"
-chmod 0755 "$root/home/linkok/opt/lock"
-ln -s "$root/home/linkok/opt/lock" "$root/home/linkok/.local/bin/lock"
+echo old >"$root/home/linkok/opt/lox"
+chmod 0755 "$root/home/linkok/opt/lox"
+ln -s "$root/home/linkok/opt/lox" "$root/home/linkok/.local/bin/lox"
 run linkok --version v1.2.3
-if [ "$code" = 0 ] && [ ! -L "$(bin)" ] && [ "$("$(bin)")" = "lock 1.2.3" ] && [ "$(cat "$root/home/linkok/opt/lock")" = old ]; then pass "private link replaced, its target untouched"; else fail "private link replaced, its target untouched"; fi
+if [ "$code" = 0 ] && [ ! -L "$(bin)" ] && [ "$("$(bin)")" = "lox 1.2.3" ] && [ "$(cat "$root/home/linkok/opt/lox")" = old ]; then pass "private link replaced, its target untouched"; else fail "private link replaced, its target untouched"; fi
 
 # 17. ~/.local/bin writable by others: refused.
 mkdir -p "$root/home/dirw/.local/bin"
