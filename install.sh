@@ -3,7 +3,7 @@
 # tools, at the same versions, as the Homebrew meta formula
 # (brew install davidgodefroid/tap/lockfamily), into ~/.local/bin, without
 # sudo and without pulling any image (each tool pulls its images, by digest,
-# on first use). Then run `lox init`.
+# on first use). Then run `lea`.
 #
 #   curl -fsSL https://lockfamily.dev/install.sh | sh
 #
@@ -536,4 +536,4 @@ case ":$PATH:" in
 esac
 command -v docker >/dev/null 2>&1 ||
 	say "docker is not installed: the Lock Family runs in Docker (Docker Engine on Linux, Docker Desktop on macOS)"
-say "next step: lox init"
+say "next step: lea (without lea: lox init)"

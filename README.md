@@ -31,19 +31,27 @@ never runs a request, never sees its results, and never sees values in clear.
 ```sh
 brew trust davidgodefroid/tap                 # once: Homebrew asks you to trust a third-party tap
 brew install davidgodefroid/tap/lockfamily   # or: curl -fsSL https://lockfamily.dev/install.sh | sh
-cd ~/projects                                 # lea's projects directory (plain claude: your project or a parent)
-lox init                                      # one lock per detected source, then lox up and lox attach
-lea                                           # or: claude, then lox approve
+cd ~/projects                                 # lea's projects directory
+lea                                           # initialises itself and starts the hub
+lox add locksql                               # one source at a time: locksql, lockmq, lockfile or lockhttp
 ```
 
+Without lea: `lox init`, then `lox add <lock>`, then `claude` + `lox approve`.
 [`lox init`](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-init.md)
-reads `.env*`, `compose*.yaml` and `config/` (never a secret), finds
-PostgreSQL, MySQL, MariaDB and RabbitMQ, and proposes one lock per source
-(`--manual`: a checklist of lea, locksql, lockmq, lockfile, lockhttp; locklog
-is greyed until it ships). For each lock it runs the launcher's `profile add
---non-interactive --json`, `init claude` and `doctor --fix --yes --json`, then
-`lox add`, `lox up` (its review) and `lox attach` for the masked passwords.
-It is re-runnable; `--yes` runs it non-interactively.
+asks nothing. It checks Docker, cosign and the launchers, lists the data
+sources the project's files name (`.env*`, `compose*.yaml`, `config/`: hints
+only, never a secret), writes a `lockfamily.yaml` with the hub alone and runs
+`lox up`.
+
+[`lox add TYPE`](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-add.md)
+then sets one source up, guided and applied at once: its questions, the
+launcher's `profile add`, `init claude` and `doctor`, the declaration in
+`lockfamily.yaml`, a short `lox up` review of that lock, and the console's own
+questions at your terminal (the masked password). A failure, an `n` or Ctrl-C
+keeps nothing. Run it again for the next source.
+
+A lock added while lea runs reaches it at lea's next start: `lea stop`, then
+`lea`.
 
 ### By hand, with locksql
 
@@ -62,18 +70,19 @@ Docker and cosign are required: `lox add` and `lox up` check every image's
 signature against its release workflow. On Linux the database must listen on
 the Docker bridge, not only on 127.0.0.1 (`host.docker.internal` is the host's
 gateway). For lea's agents, the lock names your uid (`allowed_uids: [1000]`
-in `lockfamily.yaml`; `lox init` adds it when lea is installed). Any Claude
+in `lockfamily.yaml`; `lox add` adds it when lea is installed). Any Claude
 Code on the host reaches the lock through its launcher (`locksql mcp`), which
 finds the nearest `.lockfamily/up.json` up from the working directory. lea
 reads `.lockfamily/up.json` only at the root of its projects directory, so
-with lea run `lox init` (or `lox up`) there.
+with lea run `lea` and `lox add` there.
 
 ### Commands (lox)
 
 | Command | What it does |
 |---|---|
-| `lox init [--manual] [--yes] [--prod] [--credentials ask\|vault [--vault-path INSTANCE=PATH]] [--tls MODE] [--no-attach]` | set up the project's locks in one command: prerequisites, the data sources its files name (read only, no secret), one lock per source (or a checklist), then `lox add`, `lox up`, `lox attach` |
-| `lox add TYPE INSTANCE [--version vX.Y.Z \| --image REF] [--profile P] [--hub-image REF]` | declare a lock (locksql, lockmq, lockfile, lockhttp), pinned by digest to its latest (or the given) signed release; the first one also pins the hub's latest release |
+| `lox init [--review] [--hub-image REF]` | start the project's hub: prerequisites, the data sources its files name as hints (read only, no secret), a `lockfamily.yaml` with the hub alone, then `lox up`; it asks nothing |
+| `lox add TYPE` | set one source up (locksql, lockmq, lockfile, lockhttp): its questions, the lock's profile, the declaration pinned by digest to the latest signed release, a short review, the console's questions; nothing is kept on a failure |
+| `lox add TYPE INSTANCE [--version vX.Y.Z \| --image REF] [--profile P] [--hub-image REF]` | the older form: only declare a lock in `lockfamily.yaml`, pinned by digest |
 | `lox add slack --team T… --channel C… --user U…` | enable the Slack facade; its tokens are asked at the terminal and kept with the hub's data, never in the workspace |
 | `lox add telegram --chat ID --from ID` | enable the Telegram facade (bot token asked at the terminal) |
 | `lox import [SUB…]` | merge sub-projects' `lockfamily.yaml`, keeping the strictest routing |
@@ -157,7 +166,8 @@ lea follows the hub by default (`LEA_HUB=1`, from lea v0.3.0; lea v0.4.0 is
 current). An agent whose Lock call waits for a decision is suspended until
 the decision comes, and lea's deck shows and answers the hub's tickets. lea
 gives its agents the locks' sockets named in `up.json`, never the hub;
-without `up.json`, lea says to run `lox up`. `LEA_HUB=0` switches it off.
+without `up.json`, lea says to run `lox up`. lea mounts the locks' sockets when
+its container starts: a lock added while lea runs needs `lea stop`, then `lea`. `LEA_HUB=0` switches it off.
 Host agents (any Claude Code) reach the same locks through each lock's
 launcher, which reads `up.json` too. The contract is lockhub's
 [docs/lox-up.md](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-up.md).
@@ -174,19 +184,20 @@ first use).
 
 ```sh
 curl -fsSL https://lockfamily.dev/install.sh | sh
-lox init
+lea
+lox add locksql
 ```
 
 | Tool | Installed as |
 |---|---|
 | `lox` ([lockhub](https://github.com/DavidGodefroid/lockhub)) | `~/.local/bin/lox` |
-| [`lea`](https://github.com/DavidGodefroid/lea) | the release tree in `~/.local/share/lea-install/vX.Y.Z`, linked as `~/.local/bin/lea` (as lea's own installer; `lox init` runs the rest) |
+| [`lea`](https://github.com/DavidGodefroid/lea) | the release tree in `~/.local/share/lea-install/vX.Y.Z`, linked as `~/.local/bin/lea` (as lea's own installer) |
 | `locksql`, `lockmq`, `lockhttp`, `lockfile` (Linux only) | the launchers, `~/.local/bin/<tool>`, which run their release's images by digest; lockfile's seccomp profile in `~/.local/share/lockfile/` |
 | `cosign` | `~/.local/bin/cosign`, only when no cosign is on your PATH (the meta formula installs it too; `lox init` and the launchers' `update` use it) |
 
 `locklog` has no published release yet and is skipped. Docker is required:
 Docker Engine (Linux) or Docker Desktop (macOS) must be installed and
-running. Next step: `lox init`.
+running. Next step: `lea` (without lea: `lox init`).
 
 **Versions.** They come from the tap,
 [DavidGodefroid/homebrew-tap](https://github.com/DavidGodefroid/homebrew-tap),
