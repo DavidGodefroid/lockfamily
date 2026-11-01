@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>lock family — Your AI does the work. You hold the key.</title>
-<meta name="description" content="locksql, lockmq, lockfile, lockhttp and lea: open-source tools that let AI agents query your databases, inspect your queues, check your files, browse the web and write your code. You keep the credentials, the personal data and the last word.">
+<meta name="description" content="locksql, lockmq, lockfile, lockhttp and lea: open-source tools that let AI agents query your databases, inspect your queues, check your files, browse the web and write your code. Each Lock holds its credentials; you approve from one hub and keep the personal data and the last word.">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="lock family">
 <meta property="og:title" content="lock family — Your AI does the work. You hold the key.">
-<meta property="og:description" content="locksql, lockmq, lockfile, lockhttp and lea: AI agents work on your databases, queues, files, the web and code. You keep the credentials, the personal data and the last word.">
+<meta property="og:description" content="locksql, lockmq, lockfile, lockhttp and lea: AI agents work on your databases, queues, files, the web and code. Each Lock holds its credentials; you approve from one hub. Set up with brew and lox init.">
 <meta property="og:url" content="https://lockfamily.dev/">
 <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
@@ -46,6 +46,7 @@
     <p class="eyebrow">Open source · Apache 2.0 · five tools, one rule</p>
     <h1 id="hero-title">Your AI does the work. <span class="key">You hold the key.</span></h1>
     <p class="lead">Let AI agents query your databases, inspect your queues, check your files, browse the web and write your code. You keep the credentials, the personal data and the last word.</p>
+    <p class="lead">Three steps: <code>brew trust davidgodefroid/tap</code> and <code>brew install davidgodefroid/tap/lockfamily</code>, then <code>lox init</code> in lea's projects directory (or in your project, for a plain <code>claude</code>), then <code>lea</code> (or <code>claude</code> and <code>lox approve</code>). <a href="#quick-start">Quick start</a></p>
 
     <ul class="products" aria-label="The five tools">
       <li class="product p-sql" style="--i:0">
@@ -141,7 +142,7 @@
         <div class="product-text">
           <p class="kind">Claude Code agents</p>
           <h2><a href="https://leadeck.dev/">lea</a></h2>
-          <p class="benefit">Run many agents in a container that never sees your SSH keys or your private network, all from one deck.</p>
+          <p class="benefit">Run many agents in a container that never sees your SSH keys or your private network, all from one deck that also answers the Locks' approvals.</p>
           <p class="go" aria-hidden="true">leadeck.dev <span>→</span></p>
         </div>
       </li>
@@ -150,8 +151,8 @@
 
   <section id="principle" class="section wrap" aria-labelledby="principle-title">
     <p class="section-kicker">The shared principle</p>
-    <h2 id="principle-title">The agent asks. A console you hold answers.</h2>
-    <p class="section-lead">In-agent approval is a convenience; a separate approval process is a boundary. The credentials and the only connections live in a console that runs under its own OS account, in a terminal you keep in view.</p>
+    <h2 id="principle-title">The agent asks. The console checks. You answer on the hub.</h2>
+    <p class="section-lead">In-agent approval is a convenience; a separate approval process is a boundary. The credentials and the only connections live in a Lock's console, in a container of its own that the agent cannot reach. The console sends what it would run, masked, to the approval hub, and runs it only on the decision you take there: in a terminal, the lea deck, Slack, Telegram or a paired phone.</p>
 
     <div class="flow" data-flow>
       <div class="flow-tabs" role="group" aria-label="Show the example of">
@@ -177,7 +178,7 @@ WHERE country = 'BE' LIMIT 20</code></pre>
 
         <div class="node node-console">
           <p class="node-title"><span class="node-icon" aria-hidden="true">🔑</span> Console</p>
-          <p class="node-sub">its own OS account · holds the keys · asks you</p>
+          <p class="node-sub">its own container · holds the keys · asks you on the hub</p>
           <pre class="bubble b-approve"><code data-field="approve">class READ · est. 410 rows examined
 PII columns touched: customers.email
 ╰─ Approve? [y/N] <b>y</b></code></pre>
@@ -193,7 +194,7 @@ PII columns touched: customers.email
 
       <ol class="steps">
         <li><strong>Ask.</strong> The agent proposes a query, a read or a plan. It has no password and opens no connection.</li>
-        <li><strong>Approve.</strong> The console checks it, shows you exactly what will run and waits for your approval. No answer means denied.</li>
+        <li><strong>Approve.</strong> The console checks it and sends the hub a signed ticket with the masked screen of exactly what will run. You answer from <code>lox approve</code>, the lea deck, chat or your phone; the console runs it only on the hub's signed decision, bound to that plan. No answer means denied.</li>
         <li><strong>Answer.</strong> Only the answer goes back: masked rows, masked messages, or a 1 / 0. The audit log keeps who asked what.</li>
       </ol>
     </div>
@@ -213,7 +214,7 @@ PII columns touched: customers.email
       </div>
       <div class="layer-arrow" aria-hidden="true"></div>
       <div class="layer layer-consoles">
-        <p class="layer-label">What agents reach, through a console you hold</p>
+        <p class="layer-label">What agents reach: one Lock per data source, its console started by <code>lox up</code></p>
         <div class="consoles">
           <div class="console c-sql"><img src="assets/locksql.svg" alt="" width="36" height="36"><div><h3>locksql</h3><p>SQL databases</p></div></div>
           <div class="console c-mq"><img src="assets/lockmq.svg" alt="" width="36" height="36"><div><h3>lockmq</h3><p>RabbitMQ brokers</p></div></div>
@@ -226,13 +227,13 @@ PII columns touched: customers.email
         <p class="layer-label">Shared core</p>
         <div class="layer-body">
           <span class="kit-icon" aria-hidden="true">⚙︎</span>
-          <div><h3><a href="https://github.com/DavidGodefroid/lockkit">lockkit</a></h3><p>The console, its isolated account and socket, policies the AI may tighten and only you loosen, the approval screen, the audit log, credentials from a prompt, the OS keychain or Vault, personal-data masks, MCP and agent wiring.</p></div>
+          <div><h3><a href="https://github.com/DavidGodefroid/lockkit">lockkit</a></h3><p>The console, hub-attached only, its isolated account and socket, policies the AI may tighten and only you loosen, the approval screen and the hub's tickets, the audit log, credentials asked at the console's start, masked (Vault: not yet under <code>lox up</code>), personal-data masks, MCP and agent wiring.</p></div>
         </div>
       </div>
     </div>
 
     <div class="fit-notes">
-      <p><strong>Each tool works alone.</strong> locksql works with any agent; lea runs without locksql. Together, <code>lea init</code> builds the locksql console image and wires it for your agents.</p>
+      <p><strong>One hub runs every Lock.</strong> <code>lox up</code> starts the hub and each Lock's console with Docker Compose; there is no standalone console. lea's agents reach the Locks' sockets through <code>.lockfamily/up.json</code>, and so does any Claude Code on the host, through each Lock's launcher (<code>locksql mcp</code>, …); no agent reaches the hub. lea is optional (<code>claude</code> and <code>lox approve</code> work too), except for lockhttp, whose gate runs beside lea's proxy.</p>
       <figure class="lea-demo">
         <img src="assets/lea-demo.svg" alt="Three Claude Code agents work in the lea container. One pushes to github.com through the proxy; its attempts to read ~/.ssh and to reach 192.168.1.10 are blocked. Another asks for a permission, answered from the deck." width="1200" height="640" loading="lazy">
         <figcaption>lea: an agent pushes to GitHub through the proxy; reading <code>~/.ssh</code> and reaching <code>192.168.1.10</code> are blocked.</figcaption>
@@ -243,57 +244,51 @@ PII columns touched: customers.email
   <section id="hub" class="section wrap" aria-labelledby="hub-title">
     <p class="section-kicker">The approval hub</p>
     <h2 id="hub-title">Every lock, answered from one place.</h2>
-    <p class="section-lead">With <a href="https://github.com/DavidGodefroid/lockhub">lockhub</a>, a lock no longer needs you at its own terminal. It sends the hub a signed ticket with the masked screen of the request; you answer from a facade; the hub signs your decision, bound to the exact plan you saw, and the lock runs only on that signed decision. The hub never runs a request, never sees its results and never sees values in clear. The <code>lox</code> CLI declares the hub and a workspace's locks, reviews every change with you, and runs them with Docker Compose.</p>
+    <p class="section-lead">Every Lock runs attached to <a href="https://github.com/DavidGodefroid/lockhub">lockhub</a>. Its console holds the credentials and checks each request, then sends the hub a signed ticket with the masked screen; you answer from a facade; the hub signs your decision, bound to the exact plan you saw, and the Lock runs only on that signed decision. The hub never runs a request, never sees its results and never sees values in clear. The <code>lox</code> CLI sets a project up (<code>lox init</code>), declares the hub and a workspace's Locks, reviews every change with you, and runs them with Docker Compose (<code>lox up</code>).</p>
     <ul class="hub-points">
       <li><strong>Facades.</strong> Your terminal (<code>lox approve</code>), the <a href="https://leadeck.dev/">lea</a> deck, Slack, Telegram, and a paired phone (an installable web app the hub serves, with optional Web Push). Each risk class goes only where it is safe to answer (see “routing” below); a workspace can narrow the routing, never widen it.</li>
       <li><strong>Clear values.</strong> Screens are masked everywhere. With <code>reveal: true</code> on a lock, <kbd>o</kbd> (or <kbd>Ctrl-O</kbd>, where the terminal passes it) in <code>lox approve</code> or the deck shows a ticket's clear values, sealed by the lock to that facade: the hub relays ciphertext. Never on chat.</li>
       <li><strong>Phones.</strong> With <code>devices: true</code> a lock pins the paired phones, and a decision taken on a phone is signed by the phone itself (WebAuthn): the hub's key alone cannot pass for it. <code>require_device</code> lists the risk classes only a phone's signature may approve; <code>seal_clear</code> seals the clear screen to the phones.</li>
-      <li><strong>lea.</strong> lea follows the hub by default (<code>LEA_HUB=1</code>): an agent whose Lock call waits for a decision is suspended until it comes, and the deck shows and answers the hub's tickets. lea mounts <code>.lockfamily/</code> read-only in its agents and gives them the locks' sockets named in <code>.lockfamily/up.json</code>; no agent reaches the hub.</li>
+      <li><strong>lea.</strong> lea v0.4.0 follows the hub by default (<code>LEA_HUB=1</code>): an agent whose Lock call waits for a decision is suspended until it comes, and the deck shows and answers the hub's tickets. lea mounts <code>.lockfamily/</code> read-only in its agents and gives them the Locks' sockets named in <code>.lockfamily/up.json</code>; without it, lea says to run <code>lox up</code>. No agent reaches the hub.</li>
+      <li><strong>Host agents.</strong> Any Claude Code on the host reaches the same Locks: each Lock's launcher, as <code>.mcp.json</code> starts it (<code>locksql mcp</code>, <code>lockmq mcp</code>, <code>lockfile mcp</code>), finds the nearest <code>.lockfamily/up.json</code> up from the working directory (the project or a parent) and mounts the Lock's socket read-only once Docker confirms it is <code>lox up</code>'s. Approve with <code>lox approve</code>.</li>
     </ul>
 
     <div class="qs" data-tabs>
       <div class="qs-tabs" role="tablist" aria-label="The hub">
-        <button type="button" role="tab" id="hub-tab-qs" aria-controls="hub-qs" aria-selected="true" class="t-hub">quick start</button>
+        <button type="button" role="tab" id="hub-tab-hand" aria-controls="hub-hand" aria-selected="true" class="t-hub">by hand</button>
         <button type="button" role="tab" id="hub-tab-cli" aria-controls="hub-cli" aria-selected="false" tabindex="-1" class="t-hub">lox CLI</button>
         <button type="button" role="tab" id="hub-tab-yaml" aria-controls="hub-yaml" aria-selected="false" tabindex="-1" class="t-hub">lockfamily.yaml</button>
         <button type="button" role="tab" id="hub-tab-routes" aria-controls="hub-routes" aria-selected="false" tabindex="-1" class="t-hub">routing</button>
       </div>
 
-      <div class="qs-panel" role="tabpanel" id="hub-qs" aria-labelledby="hub-tab-qs">
-        <p class="qs-meta">Linux and macOS · Docker and cosign · lockhub v0.2 pre-release · locksql v0.11 or later</p>
-        <pre class="term" tabindex="0"><code><span class="c"># 1. Install the Lock Family into ~/.local/bin: lox, lea and the launchers, at the</span>
-<span class="c">#    versions of the Homebrew tap, each release checked with cosign (Docker required)</span>
-curl -fsSL https://lockfamily.dev/install.sh | sh
-<span class="c">#    or: brew install davidgodefroid/tap/lockfamily</span>
-<span class="c">#    Next step: lox init sets a project up in one command; by hand, as follows:</span>
-<span class="c"># 2. In your workspace (lea's projects directory): a locksql lock, pinned by</span>
-<span class="c">#    digest to its latest signed release; the hub's image is pinned with it</span>
-cd ~/projects
-lox add locksql crm
-<span class="c"># 3. The lock's profile, in the workspace</span>
-mkdir -p .locksql
-cat &gt; .locksql/config.toml &lt;&lt;'TOML'
-[profiles.crm]
-engine = "postgres"
-host = "host.docker.internal"
-port = 5432
-user = "ro"
-database = "app"
-tls = "disable"          <span class="c"># host.docker.internal is not loopback: TLS defaults to verify-full</span>
-TOML
-chmod -R go-w .locksql   <span class="c"># lox up refuses a profile others can write</span>
-<span class="c"># 4. Review everything, then start the hub and the lock</span>
+      <div class="qs-panel" role="tabpanel" id="hub-hand" aria-labelledby="hub-tab-hand">
+        <p class="qs-meta">What <code>lox init</code> runs for you, by hand, with locksql · Linux and macOS · Docker and cosign · lockhub v0.4.0 pre-release · locksql v0.13.1</p>
+        <pre class="term" tabindex="0"><code><span class="c"># 1. In the project: Claude Code's files (its MCP server is `locksql mcp`),</span>
+<span class="c">#    a database profile (engine, host, TLS, where the password comes from;</span>
+<span class="c">#    never the password), then doctor --fix (.locksql/ as lox up reads it)</span>
+cd ~/projects            <span class="c"># lea's projects directory (plain claude: your project)</span>
+locksql init claude
+locksql profile add --profile orders
+locksql doctor --fix --yes
+<span class="c"># 2. Declare the lock: pinned by digest to its latest signed release;</span>
+<span class="c">#    the hub's image is pinned with it</span>
+lox add locksql orders --profile orders
+<span class="c"># 3. Review everything, then start the hub and the console</span>
 lox up
-<span class="c"># 5. The console's start-up questions (policy, password); detach: Ctrl-P Ctrl-Q</span>
-lox attach crm
-<span class="c"># 6. Answer tickets here, or from the lea deck</span>
+<span class="c"># 4. The console's start-up questions (policy, masked password);</span>
+<span class="c">#    detach with Ctrl-P Ctrl-Q once it says Listening</span>
+lox attach orders
+<span class="c"># 5. Answer tickets here, or from the lea deck</span>
 lox approve</code></pre>
-        <p>On Linux the database must listen on the Docker bridge, not only on 127.0.0.1. Then ask an agent that lea started after <code>lox up</code>: “how many orders were placed yesterday?”. Its query waits on the hub for your <kbd>y</kbd>. <code>lox doctor</code> checks the setup and changes nothing. <a href="https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-up.md">How lox up and lea fit</a></p>
+        <p>A database on this machine is <code>host.docker.internal</code>; on Linux it must listen on the Docker bridge, not only on 127.0.0.1. For lea's agents, the lock names your uid (<code>allowed_uids: [1000]</code>, <code>id -u</code>, in <code>lockfamily.yaml</code>; <code>lox init</code> adds it when lea is installed). Then ask an agent: “how many orders were placed yesterday?”. Its query waits on the hub for your <kbd>y</kbd>. <code>lox doctor</code> checks the setup and changes nothing. <a href="https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-up.md">How lox up, lea and host agents fit</a></p>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="hub-cli" aria-labelledby="hub-tab-cli">
-        <p class="qs-meta"><code>lox add</code> and <code>lox import</code> only edit <code>.lockfamily/lockfamily.yaml</code>: the next <code>lox up</code> reviews every change with you</p>
-        <pre class="term" tabindex="0"><code>lox add TYPE INSTANCE [--version vX.Y.Z | --image REF] [--profile P] [--hub-image REF]
+        <p class="qs-meta">lockhub v0.4.0 · <code>lox add</code> and <code>lox import</code> only edit <code>.lockfamily/lockfamily.yaml</code>: the next <code>lox up</code> reviews every change with you</p>
+        <pre class="term" tabindex="0"><code>lox init [--manual] [--yes] [--prod] [--credentials ask|vault] [--tls MODE] [--no-attach]
+                  <span class="c"># detect the project's sources, one lock each (or a checklist),</span>
+                  <span class="c"># then lox add, lox up, lox attach; re-runnable; --yes for CI</span>
+lox add TYPE INSTANCE [--version vX.Y.Z | --image REF] [--profile P] [--hub-image REF]
                   <span class="c"># locksql, lockmq, lockfile, lockhttp: pinned by digest, cosign-verified</span>
 lox add slack --team T… --channel C… --user U…    <span class="c"># tokens asked at the terminal</span>
 lox add telegram --chat ID --from ID               <span class="c"># bot token asked at the terminal</span>
@@ -320,7 +315,7 @@ hub:
   image: ghcr.io/davidgodefroid/lockhub@sha256:…
   facades: [tty, deck, mobile, slack]   <span class="c"># default: tty, deck</span>
   routing:
-    crm: [tty, deck, mobile]            <span class="c"># narrows an instance, never widens</span>
+    orders: [tty, deck, mobile]         <span class="c"># narrows an instance, never widens</span>
   slack:
     team: T0123
     channel: C0123
@@ -331,9 +326,11 @@ hub:
     require_device: [prod-write]        <span class="c"># only a phone's own signature approves these</span>
     push: true                          <span class="c"># Web Push, no payload</span>
 locks:
-  crm:
+  orders:
     type: locksql
     image: ghcr.io/davidgodefroid/locksql@sha256:…
+    profile: orders                     <span class="c"># the profile the console serves</span>
+    allowed_uids: [1000]                <span class="c"># id -u of the account that runs lea</span>
     devices: true                       <span class="c"># pins the paired phones</span>
     reveal: true                        <span class="c"># o / Ctrl-O on the terminal and the deck</span></code></pre>
         <p><code>lox up</code> writes <code>.lockfamily/up.json</code> for lea and keeps the hub's data, keys and audit log under <code>$XDG_STATE_HOME/lockfamily/</code> (default <code>~/.local/state/lockfamily/</code>), out of the workspace. A <code>lockfamily.yaml</code> at the workspace's root (the older layout) is still read, with a warning, until <code>.lockfamily/</code> exists.</p>
@@ -359,69 +356,92 @@ locks:
 
   <section id="quick-start" class="section wrap" aria-labelledby="qs-title">
     <p class="section-kicker">Quick start</p>
-    <h2 id="qs-title">Pick one. Running in a few commands.</h2>
+    <h2 id="qs-title">Install, run lox init, start your agents.</h2>
 
     <div class="qs" data-tabs>
       <div class="qs-tabs" role="tablist" aria-label="Product">
-        <button type="button" role="tab" id="qs-tab-sql" aria-controls="qs-sql" aria-selected="true" class="t-sql">locksql</button>
+        <button type="button" role="tab" id="qs-tab-init" aria-controls="qs-init" aria-selected="true" class="t-hub">lox init</button>
+        <button type="button" role="tab" id="qs-tab-sql" aria-controls="qs-sql" aria-selected="false" tabindex="-1" class="t-sql">locksql</button>
         <button type="button" role="tab" id="qs-tab-mq" aria-controls="qs-mq" aria-selected="false" tabindex="-1" class="t-mq">lockmq</button>
         <button type="button" role="tab" id="qs-tab-file" aria-controls="qs-file" aria-selected="false" tabindex="-1" class="t-file">lockfile</button>
+        <button type="button" role="tab" id="qs-tab-http" aria-controls="qs-http" aria-selected="false" tabindex="-1" class="t-http">lockhttp</button>
         <button type="button" role="tab" id="qs-tab-lea" aria-controls="qs-lea" aria-selected="false" tabindex="-1" class="t-lea">lea</button>
       </div>
 
+      <div class="qs-panel" role="tabpanel" id="qs-init" aria-labelledby="qs-tab-init">
+        <p class="qs-meta">Linux and macOS · Docker · lockhub v0.4.0 pre-release, lea v0.4.0</p>
+        <pre class="term" tabindex="0"><code><span class="c"># 1. Install the Lock Family: lox, lea, the Locks' launchers and cosign</span>
+<span class="c">#    (Homebrew asks you to trust a third-party tap once)</span>
+brew trust davidgodefroid/tap
+brew install davidgodefroid/tap/lockfamily
+<span class="c">#    or into ~/.local/bin, at the tap's versions, each verified with cosign:</span>
+<span class="c">#    curl -fsSL https://lockfamily.dev/install.sh | sh</span>
+<span class="c"># 2. In lea's projects directory (plain claude: your project or a parent):</span>
+<span class="c">#    one Lock per database or broker its files name, then lox up</span>
+<span class="c">#    (you review) and each console's questions</span>
+cd ~/projects
+lox init                <span class="c"># or lox init --manual: a checklist, with lockfile and lockhttp</span>
+<span class="c"># 3. Start your agents; approve on the hub</span>
+lea                      <span class="c"># or: claude, then lox approve</span></code></pre>
+        <p><code>lox init</code> reads <code>.env*</code>, <code>compose*.yaml</code> and <code>config/</code> (never a secret), finds PostgreSQL, MySQL, MariaDB and RabbitMQ, and proposes one Lock per source; nothing is written before your <kbd>y</kbd>. For each Lock it runs the launcher's <code>profile add</code>, <code>init claude</code> and <code>doctor --fix</code>, then <code>lox add</code>, <code>lox up</code> (its review) and <code>lox attach</code> for the masked passwords. Run it again to add a source; <code>--yes</code> for scripts. Where to run it: for lea, in its projects directory, the only place lea reads <code>.lockfamily/up.json</code>; for a plain <code>claude</code>, in the project or any parent, since each Lock's launcher looks up from the working directory. lockfile is Linux only. <a href="https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-init.md">lox init</a> · <a href="#hub">by hand</a></p>
+      </div>
+
       <div class="qs-panel" role="tabpanel" id="qs-sql" aria-labelledby="qs-tab-sql">
-        <p class="qs-meta">Linux and macOS (Windows through WSL2), or Docker · MariaDB, MySQL, PostgreSQL, SQLite · v0.8 pre-release</p>
-        <pre class="term" tabindex="0"><code><span class="c"># 1. Install</span>
-curl -fsSL https://raw.githubusercontent.com/DavidGodefroid/locksql/main/scripts/install.sh | sh
-<span class="c"># 2. In your project: the console account, your agents, a database profile</span>
-locksql setup
-<span class="c"># 3. In a session of the locksql account, start the console and keep it open</span>
-locksql console --project DIR</code></pre>
-        <p>Then ask your agent: “how many orders were placed yesterday?”. <a href="https://locksql.com/install/">Install options, checksums and signatures</a></p>
+        <p class="qs-meta">Linux and macOS (Windows through WSL2) · Docker · MariaDB, MySQL, PostgreSQL, SQLite · v0.13.1 pre-release</p>
+        <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
+brew install davidgodefroid/tap/lockfamily   <span class="c"># or only this tool: brew install davidgodefroid/tap/locksql</span>
+cd ~/projects                                 <span class="c"># lea's projects directory (plain claude: your project)</span>
+lox init                                      <span class="c"># detects PostgreSQL / MySQL / MariaDB, sets up the lock, runs lox up</span>
+lea                                           <span class="c"># or: claude, then lox approve</span></code></pre>
+        <p>Then ask your agent: “how many orders were placed yesterday?”. Each query waits for your decision on the hub. <a href="https://locksql.com/">locksql.com</a></p>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="qs-mq" aria-labelledby="qs-tab-mq">
-        <p class="qs-meta">Linux and macOS · RabbitMQ 3.13 and 4.x · v0.1 pre-release</p>
-        <pre class="term" tabindex="0"><code><span class="c"># 1. Install</span>
-curl -fsSL https://raw.githubusercontent.com/DavidGodefroid/lockmq/main/scripts/install.sh | sh
-<span class="c"># 2. Separate the console from the agent (once per machine)</span>
-lockmq install
-<span class="c"># 3. In your project: a broker profile and your agents</span>
-lockmq setup
-lockmq init
-<span class="c"># 4. In a session of the lockmq account, start the console and keep it open</span>
-lockmq console --profile dev --project DIR</code></pre>
-        <p><a href="https://github.com/DavidGodefroid/lockmq/blob/main/docs/usage.md">Usage guide</a></p>
+        <p class="qs-meta">Linux and macOS · Docker · RabbitMQ 3.13 and 4.x · v0.6.1 pre-release</p>
+        <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
+brew install davidgodefroid/tap/lockfamily   <span class="c"># or only this tool: brew install davidgodefroid/tap/lockmq</span>
+cd ~/projects                                 <span class="c"># lea's projects directory (plain claude: your project)</span>
+lox init                                      <span class="c"># detects RabbitMQ, sets up the lock, runs lox up</span>
+lea                                           <span class="c"># or: claude, then lox approve</span></code></pre>
+        <p>Then ask your agent: “which queues have no consumer?”. Catalogue calls answer at once; message reads wait for your approval on the hub. <a href="https://lockmq.com/">lockmq.com</a></p>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="qs-file" aria-labelledby="qs-tab-file">
-        <p class="qs-meta">Console on Linux (Landlock and seccomp sandbox the plugins); agent side on Linux and macOS · v0.2 pre-release</p>
-        <pre class="term" tabindex="0"><code><span class="c"># 1. Install (checks the release signature with cosign)</span>
-curl -fsSL https://raw.githubusercontent.com/DavidGodefroid/lockfile/main/scripts/install.sh -o install.sh
-sh install.sh
-<span class="c"># 2. The separated setup: console account `lockfile`</span>
-sudo lockfile install
-<span class="c"># 3. In the lockfile account: a source, two plugins, the console</span>
-lockfile profile add samples --source local --path /srv/samples --prefix invoices/
-lockfile plugin install format.is-pdf@1.0.0
-lockfile console --profile samples
-<span class="c"># 4. In your account: wire your agent, then ask</span>
-lockfile init claude</code></pre>
-        <p><a href="https://github.com/DavidGodefroid/lockfile#quick-start-linux">Full quick start</a></p>
+        <p class="qs-meta">Linux only (Docker, a kernel with Landlock; seccomp sandboxes the plugins) · v0.6.0 pre-release</p>
+        <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
+brew install davidgodefroid/tap/lockfamily   <span class="c"># or only this tool: brew install davidgodefroid/tap/lockfile</span>
+cd ~/projects                                 <span class="c"># lea's projects directory (plain claude: your project)</span>
+lox init --manual                             <span class="c"># check lockfile, give its source; runs lox up</span>
+lea                                           <span class="c"># or: claude, then lox approve</span></code></pre>
+        <p>Plugins are installed into the console's home (<code>lockfile plugin install format.is-pdf@1.0.0</code>) and applied with <code>:review</code> under <code>lox attach</code>. Then ask your agent about a file by its exact key. <a href="https://lockfile.pro/">lockfile.pro</a></p>
+      </div>
+
+      <div class="qs-panel" role="tabpanel" id="qs-http" aria-labelledby="qs-tab-http">
+        <p class="qs-meta">With lea · Docker · v0.7.0 pre-release</p>
+        <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
+brew install davidgodefroid/tap/lockfamily   <span class="c"># or: brew install davidgodefroid/tap/lockhttp</span>
+cd ~/projects                                 <span class="c"># lea's projects directory</span>
+lox init --manual                             <span class="c"># check lockhttp (it needs lea)</span>
+export LEA_LOCKHTTP=1                         <span class="c"># opt-in: lea's gate asks the hub</span>
+lea</code></pre>
+        <p>Reads of trusted hosts go through; a post, an upload or an unknown host waits for your <kbd>y</kbd> on the hub (<code>lox approve</code>, the lea deck or a paired phone). <a href="https://lockhttp.com/">lockhttp.com</a></p>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="qs-lea" aria-labelledby="qs-tab-lea">
-        <p class="qs-meta">Linux, macOS, or Windows with WSL2 · Docker · a Claude subscription or API key · v0.1</p>
-        <pre class="term" tabindex="0"><code>curl -fsSL https://leadeck.dev/install.sh | sh
+        <p class="qs-meta">Linux, macOS, or Windows with WSL2 · Docker · a Claude subscription or API key · v0.4.0</p>
+        <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
+brew install davidgodefroid/tap/lockfamily   <span class="c"># or lea alone: brew install davidgodefroid/tap/lea</span>
+cd ~/projects                                 <span class="c"># lea's projects directory</span>
+lox init                                      <span class="c"># optional: the Locks lea's agents use</span>
 lea</code></pre>
-        <p>In the first agent, run <code>/login</code> once. Press <kbd>n</kbd> for another agent. <a href="https://leadeck.dev/">leadeck.dev</a></p>
+        <p>Or lea's own installer: <code>curl -fsSL https://leadeck.dev/install.sh | sh</code>. In the first agent, run <code>/login</code> once. Press <kbd>n</kbd> for another agent. The deck answers the hub's tickets. With a Lock turned on in lea but no <code>.lockfamily/up.json</code> yet, lea says to run <code>lox up</code>. <a href="https://leadeck.dev/">leadeck.dev</a></p>
       </div>
     </div>
   </section>
 
   <section class="section wrap limits" aria-labelledby="limits-title">
     <h2 id="limits-title">Know the limits</h2>
-    <p>All of them, the hub included, are pre-release. The console is the enforcement point; skills and tool descriptions only guide the agent. Masking is best effort. Each project documents what the agent can see and its residual risks in its security model:
+    <p>All of them, the hub included, are before v1: lockhub v0.4.0 and lockhttp v0.7.0 are pre-releases; lea v0.4.0, locksql v0.13.1, lockmq v0.6.1, lockfile v0.6.0 and lockkit v0.10.0 may still change. locklog is coming. The console is the enforcement point and runs hub-attached only; skills and tool descriptions only guide the agent. Masking is best effort. Each project documents what the agent can see and its residual risks in its security model:
       <a href="https://locksql.com/security/">locksql</a>,
       <a href="https://github.com/DavidGodefroid/lockmq/blob/main/docs/security-model.md">lockmq</a>,
       <a href="https://github.com/DavidGodefroid/lockfile/blob/main/docs/security-model.md">lockfile</a>,
@@ -434,7 +454,7 @@ lea</code></pre>
   <div class="wrap footer-grid">
     <div class="footer-about">
       <a class="brand" href="./"><img src="assets/mark.svg" alt="" width="26" height="26"><span class="wordmark">lock<span>family</span></span></a>
-      <p>AI agents work on your databases, queues, files, the web and code. You keep the credentials, the personal data and the last word. Local and open source.</p>
+      <p>AI agents work on your databases, queues, files, the web and code. Each Lock holds the credentials; you keep the personal data and the last word, answered from one hub. Local and open source.</p>
     </div>
     <nav aria-labelledby="footer-projects">
       <h2 id="footer-projects">Projects</h2>
