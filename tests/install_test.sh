@@ -457,5 +457,26 @@ chmod 0755 "$root/home/leadir/.local" "$root/home/leadir/.local/bin"
 run leadir
 if [ "$code" != 0 ] && [ ! -e "$(lb lox)" ] && grep -q 'is a directory' "$root/out"; then pass "family: ~/.local/bin/lea a directory, refused"; else fail "family: ~/.local/bin/lea a directory, refused"; fi
 
+# 31. A cosign 2 on PATH (it does not find signatures made in the sigstore
+# bundle format only): the pinned cosign is downloaded and used, and not
+# installed over the user's own.
+mkdir -p "$root/oldcosign"
+for p in "$root/nocosign"/*; do ln -sf "$(readlink "$p")" "$root/oldcosign/${p##*/}"; done
+{
+	cat <<'STUB'
+#!/bin/sh
+if [ "$1" = version ]; then printf 'GitVersion:    v2.6.1\n'; exit 0; fi
+LOG_PREFIX="old "
+STUB
+	cat "$root/cosign-stub"
+} >"$root/oldcosign/cosign"
+chmod 0755 "$root/oldcosign/cosign"
+TPATH="$root/oldcosign" run familyoldcosign
+if [ "$code" = 0 ] && [ "$("$(lb lox)")" = "lox 0.3.0" ] && grep -qx "curl $cosign_url" "$STUB_LOG" &&
+	grep -q '^downloaded cosign verify --certificate-identity https://github.com/DavidGodefroid/locksql/' "$STUB_LOG" &&
+	! grep -q '^old .*verify' "$STUB_LOG" && [ ! -e "$(lb cosign)" ] && grep -q 'older than v3' "$root/out"; then
+	pass "family with cosign 2 on PATH: the pinned cosign verifies, the user's is left alone"
+else fail "family with cosign 2 on PATH: the pinned cosign verifies, the user's is left alone"; fi
+
 echo "$runs tests, $fails failed"
 [ "$fails" = 0 ]

@@ -36,9 +36,9 @@
 # project's release workflow run for that very tag, the archive must match
 # checksums.txt and the formula, and a launcher's image digests must be the
 # ones cosign verifies for that tag. Everything is verified before anything
-# is installed. The signatures are checked with the cosign on PATH; without
-# one, a pinned cosign release is downloaded and checked against its pinned
-# sha256.
+# is installed. The signatures are checked with the cosign on PATH (v3 or
+# later); without one, or with an older one, a pinned cosign release is
+# downloaded and checked against its pinned sha256.
 #
 # Options:
 #   --version vX.Y.Z  install lox alone, from that lockhub release (cosign,
@@ -210,16 +210,32 @@ sha256() {
 	fi
 }
 
-# need_cosign: sets $cosign, the cosign on PATH, else the pinned release,
-# downloaded to the temporary directory and checked against its sha256.
-cosign='' cosign_downloaded=0
+# cosign_too_old: the cosign on PATH reports a major version below 3. Some
+# releases sign their images in the sigstore bundle format only, which
+# cosign 2 does not find ("no signatures found"). A version that does not
+# parse is taken as recent enough.
+cosign_too_old() {
+	cto_major=$(cosign version 2>/dev/null | sed -n 's/^GitVersion:[[:space:]]*v\{0,1\}\([0-9][0-9]*\)\..*/\1/p' | head -n 1)
+	[ -n "$cto_major" ] && [ "$cto_major" -lt 3 ]
+}
+
+# need_cosign: sets $cosign, the cosign on PATH (3 or later), else the pinned
+# release, downloaded to the temporary directory and checked against its
+# sha256. A downloaded cosign is installed at the end only when none is on
+# PATH (an older one on PATH is left alone).
+cosign='' cosign_downloaded=0 cosign_on_path=0
+command -v cosign >/dev/null 2>&1 && cosign_on_path=1
 need_cosign() {
 	[ -z "$cosign" ] || return 0
-	if command -v cosign >/dev/null 2>&1; then
-		cosign=cosign
-		return 0
+	if [ "$cosign_on_path" = 1 ]; then
+		if ! cosign_too_old; then
+			cosign=cosign
+			return 0
+		fi
+		say "the cosign on PATH is older than v3: downloading cosign $cosign_version to check the signatures (not installed)"
+	else
+		say "cosign is not installed: downloading cosign $cosign_version to check the signatures"
 	fi
-	say "cosign is not installed: downloading cosign $cosign_version to check the signatures"
 	fetch_https "$cosign_url" "$tmp/cosign" ||
 		die "cannot download cosign from $cosign_url: install cosign (https://docs.sigstore.dev/cosign/system_config/installation/), or pass --version and --sha256 with a hash you trust; nothing installed"
 	[ "$(sha256 "$tmp/cosign")" = "$cosign_pin" ] ||
@@ -499,7 +515,7 @@ for t in $tools; do
 	esac
 done
 installed="$tools"
-if [ "$cosign_downloaded" = 1 ]; then
+if [ "$cosign_downloaded" = 1 ] && [ "$cosign_on_path" = 0 ]; then
 	put "$tmp/cosign" "$bindir/cosign" 0755
 	summary="$summary cosign $cosign_version,"
 	installed="$installed cosign"
