@@ -242,6 +242,7 @@ main { position: relative; outline: none; }
 .t-sql { --c: var(--sql); --ct: var(--sql-text); }
 .t-mq { --c: var(--mq); --ct: var(--mq-text); }
 .t-file { --c: var(--file); --ct: var(--file-text); }
+.t-http { --c: var(--http); --ct: var(--http-text); }
 .t-lea { --c: var(--lea); --ct: var(--lea-text); }
 [role="tab"][aria-selected="true"], .flow-tabs [data-product][aria-pressed="true"] { color: var(--ct); border-color: var(--c); background: var(--surface-2); }
 .flow-pause { margin-left: auto; font-family: var(--sans) !important; }

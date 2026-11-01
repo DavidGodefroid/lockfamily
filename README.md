@@ -18,45 +18,61 @@ python3 -m http.server -d . 8080
 
 ## The approval hub and the `lox` CLI
 
-[lockhub](https://github.com/DavidGodefroid/lockhub) (v0.2, pre-release) lets
-every lock of a workspace hand its approvals to one hub. The lock sends a
-signed ticket with the masked screen of the request, the human answers from a
-facade, and the hub signs the decision, bound to the exact plan. The lock runs
-only on that signed decision. The hub never runs a request, never sees its
-results, and never sees values in clear.
+Every lock runs attached to [lockhub](https://github.com/DavidGodefroid/lockhub)
+(v0.4.0, pre-release): `lox up` starts the hub and each lock's console, and
+there is no standalone console. The console holds the credentials and checks
+each request, then sends the hub a signed ticket with the masked screen of the
+request; the human answers from a facade, and the hub signs the decision,
+bound to the exact plan. The lock runs only on that signed decision. The hub
+never runs a request, never sees its results, and never sees values in clear.
 
-### Quick start, with locksql
+### Quick start
 
 ```sh
-curl -fsSL https://lockfamily.dev/install.sh | sh   # lox, lea, the launchers
-cd ~/projects                  # the workspace: lea's projects directory
-lox add locksql crm            # latest signed locksql, by digest; pins the hub's image too
-mkdir -p .locksql              # the lock's profile, in the workspace
-cat > .locksql/config.toml <<'TOML'
-[profiles.crm]
-engine = "postgres"
-host = "host.docker.internal"
-port = 5432
-user = "ro"
-database = "app"
-tls = "disable"                # host.docker.internal is not loopback: TLS defaults to verify-full
-TOML
-chmod -R go-w .locksql        # lox up refuses a profile others can write (umask 002)
-lox up                         # review everything, then start the hub and the lock
-lox attach crm                 # the console's start-up questions; detach: Ctrl-P Ctrl-Q
-lox approve                    # answer tickets (or from the lea deck)
+brew trust davidgodefroid/tap                 # once: Homebrew asks you to trust a third-party tap
+brew install davidgodefroid/tap/lockfamily   # or: curl -fsSL https://lockfamily.dev/install.sh | sh
+cd ~/projects                                 # lea's projects directory (plain claude: your project or a parent)
+lox init                                      # one lock per detected source, then lox up and lox attach
+lea                                           # or: claude, then lox approve
+```
+
+[`lox init`](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-init.md)
+reads `.env*`, `compose*.yaml` and `config/` (never a secret), finds
+PostgreSQL, MySQL, MariaDB and RabbitMQ, and proposes one lock per source
+(`--manual`: a checklist of lea, locksql, lockmq, lockfile, lockhttp; locklog
+is greyed until it ships). For each lock it runs the launcher's `profile add
+--non-interactive --json`, `init claude` and `doctor --fix --yes --json`, then
+`lox add`, `lox up` (its review) and `lox attach` for the masked passwords.
+It is re-runnable; `--yes` runs it non-interactively.
+
+### By hand, with locksql
+
+```sh
+cd ~/projects                             # lea's projects directory (plain claude: your project)
+locksql init claude                       # Claude Code's files (its MCP server is `locksql mcp`)
+locksql profile add --profile orders      # engine, host, TLS, where the password comes from; never the password
+locksql doctor --fix --yes                # .locksql/ as lox up reads it
+lox add locksql orders --profile orders   # latest signed locksql, by digest; pins the hub's image too
+lox up                                    # review everything, then start the hub and the console
+lox attach orders                         # the console's start-up questions; detach: Ctrl-P Ctrl-Q
+lox approve                               # answer tickets (or from the lea deck)
 ```
 
 Docker and cosign are required: `lox add` and `lox up` check every image's
 signature against its release workflow. On Linux the database must listen on
 the Docker bridge, not only on 127.0.0.1 (`host.docker.internal` is the host's
-gateway). Agents that lea starts after `lox up` (with `LEA_LOCKSQL=1`, the
-default) get the lock's socket.
+gateway). For lea's agents, the lock names your uid (`allowed_uids: [1000]`
+in `lockfamily.yaml`; `lox init` adds it when lea is installed). Any Claude
+Code on the host reaches the lock through its launcher (`locksql mcp`), which
+finds the nearest `.lockfamily/up.json` up from the working directory. lea
+reads `.lockfamily/up.json` only at the root of its projects directory, so
+with lea run `lox init` (or `lox up`) there.
 
 ### Commands (lox)
 
 | Command | What it does |
 |---|---|
+| `lox init [--manual] [--yes] [--prod] [--credentials ask\|vault [--vault-path INSTANCE=PATH]] [--tls MODE] [--no-attach]` | set up the project's locks in one command: prerequisites, the data sources its files name (read only, no secret), one lock per source (or a checklist), then `lox add`, `lox up`, `lox attach` |
 | `lox add TYPE INSTANCE [--version vX.Y.Z \| --image REF] [--profile P] [--hub-image REF]` | declare a lock (locksql, lockmq, lockfile, lockhttp), pinned by digest to its latest (or the given) signed release; the first one also pins the hub's latest release |
 | `lox add slack --team T… --channel C… --user U…` | enable the Slack facade; its tokens are asked at the terminal and kept with the hub's data, never in the workspace |
 | `lox add telegram --chat ID --from ID` | enable the Telegram facade (bot token asked at the terminal) |
@@ -107,7 +123,7 @@ hub:
   image: ghcr.io/davidgodefroid/lockhub@sha256:…
   facades: [tty, deck, mobile, slack]   # default: tty, deck
   routing:
-    crm: [tty, deck, mobile]            # narrows an instance, never widens
+    orders: [tty, deck, mobile]         # narrows an instance, never widens
   slack: {team: T0123, channel: C0123, users: [U0123]}
   mobile:
     origin: https://hub.example.ts.net
@@ -115,9 +131,11 @@ hub:
     require_device: [prod-write]
     push: true
 locks:
-  crm:
+  orders:
     type: locksql
     image: ghcr.io/davidgodefroid/locksql@sha256:…
+    profile: orders
+    allowed_uids: [1000]   # id -u of the account that runs lea
     devices: true
     reveal: true
 ```
@@ -135,20 +153,22 @@ and audit log under `$XDG_STATE_HOME/lockfamily/` (default
 
 ### lea
 
-lea follows the hub by default (`LEA_HUB=1`, from lea v0.3.0). An agent whose
-Lock call waits for a decision is suspended until the decision comes, and
-lea's deck shows and answers the hub's tickets. lea gives its agents the
-locks' sockets named in `up.json`, never the hub. `LEA_HUB=0` switches it
-off. The contract between the two is lockhub's
+lea follows the hub by default (`LEA_HUB=1`, from lea v0.3.0; lea v0.4.0 is
+current). An agent whose Lock call waits for a decision is suspended until
+the decision comes, and lea's deck shows and answers the hub's tickets. lea
+gives its agents the locks' sockets named in `up.json`, never the hub;
+without `up.json`, lea says to run `lox up`. `LEA_HUB=0` switches it off.
+Host agents (any Claude Code) reach the same locks through each lock's
+launcher, which reads `up.json` too. The contract is lockhub's
 [docs/lox-up.md](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-up.md).
-Locks need their hub-mode releases; each lock's docs list the lockhub
-versions it supports.
+Current releases: locksql v0.13.1, lockmq v0.6.1, lockfile v0.6.0, lockhttp
+v0.7.0 (pre-release), lockkit v0.10.0.
 
 ## install.sh
 
 `install.sh`, served at <https://lockfamily.dev/install.sh>, installs the Lock
 Family: the same tools, at the same versions, as the Homebrew meta formula
-(`brew install davidgodefroid/tap/lockfamily`), into `~/.local/bin`, without
+(`brew trust davidgodefroid/tap`, then `brew install davidgodefroid/tap/lockfamily`), into `~/.local/bin`, without
 sudo and without pulling any image (each tool pulls its images, by digest, on
 first use).
 
