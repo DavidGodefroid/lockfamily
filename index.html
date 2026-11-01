@@ -261,8 +261,11 @@ PII columns touched: customers.email
 
       <div class="qs-panel" role="tabpanel" id="hub-qs" aria-labelledby="hub-tab-qs">
         <p class="qs-meta">Linux and macOS · Docker and cosign · lockhub v0.2 pre-release · locksql v0.11 or later</p>
-        <pre class="term" tabindex="0"><code><span class="c"># 1. Install the lox CLI (checks the release signature with cosign)</span>
+        <pre class="term" tabindex="0"><code><span class="c"># 1. Install the Lock Family into ~/.local/bin: lox, lea and the launchers, at the</span>
+<span class="c">#    versions of the Homebrew tap, each release checked with cosign (Docker required)</span>
 curl -fsSL https://lockfamily.dev/install.sh | sh
+<span class="c">#    or: brew install davidgodefroid/tap/lockfamily</span>
+<span class="c">#    Next step: lox init sets a project up in one command; by hand, as follows:</span>
 <span class="c"># 2. In your workspace (lea's projects directory): a locksql lock, pinned by</span>
 <span class="c">#    digest to its latest signed release; the hub's image is pinned with it</span>
 cd ~/projects

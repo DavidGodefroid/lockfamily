@@ -1,7 +1,8 @@
 #!/bin/sh
-# Tests of install.sh against a fake lockhub release in a temporary
-# directory (LOCK_RELEASE_BASE), with a stub cosign: no network, nothing
-# outside the temporary HOME. Without cosign on PATH, install.sh downloads
+# Tests of install.sh against fake releases of every tool in a temporary
+# directory (LOCK_RELEASE_BASE), a fake tap (LOCK_TAP_BASE) and a stub
+# cosign: no network, nothing outside the temporary HOME. Tests 1-19 cover
+# --version (lox alone), tests 20 and up the whole family. Without cosign on PATH, install.sh downloads
 # cosign-<os>-<arch> from the cosign release it pins: a stub curl serves a
 # fake cosign under that name, and $installer is a copy of install.sh that
 # pins the fake's sha256 instead ($real_installer is install.sh itself). With COSIGN_REAL set to a real cosign binary,
@@ -44,11 +45,21 @@ release 1.2.3
 # $COSIGN_RC; docker logs that it was called (install.sh must never call it);
 # curl logs its URL and serves $root/dl/<file name> (exit 22 when missing).
 mkdir -p "$root/stub" "$root/nocosign" "$root/dl"
-cat >"$root/stub/cosign" <<'STUB'
-#!/bin/sh
-printf '%s\n' "$*" >>"$STUB_LOG"
+# A cosign stub: it logs its arguments ($LOG_PREFIX first), fails when they
+# contain $COSIGN_FAIL, and for `verify IMAGE` prints the digest stored in
+# $DIGESTS/<image with / and : as _> (none stored: it fails).
+cat >"$root/cosign-stub" <<'STUB'
+printf '%s%s\n' "$LOG_PREFIX" "$*" >>"$STUB_LOG"
+if [ -n "${COSIGN_FAIL:-}" ]; then case "$*" in *"$COSIGN_FAIL"*) exit 1 ;; esac; fi
+if [ "$1" = verify ]; then
+	for ref in "$@"; do :; done
+	f="$DIGESTS/$(printf '%s' "$ref" | tr '/:' '__')"
+	[ -f "$f" ] || exit 1
+	printf '[{"critical":{"image":{"docker-manifest-digest":"%s"}}}]\n' "$(cat "$f")"
+fi
 exit "${COSIGN_RC:-0}"
 STUB
+{ echo '#!/bin/sh'; echo 'LOG_PREFIX='; cat "$root/cosign-stub"; } >"$root/stub/cosign"
 cat >"$root/stub/docker" <<'STUB'
 #!/bin/sh
 echo "docker $*" >>"$STUB_LOG"
@@ -68,11 +79,7 @@ STUB
 chmod 0755 "$root/stub/cosign" "$root/stub/docker" "$root/stub/curl"
 # The cosign served for download: it logs "downloaded cosign ARGS".
 cosign_url="https://github.com/sigstore/cosign/releases/download/v3.0.6/cosign-$os-$arch"
-cat >"$root/dl/cosign-$os-$arch" <<'STUB'
-#!/bin/sh
-printf 'downloaded cosign %s\n' "$*" >>"$STUB_LOG"
-exit "${COSIGN_RC:-0}"
-STUB
+{ echo '#!/bin/sh'; echo "LOG_PREFIX='downloaded cosign '"; cat "$root/cosign-stub"; } >"$root/dl/cosign-$os-$arch"
 cosign_pin=$(sha256 "$root/dl/cosign-$os-$arch")
 installer="$root/install-test.sh"
 sed "s/^\($os-$arch) cosign_pin=\)[0-9a-f]*/\1$cosign_pin/" "$real_installer" >"$installer"
@@ -101,12 +108,15 @@ run() {
 	# Some shells (bash as sh) keep a function's prefix assignments
 	# (COSIGN_RC=1 run ...) after the call: read them, then drop them.
 	rc=${COSIGN_RC:-0}
+	cfail=${COSIGN_FAIL:-}
 	tpath=${TPATH:-$root/stub:$PATH}
 	inst=${INSTALLER:-$installer}
 	dl=${DL_DIR:-$root/dl}
-	unset COSIGN_RC TPATH INSTALLER DL_DIR
+	tap=${TAP:-$root/tap}
+	unset COSIGN_RC COSIGN_FAIL TPATH INSTALLER DL_DIR TAP
 	code=0
-	COSIGN_RC=$rc PATH=$tpath DL_DIR=$dl LOCK_RELEASE_BASE="$root/rel" sh "$inst" "$@" >"$root/out" 2>&1 || code=$?
+	COSIGN_RC=$rc COSIGN_FAIL=$cfail PATH=$tpath DL_DIR=$dl DIGESTS="$root/digests" \
+		LOCK_RELEASE_BASE="$root/rel" LOCK_TAP_BASE="$tap" sh "$inst" "$@" >"$root/out" 2>&1 || code=$?
 }
 bin() { printf '%s' "$HOME/.local/bin/lox"; }
 
@@ -255,6 +265,197 @@ if [ -n "${COSIGN_REAL:-}" ]; then
 else
 	echo "skip real cosign (COSIGN_REAL unset)"
 fi
+
+# The whole family (no --version): fake releases of every tool, and a fake
+# tap whose formulas name them, for this system and three others.
+hex() { printf '%s' "$1" >"$root/hex.in"; sha256 "$root/hex.in"; }
+# fam REPOSITORY TOOL VERSION: a fake release of lea or a launcher. lea is a tree lea-vX.Y.Z/
+# whose bin/lea prints its version; a launcher is scripts/TOOL with the
+# lines the installer fills in (and, for lockfile, seccomp.json). The
+# images' signed digests go to $root/digests.
+fam() {
+	d="$root/rel/$1/v$3" p="$root/pkg-$1"
+	rm -rf "$p"
+	mkdir -p "$d" "$p" "$root/digests"
+	archive="$d/${2}_${3}_${os}_${arch}.tar.gz"
+	case "$2" in
+	lea)
+		mkdir -p "$p/lea-v$3/bin"
+		printf '#!/bin/sh\necho "v%s"\n' "$3" >"$p/lea-v$3/bin/lea"
+		chmod 0755 "$p/lea-v$3/bin/lea"
+		echo readme >"$p/lea-v$3/README.md"
+		(cd "$p" && tar -czf "$archive" "lea-v$3")
+		;;
+	*)
+		mkdir -p "$p/scripts"
+		# shellcheck disable=SC2016 # $launcher_version is the launcher's
+		printf '#!/bin/sh\nlauncher_version=dev\nimage_digest=\nvault_image_digest=\nseccomp_profile=\necho "%s launcher $launcher_version"\n' "$2" >"$p/scripts/$2"
+		chmod 0755 "$p/scripts/$2"
+		files="scripts/$2"
+		if [ "$2" = lockfile ]; then echo '{"defaultAction":"SCMP_ACT_ERRNO"}' >"$p/seccomp.json"; files="$files seccomp.json"; fi
+		# shellcheck disable=SC2086
+		(cd "$p" && tar -czf "$archive" $files)
+		echo "sha256:$(hex "$1-$3")" >"$root/digests/ghcr.io_davidgodefroid_$1_$3"
+		echo "sha256:$(hex "$1-$3-vault")" >"$root/digests/ghcr.io_davidgodefroid_$1_$3-vault"
+		;;
+	esac
+	echo "not a real bundle" >"$d/checksums.txt.sigstore.json"
+	(cd "$d" && for f in *.tar.gz; do printf '%s  %s\n' "$(sha256 "$f")" "$f"; done >checksums.txt)
+}
+fam lea lea 0.4.0
+fam locksql locksql 0.13.0
+fam lockmq lockmq 0.6.0
+fam lockhttp lockhttp 0.7.0
+fam lockfile lockfile 0.6.0
+# lox: the lockhub fixture of the tests above, at the tap's version. With
+# --version the mirror holds lockhub's vX.Y.Z/ folders; for the family,
+# <repository>/vX.Y.Z/: lockhub/ is the same folder.
+release 0.3.0
+ln -s . "$root/rel/lockhub"
+
+# formula DIR REPOSITORY TOOL VERSION [vault]: Formula/TOOL.rb as the tap
+# writes it: an url and sha256 per system (only this one exists), and the
+# digests of a launcher.
+formula() {
+	f="$1/Formula/$3.rb"
+	mkdir -p "$1/Formula"
+	{
+		echo "class Fake < Formula"
+		for sys in darwin_arm64 darwin_amd64 linux_arm64 linux_amd64; do
+			a="${3}_${4}_${sys}.tar.gz"
+			s=0000000000000000000000000000000000000000000000000000000000000000
+			[ "$sys" != "${os}_${arch}" ] || s=$(sha256 "$root/rel/$2/v$4/$a")
+			echo "      url \"https://github.com/DavidGodefroid/$2/releases/download/v$4/$a\""
+			echo "      sha256 \"$s\""
+		done
+		echo "  def install"
+		case "$3" in
+		lox | lea) ;;
+		*)
+			echo "    image_digest = \"$(cat "$root/digests/ghcr.io_davidgodefroid_$2_$4")\""
+			[ "$3" = lockhttp ] || echo "    vault_image_digest = \"$(cat "$root/digests/ghcr.io_davidgodefroid_$2_$4-vault")\""
+			;;
+		esac
+		echo "  end"
+		echo "end"
+	} >"$f"
+}
+make_tap() {
+	formula "$1" lockhub lox 0.3.0
+	formula "$1" lea lea 0.4.0
+	formula "$1" locksql locksql 0.13.0
+	formula "$1" lockmq lockmq 0.6.0
+	formula "$1" lockhttp lockhttp 0.7.0
+	formula "$1" lockfile lockfile 0.6.0
+	cat >"$1/Formula/lockfamily.rb" <<'RB'
+class Lockfamily < Formula
+  depends_on "cosign"
+  depends_on "davidgodefroid/tap/lea"
+  depends_on "davidgodefroid/tap/lockhttp"
+  depends_on "davidgodefroid/tap/lockmq"
+  depends_on "davidgodefroid/tap/locksql"
+  depends_on "davidgodefroid/tap/lox"
+  # locklog: no published release yet; added here with its first release.
+
+  on_linux do
+    depends_on "davidgodefroid/tap/lockfile"
+  end
+end
+RB
+}
+make_tap "$root/tap"
+# retap NAME FILE SED: a copy of the tap, with FILE edited by SED.
+retap() {
+	rm -rf "$root/tap-$1"
+	cp -R "$root/tap" "$root/tap-$1"
+	sed "$3" "$root/tap/Formula/$2" >"$root/tap-$1/Formula/$2"
+	cmp -s "$root/tap/Formula/$2" "$root/tap-$1/Formula/$2" && { echo "retap $1: $2 unchanged" >&2; exit 1; }
+	return 0
+}
+lb() { printf '%s' "$HOME/.local/bin/$1"; }
+nothing_installed() { [ ! -e "$HOME/.local/bin" ] && [ ! -e "$HOME/.local/share" ]; }
+launchers="locksql lockmq lockhttp"
+[ "$os" != linux ] || launchers="$launchers lockfile"
+
+# 20. The whole family, with cosign on PATH.
+run family
+ok=1
+[ "$code" = 0 ] || ok=0
+[ "$("$(lb lox)")" = "lox 0.3.0" ] || ok=0
+[ "$(readlink "$(lb lea)")" = "$HOME/.local/share/lea-install/v0.4.0/bin/lea" ] && [ "$("$(lb lea)" version)" = v0.4.0 ] || ok=0
+for t in $launchers; do
+	v=$(sed -n 's|.*releases/download/v\([^/]*\)/.*|\1|p' "$root/tap/Formula/$t.rb" | sed -n 1p)
+	[ "$(find "$(lb "$t")" -maxdepth 0 -perm 0755 | wc -l)" -eq 1 ] || ok=0
+	grep -qx "launcher_version=$v" "$(lb "$t")" || ok=0
+	grep -qx "image_digest=$(cat "$root/digests/ghcr.io_davidgodefroid_${t}_$v")" "$(lb "$t")" || ok=0
+	if [ "$t" != lockhttp ]; then grep -qx "vault_image_digest=$(cat "$root/digests/ghcr.io_davidgodefroid_${t}_$v-vault")" "$(lb "$t")" || ok=0; fi
+	grep -q -- "verify-blob --bundle .* --certificate-identity https://github.com/DavidGodefroid/$t/.github/workflows/release.yml@refs/tags/v$v " "$STUB_LOG" || ok=0
+	grep -q -- "^verify --certificate-identity https://github.com/DavidGodefroid/$t/.github/workflows/release.yml@refs/tags/v$v .* ghcr.io/davidgodefroid/$t:$v$" "$STUB_LOG" || ok=0
+done
+grep -q -- "--certificate-identity https://github.com/DavidGodefroid/lockhub/.github/workflows/release.yml@refs/tags/v0.3.0 " "$STUB_LOG" || ok=0
+grep -q -- "--certificate-identity https://github.com/DavidGodefroid/lea/.github/workflows/release.yml@refs/tags/v0.4.0 " "$STUB_LOG" || ok=0
+if [ $ok = 1 ]; then pass "family: every tool at its tap version, each verified against its own release workflow"; else fail "family: every tool at its tap version"; fi
+if [ "$os" = linux ]; then
+	if grep -qx "seccomp_profile=$HOME/.local/share/lockfile/seccomp.json" "$(lb lockfile)" && [ -f "$HOME/.local/share/lockfile/seccomp.json" ]; then
+		pass "family: lockfile's seccomp profile"
+	else fail "family: lockfile's seccomp profile"; fi
+else
+	if [ ! -e "$(lb lockfile)" ] && grep -q 'lockfile: Linux only, skipped' "$root/out"; then pass "family: lockfile skipped (not Linux)"; else fail "family: lockfile skipped (not Linux)"; fi
+fi
+if grep -q 'locklog: no published release yet, skipped' "$root/out" && grep -q 'next step: lox init' "$root/out"; then pass "family: locklog skipped, next step lox init"; else fail "family: locklog skipped, next step lox init"; fi
+if [ ! -e "$(lb cosign)" ] && ! grep -q '^curl' "$STUB_LOG" && ! grep -q '^docker' "$STUB_LOG"; then pass "family: cosign on PATH used, nothing downloaded, no docker call"; else fail "family: cosign on PATH used, nothing downloaded, no docker call"; fi
+
+# 21. Installing again over it.
+run family
+if [ "$code" = 0 ] && [ "$("$(lb lea)" version)" = v0.4.0 ] && [ "$("$(lb lox)")" = "lox 0.3.0" ]; then pass "family: a second install replaces the first"; else fail "family: a second install replaces the first"; fi
+
+# 22. Without cosign: the pinned cosign is downloaded, used, then installed.
+TPATH="$root/nocosign" run familynocosign
+if [ "$code" = 0 ] && [ "$("$(lb lox)")" = "lox 0.3.0" ] && grep -qx "curl $cosign_url" "$STUB_LOG" &&
+	grep -q '^downloaded cosign verify --certificate-identity https://github.com/DavidGodefroid/locksql/' "$STUB_LOG" &&
+	cmp -s "$(lb cosign)" "$root/dl/cosign-$os-$arch" && [ "$(find "$(lb cosign)" -maxdepth 0 -perm 0755 | wc -l)" -eq 1 ]; then
+	pass "family without cosign: the pinned cosign verifies, then is installed"
+else fail "family without cosign: the pinned cosign verifies, then is installed"; fi
+
+# 23. A tap digest that is not the one cosign verifies: nothing installed.
+retap digest lockmq.rb "s/^\\(    image_digest = \\)\"sha256:[0-9a-f]*\"/\\1\"sha256:$(hex other)\"/"
+TAP="$root/tap-digest" run familydigest
+if [ "$code" != 0 ] && nothing_installed && grep -q 'cosign: ghcr.io/davidgodefroid/lockmq:0.6.0 is not' "$root/out"; then pass "family: a tap digest cosign does not verify aborts, nothing installed"; else fail "family: a tap digest cosign does not verify aborts"; fi
+
+# 24. An archive that does not match its formula's sha256: nothing installed.
+retap sha lea.rb "/${os}_${arch}/{n;s/sha256 \"[0-9a-f]*\"/sha256 \"$(hex other)\"/;}"
+TAP="$root/tap-sha" run familysha
+if [ "$code" != 0 ] && nothing_installed && grep -q 'the tap and the release disagree' "$root/out"; then pass "family: formula sha256 mismatch aborts, nothing installed"; else fail "family: formula sha256 mismatch aborts"; fi
+
+# 25. One project's signature that does not verify: nothing installed.
+COSIGN_FAIL="DavidGodefroid/lockhttp/" run familysig
+if [ "$code" != 0 ] && nothing_installed && grep -q 'signature of the lockhttp checksums.txt does not verify' "$root/out"; then pass "family: one bad signature aborts, nothing installed"; else fail "family: one bad signature aborts"; fi
+
+# 26. A formula whose version is not a release version: refused.
+retap ver locksql.rb 's|download/v0\.13\.0/locksql_0\.13\.0_|download/v0.13;id/locksql_0.13;id_|'
+TAP="$root/tap-ver" run familyver
+if [ "$code" != 0 ] && nothing_installed && grep -q 'locksql.rb has no valid release archive' "$root/out"; then pass "family: invalid formula version refused"; else fail "family: invalid formula version refused"; fi
+
+# 27. A formula without its vault image digest: refused.
+retap novault lockmq.rb '/vault_image_digest/d'
+TAP="$root/tap-novault" run familynovault
+if [ "$code" != 0 ] && nothing_installed && grep -q 'lockmq.rb has no valid vault_image_digest' "$root/out"; then pass "family: missing vault digest refused"; else fail "family: missing vault digest refused"; fi
+
+# 28. No tap: refused before any download.
+TAP="$root/no-tap" run familynotap
+if [ "$code" != 0 ] && nothing_installed && grep -q 'cannot read the tap' "$root/out"; then pass "family: unreachable tap aborts"; else fail "family: unreachable tap aborts"; fi
+
+# 29. A tool the meta formula names that this script does not know: skipped
+# with a message, the others installed.
+retap extra lockfamily.rb 's|^  depends_on "cosign"$|  depends_on "davidgodefroid/tap/lockfoo"|'
+TAP="$root/tap-extra" run familyextra
+if [ "$code" = 0 ] && grep -q 'also names lockfoo' "$root/out" && [ "$("$(lb lox)")" = "lox 0.3.0" ]; then pass "family: an unknown tool of the meta formula is skipped"; else fail "family: an unknown tool of the meta formula is skipped"; fi
+
+# 30. ~/.local/bin/lea a directory: refused.
+mkdir -p "$root/home/leadir/.local/bin/lea"
+chmod 0755 "$root/home/leadir/.local" "$root/home/leadir/.local/bin"
+run leadir
+if [ "$code" != 0 ] && [ ! -e "$(lb lox)" ] && grep -q 'is a directory' "$root/out"; then pass "family: ~/.local/bin/lea a directory, refused"; else fail "family: ~/.local/bin/lea a directory, refused"; fi
 
 echo "$runs tests, $fails failed"
 [ "$fails" = 0 ]

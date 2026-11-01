@@ -28,7 +28,7 @@ results, and never sees values in clear.
 ### Quick start, with locksql
 
 ```sh
-curl -fsSL https://lockfamily.dev/install.sh | sh   # the lox CLI
+curl -fsSL https://lockfamily.dev/install.sh | sh   # lox, lea, the launchers
 cd ~/projects                  # the workspace: lea's projects directory
 lox add locksql crm            # latest signed locksql, by digest; pins the hub's image too
 mkdir -p .locksql              # the lock's profile, in the workspace
@@ -146,25 +146,57 @@ versions it supports.
 
 ## install.sh
 
-`install.sh`, served at <https://lockfamily.dev/install.sh>, installs the `lox`
-CLI of the approval hub ([lockhub](https://github.com/DavidGodefroid/lockhub))
-and nothing else: only `~/.local/bin/lox`, no sudo, no image pulled.
+`install.sh`, served at <https://lockfamily.dev/install.sh>, installs the Lock
+Family: the same tools, at the same versions, as the Homebrew meta formula
+(`brew install davidgodefroid/tap/lockfamily`), into `~/.local/bin`, without
+sudo and without pulling any image (each tool pulls its images, by digest, on
+first use).
 
 ```sh
 curl -fsSL https://lockfamily.dev/install.sh | sh
-# or a given release:
+lox init
+```
+
+| Tool | Installed as |
+|---|---|
+| `lox` ([lockhub](https://github.com/DavidGodefroid/lockhub)) | `~/.local/bin/lox` |
+| [`lea`](https://github.com/DavidGodefroid/lea) | the release tree in `~/.local/share/lea-install/vX.Y.Z`, linked as `~/.local/bin/lea` (as lea's own installer; `lox init` runs the rest) |
+| `locksql`, `lockmq`, `lockhttp`, `lockfile` (Linux only) | the launchers, `~/.local/bin/<tool>`, which run their release's images by digest; lockfile's seccomp profile in `~/.local/share/lockfile/` |
+| `cosign` | `~/.local/bin/cosign`, only when no cosign is on your PATH (the meta formula installs it too; `lox init` and the launchers' `update` use it) |
+
+`locklog` has no published release yet and is skipped. Docker is required:
+Docker Engine (Linux) or Docker Desktop (macOS) must be installed and
+running. Next step: `lox init`.
+
+**Versions.** They come from the tap,
+[DavidGodefroid/homebrew-tap](https://github.com/DavidGodefroid/homebrew-tap),
+its single source of truth, which each project's release workflow bumps on
+its tag: the tools that `Formula/lockfamily.rb` depends on, and in each
+`Formula/<tool>.rb` the release URL for your system, its sha256 and the image
+digests. The formulas are read as text, never run, and every value must match
+a strict pattern.
+
+**Verification.** The tap only says which release. For every tool, the
+keyless signature of the release's `checksums.txt` must come from that
+project's release workflow run for that very tag, the archive must match
+`checksums.txt` and the formula, and a launcher's image digests must be the
+ones cosign verifies for that tag. Everything is verified before anything is
+installed. The signatures are checked with the cosign on your PATH; without
+one, it downloads cosign v3.0.6, checks it against the sha256 pinned in
+`install.sh`, and, once everything else is installed, installs it as
+`~/.local/bin/cosign`.
+
+**lox alone.** `--version vX.Y.Z` installs only `lox`, from that lockhub
+release, as before (a downloaded cosign is then used for the check only);
+offline, add `--sha256 <hash>` with a hash you trust:
+
+```sh
 curl -fsSL https://lockfamily.dev/install.sh | sh -s -- --version vX.Y.Z
 ```
 
-The keyless signature of the release's `checksums.txt` must come from the
-lockhub release workflow run for that tag, and the archive must match it. It
-checks the signature with the cosign on your PATH; without one, it downloads
-cosign v3.0.6 to a temporary directory, checks it against the sha256 pinned in
-`install.sh`, uses it for that check only and never installs it. Offline, pass
-`--version` and `--sha256 <hash>` with a hash you trust. The per-tool install
-scripts stay.
+The per-tool install scripts stay.
 
-Tests (fake release, stub cosign, fake cosign download, no network): `sh tests/install_test.sh`
+Tests (fake releases of every tool, fake tap, stub cosign, fake cosign download, no network): `sh tests/install_test.sh`
 (`COSIGN_REAL=$(command -v cosign)` adds a real cosign check).
 
 Logos and the lea demo come from each project's own repository.

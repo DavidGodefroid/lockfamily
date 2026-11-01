@@ -48,25 +48,39 @@ jobs:
       - name: tests
         run: COSIGN_REAL="$(command -v cosign)" sh tests/install_test.sh
 
-  # The latest lockhub release, installed for real from GitHub (signature,
-  # checksum, lox version). Before the first published lockhub release, the
-  # job says so and stops. A release without lox_* archives (lockhub v0.2.7
-  # and earlier ship lock_*) fails the job: the download fails.
+  # The whole family, installed for real from GitHub at the versions of the
+  # tap's formulas (signatures, checksums, image digests), on a runner
+  # without cosign: install.sh downloads its pinned cosign, then installs it.
+  # The launchers' `version` prints their own version and image, then fails
+  # on the Docker that does not answer (DOCKER_HOST): nothing is pulled.
   install-release:
-    name: install.sh (latest lockhub release)
-    runs-on: ubuntu-latest
+    name: install.sh (tap versions, ${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: sigstore/cosign-installer@7e8b541eb2e61bf99390e1afd4be13a184e9ebc5 # v3.10.1
-        with:
-          cosign-release: v2.6.1
       - name: install
+        run: sh install.sh
+      - name: the tap's versions
+        env:
+          DOCKER_HOST: unix:///nonexistent/docker.sock
         run: |
-          code=0; sh install.sh 2>out.txt || code=$?
-          cat out.txt
-          if [ "$code" != 0 ] && grep -q "no published lockhub release" out.txt; then
-            echo "::notice::no published lockhub release yet"
-            exit 0
-          fi
-          test "$code" = 0
-          "$HOME/.local/bin/lox" version
+          bin="$HOME/.local/bin"
+          tap=https://raw.githubusercontent.com/DavidGodefroid/homebrew-tap/main/Formula
+          v() { curl -fsSL "$tap/$1.rb" | sed -n 's|.*/releases/download/v\([0-9][^/]*\)/.*|\1|p' | sed -n 1p; }
+          test "$("$bin/lox" version)" = "lox $(v lox)"
+          test "$("$bin/lea" version)" = "v$(v lea)"
+          if [ -x "$bin/cosign" ]; then "$bin/cosign" version; else cosign version; fi
+          tools="locksql lockmq lockhttp"
+          if [ "$RUNNER_OS" = Linux ]; then tools="$tools lockfile"; else test ! -e "$bin/lockfile"; fi
+          for t in $tools; do
+            out=$("$bin/$t" version 2>&1 || true)
+            echo "$out"
+            case "$out" in
+            "$t launcher $(v "$t") (image ghcr.io/davidgodefroid/$t@sha256:"*) ;;
+            *) echo "unexpected: $out" >&2; exit 1 ;;
+            esac
+          done
