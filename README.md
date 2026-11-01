@@ -197,7 +197,7 @@ lox add locksql
 
 `locklog` has no published release yet and is skipped. Docker is required:
 Docker Engine (Linux) or Docker Desktop (macOS) must be installed and
-running. Next step: `lox init`.
+running. Next step: `lea` (without lea: `lox init`).
 
 **Versions.** They come from the tap,
 [DavidGodefroid/homebrew-tap](https://github.com/DavidGodefroid/homebrew-tap),

@@ -402,7 +402,7 @@ if [ "$os" = linux ]; then
 else
 	if [ ! -e "$(lb lockfile)" ] && grep -q 'lockfile: Linux only, skipped' "$root/out"; then pass "family: lockfile skipped (not Linux)"; else fail "family: lockfile skipped (not Linux)"; fi
 fi
-if grep -q 'locklog: no published release yet, skipped' "$root/out" && grep -q 'next step: lox init' "$root/out"; then pass "family: locklog skipped, next step lox init"; else fail "family: locklog skipped, next step lox init"; fi
+if grep -q 'locklog: no published release yet, skipped' "$root/out" && grep -q 'next step: lea (without lea: lox init)' "$root/out"; then pass "family: locklog skipped, next step lea"; else fail "family: locklog skipped, next step lea"; fi
 if [ ! -e "$(lb cosign)" ] && ! grep -q '^curl' "$STUB_LOG" && ! grep -q '^docker' "$STUB_LOG"; then pass "family: cosign on PATH used, nothing downloaded, no docker call"; else fail "family: cosign on PATH used, nothing downloaded, no docker call"; fi
 
 # 21. Installing again over it.
