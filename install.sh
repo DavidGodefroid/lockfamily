@@ -441,7 +441,7 @@ if [ -n "$tag" ]; then
 		say "  export PATH=\"\$HOME/.local/bin:\$PATH\""
 		;;
 	esac
-	command -v docker >/dev/null 2>&1 || say "docker is not installed: lox up needs it"
+	command -v docker >/dev/null 2>&1 || say "docker is not installed: lox run needs it"
 	exit 0
 fi
 
@@ -536,4 +536,4 @@ case ":$PATH:" in
 esac
 command -v docker >/dev/null 2>&1 ||
 	say "docker is not installed: the Lock Family runs in Docker (Docker Engine on Linux, Docker Desktop on macOS)"
-say "next step: lea (without lea: lox init)"
+say "next step: lox add <lock> in your project, then lox run in a terminal of its own, outside the agent: approvals live there"
