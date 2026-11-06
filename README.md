@@ -1,12 +1,13 @@
 <p align="center">
-  <a href="https://lockfamily.dev"><img src="assets/mark.svg" width="96" height="96" alt="Lock Family logo"></a>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg">
+    <img alt="Lock Family: harness security for AI agents." src="docs/assets/banner-light.svg" width="600">
+  </picture>
 </p>
-
-<h1 align="center">Lock Family</h1>
 
 <p align="center">
   <a href="https://github.com/DavidGodefroid/lockfamily/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/DavidGodefroid/lockfamily/actions/workflows/ci.yml/badge.svg"></a>
-  <a href="LICENSE"><img alt="Apache 2.0" src="https://img.shields.io/badge/license-Apache%202.0-14B8A6"></a>
+  <a href="LICENSE"><img alt="License: Apache 2.0" src="https://img.shields.io/badge/license-Apache%202.0-575146"></a>
 </p>
 
 <p align="center"><b>Harness security for AI agents.</b><br>

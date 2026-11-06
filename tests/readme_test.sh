@@ -38,7 +38,8 @@ first="${TMPDIR:-/tmp}/readme_head.$$"
 check "first screen names the Lock Family" "has '$first' 'Lock Family'"
 check "first screen says harness security" "has '$first' 'Harness security for AI agents'"
 check "first screen links to the site" "has '$first' 'href=\"https://lockfamily.dev\"'"
-check "first screen shows the logo" "has '$first' 'assets/mark.svg'"
+check "first screen shows the banner" "has '$first' 'docs/assets/banner-light.svg'"
+check "first screen has the dark banner" "has '$first' 'docs/assets/banner-dark.svg'"
 for w in 'Static HTML' 'static HTML' 'GitHub Pages' 'http.server' 'CNAME' 'vanilla JavaScript'; do
 	check "first screen has no site detail: $w" "! has '$first' '$w'"
 done
