@@ -221,6 +221,7 @@ if [ "$code" = 2 ]; then pass "unknown option: exit 2"; else fail "unknown optio
 
 # 14. ~/.local/bin/lox as a link to a file others can write: refused.
 mkdir -p "$root/shared" "$root/home/linkw/.local/bin"
+chmod 0755 "$root/home/linkw/.local/bin" # the refusal must be about the link, not the directory (umask 002)
 echo old >"$root/shared/lox"
 chmod 0666 "$root/shared/lox"
 ln -s "$root/shared/lox" "$root/home/linkw/.local/bin/lox"
@@ -229,6 +230,7 @@ if [ "$code" != 0 ] && [ "$(cat "$root/shared/lox")" = old ] && [ -L "$(bin)" ] 
 
 # 15. ... or in a directory others can write: refused.
 mkdir -p "$root/sharedd" "$root/home/linkd/.local/bin"
+chmod 0755 "$root/home/linkd/.local/bin" # the refusal must be about the link, not this directory (umask 002)
 chmod 0777 "$root/sharedd"
 echo old >"$root/sharedd/lox"
 chmod 0644 "$root/sharedd/lox"
@@ -246,11 +248,11 @@ ln -s "$root/home/linkok/opt/lox" "$root/home/linkok/.local/bin/lox"
 run linkok --version v1.2.3
 if [ "$code" = 0 ] && [ ! -L "$(bin)" ] && [ "$("$(bin)")" = "lox 1.2.3" ] && [ "$(cat "$root/home/linkok/opt/lox")" = old ]; then pass "private link replaced, its target untouched"; else fail "private link replaced, its target untouched"; fi
 
-# 17. ~/.local/bin writable by others: refused.
+# 17. ~/.local/bin writable by others: refused, with its mode and the fix.
 mkdir -p "$root/home/dirw/.local/bin"
 chmod 0777 "$root/home/dirw/.local/bin"
 run dirw --version v1.2.3
-if [ "$code" != 0 ] && [ ! -e "$(bin)" ] && grep -q 'writable by others' "$root/out"; then pass "world-writable ~/.local/bin refused"; else fail "world-writable ~/.local/bin refused"; fi
+if [ "$code" != 0 ] && [ ! -e "$(bin)" ] && grep -q 'writable by its group or others (mode 777)' "$root/out" && grep -q 'chmod go-w' "$root/out"; then pass "world-writable ~/.local/bin refused"; else fail "world-writable ~/.local/bin refused"; fi
 
 # 18. No PATH hint when ~/.local/bin is on PATH.
 TPATH="$root/home/onpath/.local/bin:$root/stub:$PATH" run onpath --version v1.2.3
@@ -477,6 +479,40 @@ if [ "$code" = 0 ] && [ "$("$(lb lox)")" = "lox 0.3.0" ] && grep -qx "curl $cosi
 	! grep -q '^old .*verify' "$STUB_LOG" && [ ! -e "$(lb cosign)" ] && grep -q 'older than v3' "$root/out"; then
 	pass "family with cosign 2 on PATH: the pinned cosign verifies, the user's is left alone"
 else fail "family with cosign 2 on PATH: the pinned cosign verifies, the user's is left alone"; fi
+
+# 32. A group-writable (775) ~/.local/share/lea-install, as a umask of 002
+# leaves it, is refused before any download: nothing installed, the mode and
+# the fix in the message, and the directory's mode left as it was (never
+# chmod-ed silently).
+mkdir -p "$root/home/leaw/.local/share/lea-install"
+chmod 0775 "$root/home/leaw/.local/share/lea-install"
+run leaw
+if [ "$code" != 0 ] && [ ! -e "$(lb lox)" ] && [ ! -e "$HOME/.local/share/lea-install/v0.4.0" ] &&
+	! grep -q '^curl' "$STUB_LOG" && grep -q 'mode 775' "$root/out" && grep -qF "chmod go-w '$HOME/.local/share/lea-install'" "$root/out" &&
+	[ "$(find "$HOME/.local/share/lea-install" -maxdepth 0 -perm -0020 | wc -l)" -eq 1 ]; then
+	pass "group-writable lea-install (umask 002) refused before any download, with mode and fix"
+else fail "group-writable lea-install (umask 002) refused before any download, with mode and fix"; fi
+
+# 33. The same for lockfile's share directory.
+mkdir -p "$root/home/lfw/.local/share/lockfile"
+chmod 0775 "$root/home/lfw/.local/share/lockfile"
+run lfw
+if [ "$code" != 0 ] && [ ! -e "$(lb lox)" ] && [ ! -e "$HOME/.local/share/lockfile/seccomp.json" ] &&
+	! grep -q '^curl' "$STUB_LOG" && grep -q 'mode 775' "$root/out" && grep -qF "chmod go-w '$HOME/.local/share/lockfile'" "$root/out"; then
+	pass "group-writable lockfile share refused before any download, with mode and fix"
+else fail "group-writable lockfile share refused before any download, with mode and fix"; fi
+
+# 34. After the suggested chmod go-w, the install completes.
+mkdir -p "$root/home/lefix/.local/share/lea-install"
+chmod 0775 "$root/home/lefix/.local/share/lea-install"
+chmod go-w "$root/home/lefix/.local/share/lea-install"
+run lefix
+if [ "$code" = 0 ] && [ "$("$(lb lox)")" = "lox 0.3.0" ] && [ "$("$(lb lea)" version)" = v0.4.0 ]; then
+	pass "after chmod go-w the install completes"
+else fail "after chmod go-w the install completes"; fi
+
+# (A directory owned by someone else cannot be set up without root, so the
+# owner branch of check_dir's message has no case here.)
 
 echo "$runs tests, $fails failed"
 [ "$fails" = 0 ]

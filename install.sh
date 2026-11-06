@@ -175,10 +175,23 @@ fi
 # What the installer writes must be the user's own, not writable by others:
 # someone else could swap a binary.
 others_can_write() { [ -n "$(find -H "$1" -maxdepth 0 \( -perm -0020 -o -perm -0002 -o ! -user "$(id -u)" \) 2>/dev/null)" ]; }
+# dir_mode DIR: DIR's mode in octal (775), for the refusal message; dir_owner
+# DIR: its owner's name. stat -c on GNU and busybox, stat -f on macOS.
+dir_mode() { stat -c %a "$1" 2>/dev/null || stat -f %Lp "$1" 2>/dev/null || echo unknown; }
+dir_owner() { stat -c %U "$1" 2>/dev/null || stat -f %Su "$1" 2>/dev/null || echo unknown; }
+# check_dir DIR: an existing DIR must be a directory of the user's own that
+# its group and others cannot write. The refusal says which is wrong, the
+# actual mode or owner, and the exact fix: it is never applied silently (a
+# group-writable directory may already have been tampered with).
 check_dir() {
 	if [ -e "$1" ]; then
 		[ -d "$1" ] || die "$1 is not a directory"
-		others_can_write "$1" && die "$1 is writable by others or not yours: fix its owner and mode first"
+		if [ -n "$(find -H "$1" -maxdepth 0 ! -user "$(id -u)" 2>/dev/null)" ]; then
+			die "$1 is owned by $(dir_owner "$1"), not by you: it must be owned by you, run  chown \"\$(id -un)\" '$1'  (you may need sudo), then rerun"
+		fi
+		if [ -n "$(find -H "$1" -maxdepth 0 \( -perm -0020 -o -perm -0002 \) 2>/dev/null)" ]; then
+			die "$1 is writable by its group or others (mode $(dir_mode "$1")): run  chmod go-w '$1'  then rerun"
+		fi
 	fi
 	return 0
 }
