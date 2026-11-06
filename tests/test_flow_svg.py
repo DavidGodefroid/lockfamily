@@ -131,6 +131,37 @@ class Flow(unittest.TestCase):
         for layout in flow_svg.LAYOUTS.values():
             self.assertEqual(set(layout['wires']), {'mcp', 'socket', 'ticket', 'tty', 'db'})
 
+    def test_no_route_in_every_layout(self):
+        # The crossed 'no route' marker between the harness and the hub, in
+        # the wide and the narrow variant alike.
+        for theme, layout, svg, s in built():
+            nr = flow_svg.LAYOUTS[layout]['noroute']
+            self.assertIsNotNone(nr, layout)
+            self.assertIn('>no route</text>', svg, (theme, layout))
+            self.assertIn('stroke="%s" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" '
+                          'stroke-dasharray="4 5"' % flow_svg.THEMES[theme]['deny'], svg, (theme, layout))
+            # It starts at the harness and ends on the hub's edge.
+            hx, hy, hw, hh = flow_svg.LAYOUTS[layout]['harness']
+            bx, by, bw, bh = flow_svg.LAYOUTS[layout]['hub']
+            (x0, y0), (x1, y1) = nr['path'][0], nr['path'][-1]
+            self.assertTrue(hx <= x0 <= hx + hw and hy <= y0 <= hy + hh, layout)
+            self.assertTrue(x1 in (bx, bx + bw) and by <= y1 <= by + bh, layout)
+            # The marker sits on the path, outside every box.
+            mx, my = nr['mark']
+            pts = nr['path']
+            self.assertTrue(any(min(a[0], b[0]) <= mx <= max(a[0], b[0]) and min(a[1], b[1]) <= my <= max(a[1], b[1])
+                                for a, b in zip(pts, pts[1:])), layout)
+            for name in ('agent', 'client', 'lock', 'hub'):
+                x, y, w, h = flow_svg.LAYOUTS[layout][name]
+                self.assertFalse(x - 11 < mx < x + w + 11 and y - 11 < my < y + h + 11, (layout, name))
+
+    def test_hub_card_wording(self):
+        # lox run shows the masked request text: the hub holds masked
+        # queries, never clear values.
+        for theme, layout, svg, _ in built():
+            self.assertIn('masked queries only, no clear values', svg, (theme, layout))
+            self.assertNotIn('no query', svg, (theme, layout))
+
     def test_hops_inside_their_scenario(self):
         for wire, back, t0, t1, label in self.s.hops:
             self.assertEqual(scenario_of(t0), scenario_of(t1 - 1e-9), (wire, label))

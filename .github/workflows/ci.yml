@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: shellcheck
-        run: shellcheck -s sh install.sh tests/install_test.sh tests/readme_test.sh tests/flow_svg_test.sh
+        run: shellcheck -s sh install.sh tests/install_test.sh tests/readme_test.sh tests/flow_svg_test.sh tests/site_test.sh
 
   # The README and its docs: the first screen, every relative link and
   # anchor, the quick start against install.sh, the lox run flags.
@@ -39,6 +39,17 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: tests
         run: FLOW_E2E=required sh tests/flow_svg_test.sh
+
+  # The site's identity: tokens, WCAG AA contrast, self-hosted fonts, the
+  # logos up to date, no third-party request, and the page in a headless
+  # Chrome at 360, 768 and 1280 px, light and dark.
+  site:
+    name: site identity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: tests
+        run: SITE_E2E=required sh tests/site_test.sh
 
   # install.sh in clean containers, as a non-root user with no cosign and no
   # docker: busybox sh (alpine) and dash (debian), against a fake release.

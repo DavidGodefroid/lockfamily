@@ -37,26 +37,27 @@ SANS_EM = 0.52
 SANS_BOLD_EM = 0.56
 MONO_EM = 0.61
 
-# The site's palette (assets/style.css), per theme. The lox run terminal is
-# dark in both themes, as on the site.
+# The identity's palette (assets/tokens.css, docs/identity.md), per theme:
+# paper and carbon. The lox run terminal is dark in both themes, as on the
+# site.
 THEMES = {
     'light': {
-        'bg': '#ffffff', 'surface': '#f8fafc', 'surface2': '#f1f5f9',
-        'text': '#0f172a', 'muted': '#475569', 'border': '#cbd5e1',
-        'wire': '#94a3b8',
-        'req': '#1e66f5', 'ticket': '#6d28d9', 'ok': '#15803d',
-        'deny': '#b91c1c', 'ask': '#b45309', 'result': '#115e59',
-        'harness': '#1e66f5', 'hub': '#6d28d9', 'lock': '#115e59',
-        'term_bg': '#0f172a', 'term_border': '#0f172a',
+        'bg': '#f4efe4', 'surface': '#fffcf5', 'surface2': '#e9e2d2',
+        'text': '#1d1b17', 'muted': '#575146', 'border': '#b9af98',
+        'wire': '#8f8670',
+        'req': '#2a55a8', 'ticket': '#0e6158', 'ok': '#2d6a35',
+        'deny': '#a8201a', 'ask': '#8a5300', 'result': '#0e6158',
+        'harness': '#2a55a8', 'hub': '#0e6158', 'lock': '#1d1b17',
+        'term_bg': '#1a1814', 'term_border': '#1a1814', 'term_bar': '#2a2620',
     },
     'dark': {
-        'bg': '#0b1020', 'surface': '#111827', 'surface2': '#1a2236',
-        'text': '#e2e8f0', 'muted': '#a3b1c6', 'border': '#334155',
-        'wire': '#475569',
-        'req': '#89b4fa', 'ticket': '#c4b5fd', 'ok': '#4ade80',
-        'deny': '#f87171', 'ask': '#fbbf24', 'result': '#5eead4',
-        'harness': '#89b4fa', 'hub': '#c4b5fd', 'lock': '#5eead4',
-        'term_bg': '#060a16', 'term_border': '#334155',
+        'bg': '#16140f', 'surface': '#25221b', 'surface2': '#1f1c16',
+        'text': '#ede6d6', 'muted': '#b2a994', 'border': '#4a4438',
+        'wire': '#6b6352',
+        'req': '#89b4fa', 'ticket': '#6fd9c8', 'ok': '#7fcf8a',
+        'deny': '#ff9384', 'ask': '#e8b860', 'result': '#6fd9c8',
+        'harness': '#89b4fa', 'hub': '#6fd9c8', 'lock': '#ede6d6',
+        'term_bg': '#0e0d0a', 'term_border': '#4a4438', 'term_bar': '#24211b',
     },
 }
 
@@ -94,7 +95,8 @@ LAYOUTS = {
             'ticket': (612, 268, 'start', ['↑ masked ticket', '↓ signed decision']),
             'tty': (698, 192, 'middle', ['queue']),
         },
-        'noroute': [(296, 163), (400, 163)],
+        # No wire between the harness and the hub: a crossed, dashed one.
+        'noroute': {'path': [(296, 163), (400, 163)], 'mark': (348, 163), 'label': (348, 145, 'middle')},
         'caption': (16, 596, 1168, 70),
     },
     'narrow': {
@@ -103,30 +105,31 @@ LAYOUTS = {
         'harness': (16, 192, 448, 168),
         'agent': (28, 228, 250, 124),
         'client': (290, 228, 162, 124),
-        'lock': (16, 432, 260, 140),
-        'hub': (16, 682, 260, 126),
+        'lock': (46, 432, 260, 140),
+        'hub': (46, 682, 260, 126),
         'term': (16, 880, 448, 452),
         'chips': [(366, 424, 86), (366, 458, 86), (366, 492, 86), (366, 526, 86), (366, 560, 86)],
         'wires': {
             'mcp': [(278, 290), (290, 290)],
-            'socket': [(371, 352), (371, 386), (146, 386), (146, 432)],
-            'ticket': [(146, 572), (146, 682)],
-            'tty': [(146, 808), (146, 880)],
-            'db': [(276, 506), (366, 506)],
+            'socket': [(371, 352), (371, 386), (176, 386), (176, 432)],
+            'ticket': [(176, 572), (176, 682)],
+            'tty': [(176, 808), (176, 880)],
+            'db': [(306, 506), (366, 506)],
         },
         'wire_labels': {
-            'socket': (230, 414, 'start', ['socket']),
-            'ticket': (230, 620, 'start', ['↑ masked ticket', '↓ signed decision']),
-            'tty': (230, 848, 'start', ['queue']),
+            'socket': (260, 414, 'start', ['socket']),
+            'ticket': (260, 620, 'start', ['↑ masked ticket', '↓ signed decision']),
+            'tty': (260, 848, 'start', ['queue']),
         },
-        'noroute': None,
+        # Down the left margin, from the harness to the hub, past the lock.
+        'noroute': {'path': [(30, 360), (30, 745), (46, 745)], 'mark': (30, 627), 'label': (48, 631, 'start')},
         'caption': (16, 1356, 448, 108),
     },
 }
 
 PROPS = [
     ('✕', 'deny', 'The agent never talks to the hub'),
-    ('◆', 'hub', 'The hub sees masked tickets only'),
+    ('◆', 'hub', 'The hub sees masked queries only'),
     ('▣', 'harness', 'You approve outside the harness'),
     ('✓', 'ok', 'Reads auto · writes asked'),
 ]
@@ -344,14 +347,14 @@ def build(theme, layout):
     for name, (x, y, anchor, lines) in L['wire_labels'].items():
         for i, line in enumerate(lines):
             s.add(s.text(x, y + 15 * i, line, 11.5, t['muted'], 600, anchor))
-    if L['noroute']:
-        (x0, y0), (x1, y1) = L['noroute']
-        s.add(s.path(L['noroute'], t['deny'], 1.8, '4 5'))
-        mx, my = (x0 + x1) / 2, (y0 + y1) / 2
-        s.add('<circle cx="%s" cy="%s" r="11" fill="%s" stroke="%s" stroke-width="1.6"/>'
-              % (f(mx), f(my), t['bg'], t['deny']))
-        s.add(s.text(mx, my + 4.5, '✕', 13, t['deny'], 700, 'middle'))
-        s.add(s.text(mx, my - 18, 'no route', 11.5, t['deny'], 600, 'middle'))
+    nr = L['noroute']
+    s.add(s.path(nr['path'], t['deny'], 1.8, '4 5'))
+    mx, my = nr['mark']
+    s.add('<circle cx="%s" cy="%s" r="11" fill="%s" stroke="%s" stroke-width="1.6"/>'
+          % (f(mx), f(my), t['bg'], t['deny']))
+    s.add(s.text(mx, my + 4.5, '✕', 13, t['deny'], 700, 'middle'))
+    lx_, ly_, la = nr['label']
+    s.add(s.text(lx_, ly_, 'no route', 11.5, t['deny'], 600, la))
 
     for n in s.node(L['agent'], 'agent', ['Claude Code · Codex · lea'], t['req']):
         s.add(n)
@@ -361,8 +364,8 @@ def build(theme, layout):
                                         'holds the credentials', 'masks every value it returns'],
                     t['lock']):
         s.add(n)
-    for n in s.node(L['hub'], 'hub', ['queues tickets, signs decisions', 'masked tickets only: no query,',
-                                      'no result, no value in clear'], t['hub']):
+    for n in s.node(L['hub'], 'hub', ['queues tickets, signs decisions', 'masked queries only, no clear values',
+                                      'never runs one, never sees a result'], t['hub']):
         s.add(n)
 
     # What sits behind the lock.
@@ -400,8 +403,8 @@ def term(s):
     box = L['term']
     s.add(s.rect(x, y, w, h, 12, s.t['term_bg'], s.t['term_border'], 1.2))
     # Title bar: the human, outside the harness.
-    s.add(s.rect(x, y, w, 34, 12, '#1e293b'))
-    s.add(s.rect(x, y + 22, w, 12, 0, '#1e293b'))
+    s.add(s.rect(x, y, w, 34, 12, s.t['term_bar']))
+    s.add(s.rect(x, y + 22, w, 12, 0, s.t['term_bar']))
     for i, c in enumerate(['#f87171', '#fbbf24', '#4ade80']):
         s.add('<circle cx="%s" cy="%s" r="5" fill="%s"/>' % (f(x + 18 + 16 * i), f(y + 17), c))
     px, py = x + 76, y + 17
@@ -606,7 +609,7 @@ def answer(s, key, on, off):
     cy = s.card_y + 124
     colr = TERM['you'] if key == 'y' else TERM['denied']
     s.group([s.rect(cx, cy, 32, 20, 5, colr),
-             s.text(cx + 16, cy + 15, key, 13, '#0f172a', 700, 'middle', mono=True)], [(on, off)])
+             s.text(cx + 16, cy + 15, key, 13, '#1a1814', 700, 'middle', mono=True)], [(on, off)])
 
 
 def caption(s):
