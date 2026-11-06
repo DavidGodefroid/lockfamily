@@ -1,0 +1,327 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" width="1200" height="680" xml:space="preserve" role="img" aria-labelledby="flow-title flow-desc">
+<title id="flow-title">How a request flows through the Lock Family</title>
+<desc id="flow-desc">An agent (Claude Code, Codex, lea) runs in its harness with a Lock client, an MCP server that holds no credential. The client reaches the lock over a socket; the lock holds the credentials and the only connection to the database, RabbitMQ, files, HTTP or logs. The lock sends a masked ticket to the hub; the hub passes it to lox run, which the human keeps open in a terminal of their own, outside the harness. lox run decides, by an auto rule or by asking the human; the hub signs the decision and the lock runs the request only on it, then masks the result for the agent. The agent never talks to the hub, and the hub never sees a query or a result in clear. Four scenarios loop: 1, a SELECT on profile replica is approved by an auto rule, no question, and masked rows come back; 2, the first request on profile primary makes the lock send a connect ticket, lox run asks y/n once for the session, and the lock connects on the signed decision; 3, an UPDATE is always asked, approved with y and run; 4, a DELETE is asked and denied with n, the lock never runs it and the agent is told it was denied.</desc>
+<style>text{font-family:-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif;white-space:pre}
+.m{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, &quot;Liberation Mono&quot;, monospace}
+@media (prefers-reduced-motion:reduce){.a{animation:none!important}}
+@keyframes k1{0.000%{opacity:0}0.482%{opacity:0}1.084%{opacity:1}22.048%{opacity:1}22.651%{opacity:0}100.000%{opacity:0}}
+.k1{animation:k1 41.5s linear infinite}
+@keyframes k2{0.000%{opacity:0}18.554%{opacity:0}19.157%{opacity:1}22.048%{opacity:1}22.651%{opacity:0}100.000%{opacity:0}}
+.k2{animation:k2 41.5s linear infinite}
+@keyframes k3{0.000%{opacity:0;transform:translate(166px,240px)}0.964%{opacity:0;transform:translate(166px,240px)}1.157%{opacity:1;transform:translate(166px,240px)}2.458%{opacity:1;transform:translate(166px,350px)}2.651%{opacity:0;transform:translate(166px,350px)}100.000%{opacity:0;transform:translate(166px,350px)}}
+.k3{animation:k3 41.5s linear infinite}
+@keyframes k4{0.000%{opacity:0;transform:translate(296px,402px)}2.651%{opacity:0;transform:translate(296px,402px)}2.843%{opacity:1;transform:translate(296px,402px)}4.145%{opacity:1;transform:translate(400px,402px)}4.337%{opacity:0;transform:translate(400px,402px)}100.000%{opacity:0;transform:translate(400px,402px)}}
+.k4{animation:k4 41.5s linear infinite}
+@keyframes k5{0.000%{opacity:0;transform:translate(530px,326px)}4.337%{opacity:0;transform:translate(530px,326px)}4.530%{opacity:1;transform:translate(530px,326px)}5.831%{opacity:1;transform:translate(530px,226px)}6.024%{opacity:0;transform:translate(530px,226px)}100.000%{opacity:0;transform:translate(530px,226px)}}
+.k5{animation:k5 41.5s linear infinite}
+@keyframes k6{0.000%{opacity:0;transform:translate(660px,163px)}6.024%{opacity:0;transform:translate(660px,163px)}6.217%{opacity:1;transform:translate(660px,163px)}7.518%{opacity:1;transform:translate(736px,163px)}7.711%{opacity:0;transform:translate(736px,163px)}100.000%{opacity:0;transform:translate(736px,163px)}}
+.k6{animation:k6 41.5s linear infinite}
+@keyframes k7{0.000%{opacity:0;transform:translate(736px,163px)}8.434%{opacity:0;transform:translate(736px,163px)}8.627%{opacity:1;transform:translate(736px,163px)}9.928%{opacity:1;transform:translate(660px,163px)}10.120%{opacity:0;transform:translate(660px,163px)}100.000%{opacity:0;transform:translate(660px,163px)}}
+.k7{animation:k7 41.5s linear infinite}
+@keyframes k8{0.000%{opacity:0;transform:translate(530px,226px)}10.120%{opacity:0;transform:translate(530px,226px)}10.313%{opacity:1;transform:translate(530px,226px)}11.614%{opacity:1;transform:translate(530px,326px)}11.807%{opacity:0;transform:translate(530px,326px)}100.000%{opacity:0;transform:translate(530px,326px)}}
+.k8{animation:k8 41.5s linear infinite}
+@keyframes k9{0.000%{opacity:0;transform:translate(530px,466px)}11.807%{opacity:0;transform:translate(530px,466px)}12.000%{opacity:1;transform:translate(530px,466px)}13.060%{opacity:1;transform:translate(530px,536px)}13.253%{opacity:0;transform:translate(530px,536px)}100.000%{opacity:0;transform:translate(530px,536px)}}
+.k9{animation:k9 41.5s linear infinite}
+@keyframes k10{0.000%{opacity:0;transform:translate(530px,536px)}13.253%{opacity:0;transform:translate(530px,536px)}13.446%{opacity:1;transform:translate(530px,536px)}14.506%{opacity:1;transform:translate(530px,466px)}14.699%{opacity:0;transform:translate(530px,466px)}100.000%{opacity:0;transform:translate(530px,466px)}}
+.k10{animation:k10 41.5s linear infinite}
+@keyframes k11{0.000%{opacity:0;transform:translate(400px,402px)}14.940%{opacity:0;transform:translate(400px,402px)}15.133%{opacity:1;transform:translate(400px,402px)}16.434%{opacity:1;transform:translate(296px,402px)}16.627%{opacity:0;transform:translate(296px,402px)}100.000%{opacity:0;transform:translate(296px,402px)}}
+.k11{animation:k11 41.5s linear infinite}
+@keyframes k12{0.000%{opacity:0;transform:translate(166px,350px)}16.627%{opacity:0;transform:translate(166px,350px)}16.819%{opacity:1;transform:translate(166px,350px)}18.120%{opacity:1;transform:translate(166px,240px)}18.313%{opacity:0;transform:translate(166px,240px)}100.000%{opacity:0;transform:translate(166px,240px)}}
+.k12{animation:k12 41.5s linear infinite}
+@keyframes k13{0.000%{opacity:0}7.711%{opacity:0}8.313%{opacity:1}99.277%{opacity:1}99.880%{opacity:0}100.000%{opacity:0}}
+.k13{animation:k13 41.5s linear infinite}
+@keyframes k14{0.000%{opacity:1}39.518%{opacity:1}40.120%{opacity:0}100.000%{opacity:0}}
+.k14{animation:k14 41.5s linear infinite}
+@keyframes k15{0.000%{opacity:0}39.518%{opacity:0}40.120%{opacity:1}99.277%{opacity:1}99.880%{opacity:0}100.000%{opacity:0}}
+.k15{animation:k15 41.5s linear infinite}
+@keyframes k16{0.000%{opacity:0}23.373%{opacity:0}23.976%{opacity:1}50.964%{opacity:1}51.566%{opacity:0}100.000%{opacity:0}}
+.k16{animation:k16 41.5s linear infinite}
+@keyframes k17{0.000%{opacity:0}48.434%{opacity:0}49.036%{opacity:1}50.964%{opacity:1}51.566%{opacity:0}100.000%{opacity:0}}
+.k17{animation:k17 41.5s linear infinite}
+@keyframes k18{0.000%{opacity:0;transform:translate(166px,240px)}23.855%{opacity:0;transform:translate(166px,240px)}24.048%{opacity:1;transform:translate(166px,240px)}25.349%{opacity:1;transform:translate(166px,350px)}25.542%{opacity:0;transform:translate(166px,350px)}100.000%{opacity:0;transform:translate(166px,350px)}}
+.k18{animation:k18 41.5s linear infinite}
+@keyframes k19{0.000%{opacity:0;transform:translate(296px,402px)}25.542%{opacity:0;transform:translate(296px,402px)}25.735%{opacity:1;transform:translate(296px,402px)}27.036%{opacity:1;transform:translate(400px,402px)}27.229%{opacity:0;transform:translate(400px,402px)}100.000%{opacity:0;transform:translate(400px,402px)}}
+.k19{animation:k19 41.5s linear infinite}
+@keyframes k20{0.000%{opacity:0;transform:translate(530px,326px)}27.229%{opacity:0;transform:translate(530px,326px)}27.422%{opacity:1;transform:translate(530px,326px)}28.723%{opacity:1;transform:translate(530px,226px)}28.916%{opacity:0;transform:translate(530px,226px)}100.000%{opacity:0;transform:translate(530px,226px)}}
+.k20{animation:k20 41.5s linear infinite}
+@keyframes k21{0.000%{opacity:0;transform:translate(660px,163px)}28.916%{opacity:0;transform:translate(660px,163px)}29.108%{opacity:1;transform:translate(660px,163px)}30.410%{opacity:1;transform:translate(736px,163px)}30.602%{opacity:0;transform:translate(736px,163px)}100.000%{opacity:0;transform:translate(736px,163px)}}
+.k21{animation:k21 41.5s linear infinite}
+@keyframes k22{0.000%{opacity:0}30.602%{opacity:0}31.205%{opacity:1}34.940%{opacity:1}35.542%{opacity:0}100.000%{opacity:0}}
+.k22{animation:k22 41.5s linear infinite}
+@keyframes k23{0.000%{opacity:0}33.735%{opacity:0}34.337%{opacity:1}34.940%{opacity:1}35.542%{opacity:0}100.000%{opacity:0}}
+.k23{animation:k23 41.5s linear infinite}
+@keyframes k24{0.000%{opacity:0}30.602%{opacity:0}31.205%{opacity:1}34.940%{opacity:1}35.542%{opacity:0}100.000%{opacity:0}}
+.k24{animation:k24 41.5s linear infinite}
+@keyframes k25{0.000%{opacity:0}34.940%{opacity:0}35.542%{opacity:1}99.277%{opacity:1}99.880%{opacity:0}100.000%{opacity:0}}
+.k25{animation:k25 41.5s linear infinite}
+@keyframes k26{0.000%{opacity:0;transform:translate(736px,163px)}34.940%{opacity:0;transform:translate(736px,163px)}35.133%{opacity:1;transform:translate(736px,163px)}36.434%{opacity:1;transform:translate(660px,163px)}36.627%{opacity:0;transform:translate(660px,163px)}100.000%{opacity:0;transform:translate(660px,163px)}}
+.k26{animation:k26 41.5s linear infinite}
+@keyframes k27{0.000%{opacity:0;transform:translate(530px,226px)}36.627%{opacity:0;transform:translate(530px,226px)}36.819%{opacity:1;transform:translate(530px,226px)}38.120%{opacity:1;transform:translate(530px,326px)}38.313%{opacity:0;transform:translate(530px,326px)}100.000%{opacity:0;transform:translate(530px,326px)}}
+.k27{animation:k27 41.5s linear infinite}
+@keyframes k28{0.000%{opacity:0;transform:translate(530px,466px)}38.313%{opacity:0;transform:translate(530px,466px)}38.506%{opacity:1;transform:translate(530px,466px)}39.325%{opacity:1;transform:translate(530px,536px)}39.518%{opacity:0;transform:translate(530px,536px)}100.000%{opacity:0;transform:translate(530px,536px)}}
+.k28{animation:k28 41.5s linear infinite}
+@keyframes k29{0.000%{opacity:1}39.518%{opacity:1}40.120%{opacity:0}100.000%{opacity:0}}
+.k29{animation:k29 41.5s linear infinite}
+@keyframes k30{0.000%{opacity:0}39.518%{opacity:0}40.120%{opacity:1}99.277%{opacity:1}99.880%{opacity:0}100.000%{opacity:0}}
+.k30{animation:k30 41.5s linear infinite}
+@keyframes k31{0.000%{opacity:0;transform:translate(530px,326px)}39.759%{opacity:0;transform:translate(530px,326px)}39.952%{opacity:1;transform:translate(530px,326px)}40.771%{opacity:1;transform:translate(530px,226px)}40.964%{opacity:0;transform:translate(530px,226px)}100.000%{opacity:0;transform:translate(530px,226px)}}
+.k31{animation:k31 41.5s linear infinite}
+@keyframes k32{0.000%{opacity:0;transform:translate(660px,163px)}40.964%{opacity:0;transform:translate(660px,163px)}41.157%{opacity:1;transform:translate(660px,163px)}41.855%{opacity:1;transform:translate(736px,163px)}42.048%{opacity:0;transform:translate(736px,163px)}100.000%{opacity:0;transform:translate(736px,163px)}}
+.k32{animation:k32 41.5s linear infinite}
+@keyframes k33{0.000%{opacity:0}42.048%{opacity:0}42.651%{opacity:1}99.277%{opacity:1}99.880%{opacity:0}100.000%{opacity:0}}
+.k33{animation:k33 41.5s linear infinite}
+@keyframes k34{0.000%{opacity:0;transform:translate(736px,163px)}42.169%{opacity:0;transform:translate(736px,163px)}42.361%{opacity:1;transform:translate(736px,163px)}43.060%{opacity:1;transform:translate(660px,163px)}43.253%{opacity:0;transform:translate(660px,163px)}100.000%{opacity:0;transform:translate(660px,163px)}}
+.k34{animation:k34 41.5s linear infinite}
+@keyframes k35{0.000%{opacity:0;transform:translate(530px,226px)}43.253%{opacity:0;transform:translate(530px,226px)}43.446%{opacity:1;transform:translate(530px,226px)}44.265%{opacity:1;transform:translate(530px,326px)}44.458%{opacity:0;transform:translate(530px,326px)}100.000%{opacity:0;transform:translate(530px,326px)}}
+.k35{animation:k35 41.5s linear infinite}
+@keyframes k36{0.000%{opacity:0;transform:translate(530px,466px)}44.458%{opacity:0;transform:translate(530px,466px)}44.651%{opacity:1;transform:translate(530px,466px)}45.229%{opacity:1;transform:translate(530px,536px)}45.422%{opacity:0;transform:translate(530px,536px)}100.000%{opacity:0;transform:translate(530px,536px)}}
+.k36{animation:k36 41.5s linear infinite}
+@keyframes k37{0.000%{opacity:0;transform:translate(530px,536px)}45.422%{opacity:0;transform:translate(530px,536px)}45.614%{opacity:1;transform:translate(530px,536px)}46.193%{opacity:1;transform:translate(530px,466px)}46.386%{opacity:0;transform:translate(530px,466px)}100.000%{opacity:0;transform:translate(530px,466px)}}
+.k37{animation:k37 41.5s linear infinite}
+@keyframes k38{0.000%{opacity:0;transform:translate(400px,402px)}46.386%{opacity:0;transform:translate(400px,402px)}46.578%{opacity:1;transform:translate(400px,402px)}47.277%{opacity:1;transform:translate(296px,402px)}47.470%{opacity:0;transform:translate(296px,402px)}100.000%{opacity:0;transform:translate(296px,402px)}}
+.k38{animation:k38 41.5s linear infinite}
+@keyframes k39{0.000%{opacity:0;transform:translate(166px,350px)}47.470%{opacity:0;transform:translate(166px,350px)}47.663%{opacity:1;transform:translate(166px,350px)}48.361%{opacity:1;transform:translate(166px,240px)}48.554%{opacity:0;transform:translate(166px,240px)}100.000%{opacity:0;transform:translate(166px,240px)}}
+.k39{animation:k39 41.5s linear infinite}
+@keyframes k40{0.000%{opacity:0}52.289%{opacity:0}52.892%{opacity:1}76.265%{opacity:1}76.867%{opacity:0}100.000%{opacity:0}}
+.k40{animation:k40 41.5s linear infinite}
+@keyframes k41{0.000%{opacity:0}73.494%{opacity:0}74.096%{opacity:1}76.265%{opacity:1}76.867%{opacity:0}100.000%{opacity:0}}
+.k41{animation:k41 41.5s linear infinite}
+@keyframes k42{0.000%{opacity:0;transform:translate(166px,240px)}52.771%{opacity:0;transform:translate(166px,240px)}52.964%{opacity:1;transform:translate(166px,240px)}54.265%{opacity:1;transform:translate(166px,350px)}54.458%{opacity:0;transform:translate(166px,350px)}100.000%{opacity:0;transform:translate(166px,350px)}}
+.k42{animation:k42 41.5s linear infinite}
+@keyframes k43{0.000%{opacity:0;transform:translate(296px,402px)}54.458%{opacity:0;transform:translate(296px,402px)}54.651%{opacity:1;transform:translate(296px,402px)}55.952%{opacity:1;transform:translate(400px,402px)}56.145%{opacity:0;transform:translate(400px,402px)}100.000%{opacity:0;transform:translate(400px,402px)}}
+.k43{animation:k43 41.5s linear infinite}
+@keyframes k44{0.000%{opacity:0;transform:translate(530px,326px)}56.145%{opacity:0;transform:translate(530px,326px)}56.337%{opacity:1;transform:translate(530px,326px)}57.639%{opacity:1;transform:translate(530px,226px)}57.831%{opacity:0;transform:translate(530px,226px)}100.000%{opacity:0;transform:translate(530px,226px)}}
+.k44{animation:k44 41.5s linear infinite}
+@keyframes k45{0.000%{opacity:0;transform:translate(660px,163px)}57.831%{opacity:0;transform:translate(660px,163px)}58.024%{opacity:1;transform:translate(660px,163px)}59.325%{opacity:1;transform:translate(736px,163px)}59.518%{opacity:0;transform:translate(736px,163px)}100.000%{opacity:0;transform:translate(736px,163px)}}
+.k45{animation:k45 41.5s linear infinite}
+@keyframes k46{0.000%{opacity:0}59.518%{opacity:0}60.120%{opacity:1}63.855%{opacity:1}64.458%{opacity:0}100.000%{opacity:0}}
+.k46{animation:k46 41.5s linear infinite}
+@keyframes k47{0.000%{opacity:0}62.651%{opacity:0}63.253%{opacity:1}63.855%{opacity:1}64.458%{opacity:0}100.000%{opacity:0}}
+.k47{animation:k47 41.5s linear infinite}
+@keyframes k48{0.000%{opacity:0}59.518%{opacity:0}60.120%{opacity:1}63.855%{opacity:1}64.458%{opacity:0}100.000%{opacity:0}}
+.k48{animation:k48 41.5s linear infinite}
+@keyframes k49{0.000%{opacity:0}63.855%{opacity:0}64.458%{opacity:1}99.277%{opacity:1}99.880%{opacity:0}100.000%{opacity:0}}
+.k49{animation:k49 41.5s linear infinite}
+@keyframes k50{0.000%{opacity:0;transform:translate(736px,163px)}63.855%{opacity:0;transform:translate(736px,163px)}64.048%{opacity:1;transform:translate(736px,163px)}65.349%{opacity:1;transform:translate(660px,163px)}65.542%{opacity:0;transform:translate(660px,163px)}100.000%{opacity:0;transform:translate(660px,163px)}}
+.k50{animation:k50 41.5s linear infinite}
+@keyframes k51{0.000%{opacity:0;transform:translate(530px,226px)}65.542%{opacity:0;transform:translate(530px,226px)}65.735%{opacity:1;transform:translate(530px,226px)}67.036%{opacity:1;transform:translate(530px,326px)}67.229%{opacity:0;transform:translate(530px,326px)}100.000%{opacity:0;transform:translate(530px,326px)}}
+.k51{animation:k51 41.5s linear infinite}
+@keyframes k52{0.000%{opacity:0;transform:translate(530px,466px)}67.229%{opacity:0;transform:translate(530px,466px)}67.422%{opacity:1;transform:translate(530px,466px)}68.482%{opacity:1;transform:translate(530px,536px)}68.675%{opacity:0;transform:translate(530px,536px)}100.000%{opacity:0;transform:translate(530px,536px)}}
+.k52{animation:k52 41.5s linear infinite}
+@keyframes k53{0.000%{opacity:0;transform:translate(530px,536px)}68.675%{opacity:0;transform:translate(530px,536px)}68.867%{opacity:1;transform:translate(530px,536px)}69.928%{opacity:1;transform:translate(530px,466px)}70.120%{opacity:0;transform:translate(530px,466px)}100.000%{opacity:0;transform:translate(530px,466px)}}
+.k53{animation:k53 41.5s linear infinite}
+@keyframes k54{0.000%{opacity:0;transform:translate(400px,402px)}70.120%{opacity:0;transform:translate(400px,402px)}70.313%{opacity:1;transform:translate(400px,402px)}71.614%{opacity:1;transform:translate(296px,402px)}71.807%{opacity:0;transform:translate(296px,402px)}100.000%{opacity:0;transform:translate(296px,402px)}}
+.k54{animation:k54 41.5s linear infinite}
+@keyframes k55{0.000%{opacity:0;transform:translate(166px,350px)}71.807%{opacity:0;transform:translate(166px,350px)}72.000%{opacity:1;transform:translate(166px,350px)}73.301%{opacity:1;transform:translate(166px,240px)}73.494%{opacity:0;transform:translate(166px,240px)}100.000%{opacity:0;transform:translate(166px,240px)}}
+.k55{animation:k55 41.5s linear infinite}
+@keyframes k56{0.000%{opacity:0}77.590%{opacity:0}78.193%{opacity:1}99.157%{opacity:1}99.759%{opacity:0}100.000%{opacity:0}}
+.k56{animation:k56 41.5s linear infinite}
+@keyframes k57{0.000%{opacity:0}96.386%{opacity:0}96.988%{opacity:1}99.157%{opacity:1}99.759%{opacity:0}100.000%{opacity:0}}
+.k57{animation:k57 41.5s linear infinite}
+@keyframes k58{0.000%{opacity:0;transform:translate(166px,240px)}78.072%{opacity:0;transform:translate(166px,240px)}78.265%{opacity:1;transform:translate(166px,240px)}79.566%{opacity:1;transform:translate(166px,350px)}79.759%{opacity:0;transform:translate(166px,350px)}100.000%{opacity:0;transform:translate(166px,350px)}}
+.k58{animation:k58 41.5s linear infinite}
+@keyframes k59{0.000%{opacity:0;transform:translate(296px,402px)}79.759%{opacity:0;transform:translate(296px,402px)}79.952%{opacity:1;transform:translate(296px,402px)}81.253%{opacity:1;transform:translate(400px,402px)}81.446%{opacity:0;transform:translate(400px,402px)}100.000%{opacity:0;transform:translate(400px,402px)}}
+.k59{animation:k59 41.5s linear infinite}
+@keyframes k60{0.000%{opacity:0;transform:translate(530px,326px)}81.446%{opacity:0;transform:translate(530px,326px)}81.639%{opacity:1;transform:translate(530px,326px)}82.940%{opacity:1;transform:translate(530px,226px)}83.133%{opacity:0;transform:translate(530px,226px)}100.000%{opacity:0;transform:translate(530px,226px)}}
+.k60{animation:k60 41.5s linear infinite}
+@keyframes k61{0.000%{opacity:0;transform:translate(660px,163px)}83.133%{opacity:0;transform:translate(660px,163px)}83.325%{opacity:1;transform:translate(660px,163px)}84.627%{opacity:1;transform:translate(736px,163px)}84.819%{opacity:0;transform:translate(736px,163px)}100.000%{opacity:0;transform:translate(736px,163px)}}
+.k61{animation:k61 41.5s linear infinite}
+@keyframes k62{0.000%{opacity:0}84.819%{opacity:0}85.422%{opacity:1}89.157%{opacity:1}89.759%{opacity:0}100.000%{opacity:0}}
+.k62{animation:k62 41.5s linear infinite}
+@keyframes k63{0.000%{opacity:0}87.952%{opacity:0}88.554%{opacity:1}89.157%{opacity:1}89.759%{opacity:0}100.000%{opacity:0}}
+.k63{animation:k63 41.5s linear infinite}
+@keyframes k64{0.000%{opacity:0}84.819%{opacity:0}85.422%{opacity:1}89.157%{opacity:1}89.759%{opacity:0}100.000%{opacity:0}}
+.k64{animation:k64 41.5s linear infinite}
+@keyframes k65{0.000%{opacity:0}89.157%{opacity:0}89.759%{opacity:1}99.277%{opacity:1}99.880%{opacity:0}100.000%{opacity:0}}
+.k65{animation:k65 41.5s linear infinite}
+@keyframes k66{0.000%{opacity:0;transform:translate(736px,163px)}89.157%{opacity:0;transform:translate(736px,163px)}89.349%{opacity:1;transform:translate(736px,163px)}90.651%{opacity:1;transform:translate(660px,163px)}90.843%{opacity:0;transform:translate(660px,163px)}100.000%{opacity:0;transform:translate(660px,163px)}}
+.k66{animation:k66 41.5s linear infinite}
+@keyframes k67{0.000%{opacity:0;transform:translate(530px,226px)}90.843%{opacity:0;transform:translate(530px,226px)}91.036%{opacity:1;transform:translate(530px,226px)}92.337%{opacity:1;transform:translate(530px,326px)}92.530%{opacity:0;transform:translate(530px,326px)}100.000%{opacity:0;transform:translate(530px,326px)}}
+.k67{animation:k67 41.5s linear infinite}
+@keyframes k68{0.000%{opacity:0}92.289%{opacity:0}92.892%{opacity:1}99.036%{opacity:1}99.639%{opacity:0}100.000%{opacity:0}}
+.k68{animation:k68 41.5s linear infinite}
+@keyframes k69{0.000%{opacity:0;transform:translate(400px,402px)}92.771%{opacity:0;transform:translate(400px,402px)}92.964%{opacity:1;transform:translate(400px,402px)}94.265%{opacity:1;transform:translate(296px,402px)}94.458%{opacity:0;transform:translate(296px,402px)}100.000%{opacity:0;transform:translate(296px,402px)}}
+.k69{animation:k69 41.5s linear infinite}
+@keyframes k70{0.000%{opacity:0;transform:translate(166px,350px)}94.458%{opacity:0;transform:translate(166px,350px)}94.651%{opacity:1;transform:translate(166px,350px)}95.952%{opacity:1;transform:translate(166px,240px)}96.145%{opacity:0;transform:translate(166px,240px)}100.000%{opacity:0;transform:translate(166px,240px)}}
+.k70{animation:k70 41.5s linear infinite}
+@keyframes k71{0.000%{opacity:0}0.602%{opacity:1}22.169%{opacity:1}22.771%{opacity:0}100.000%{opacity:0}}
+.k71{animation:k71 41.5s linear infinite}
+@keyframes k72{0.000%{opacity:0}0.120%{opacity:0}0.723%{opacity:1}22.048%{opacity:1}22.651%{opacity:0}100.000%{opacity:0}}
+.k72{animation:k72 41.5s linear infinite}
+@keyframes k73{0.000%{opacity:0}22.892%{opacity:0}23.494%{opacity:1}51.084%{opacity:1}51.687%{opacity:0}100.000%{opacity:0}}
+.k73{animation:k73 41.5s linear infinite}
+@keyframes k74{0.000%{opacity:0}23.012%{opacity:0}23.614%{opacity:1}50.964%{opacity:1}51.566%{opacity:0}100.000%{opacity:0}}
+.k74{animation:k74 41.5s linear infinite}
+@keyframes k75{0.000%{opacity:0}51.807%{opacity:0}52.410%{opacity:1}76.386%{opacity:1}76.988%{opacity:0}100.000%{opacity:0}}
+.k75{animation:k75 41.5s linear infinite}
+@keyframes k76{0.000%{opacity:0}51.928%{opacity:0}52.530%{opacity:1}76.265%{opacity:1}76.867%{opacity:0}100.000%{opacity:0}}
+.k76{animation:k76 41.5s linear infinite}
+@keyframes k77{0.000%{opacity:0}77.108%{opacity:0}77.711%{opacity:1}99.277%{opacity:1}99.880%{opacity:0}100.000%{opacity:0}}
+.k77{animation:k77 41.5s linear infinite}
+@keyframes k78{0.000%{opacity:0}77.229%{opacity:0}77.831%{opacity:1}99.157%{opacity:1}99.759%{opacity:0}100.000%{opacity:0}}
+.k78{animation:k78 41.5s linear infinite}
+@keyframes k79{0.000%{opacity:0}100.000%{opacity:0}}
+.k79{animation:k79 41.5s linear infinite}</style>
+<rect x="0" y="0" width="1200" height="680" rx="18" fill="#0b1020" stroke="none" stroke-width="1"/>
+<rect x="16" y="14" width="284" height="38" rx="19" fill="#1a2236" stroke="#334155" stroke-width="1"/>
+<text x="34" y="38.5" font-size="14" fill="#f87171" font-weight="700">✕</text>
+<text x="52" y="37.5" font-size="12.5" fill="#e2e8f0" font-weight="600">The agent never talks to the hub</text>
+<rect x="308" y="14" width="284" height="38" rx="19" fill="#1a2236" stroke="#334155" stroke-width="1"/>
+<text x="326" y="38.5" font-size="14" fill="#c4b5fd" font-weight="700">◆</text>
+<text x="344" y="37.5" font-size="12.5" fill="#e2e8f0" font-weight="600">The hub sees masked tickets only</text>
+<rect x="600" y="14" width="284" height="38" rx="19" fill="#1a2236" stroke="#334155" stroke-width="1"/>
+<text x="618" y="38.5" font-size="14" fill="#89b4fa" font-weight="700">▣</text>
+<text x="636" y="37.5" font-size="12.5" fill="#e2e8f0" font-weight="600">You approve outside the harness</text>
+<rect x="892" y="14" width="292" height="38" rx="19" fill="#1a2236" stroke="#334155" stroke-width="1"/>
+<text x="910" y="38.5" font-size="14" fill="#4ade80" font-weight="700">✓</text>
+<text x="928" y="37.5" font-size="12.5" fill="#e2e8f0" font-weight="600">Reads auto · writes asked</text>
+<rect x="16" y="74" width="300" height="404" rx="16" fill="none" stroke="#89b4fa" stroke-width="1.6" stroke-dasharray="6 5"/>
+<text x="32" y="98" font-size="13" fill="#89b4fa" font-weight="700">agent harness</text>
+<text x="138" y="98" font-size="12" fill="#a3b1c6">your agent’s tools</text>
+<path d="M166 240 L166 350" fill="none" stroke="#475569" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M296 402 L400 402" fill="none" stroke="#475569" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M530 326 L530 226" fill="none" stroke="#475569" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M660 163 L736 163" fill="none" stroke="#475569" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M530 466 L530 536" fill="none" stroke="#475569" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="224" y="299" font-size="11.5" fill="#a3b1c6" font-weight="600">MCP</text>
+<text x="348" y="384" font-size="11.5" fill="#a3b1c6" font-weight="600" text-anchor="middle">socket</text>
+<text x="612" y="268" font-size="11.5" fill="#a3b1c6" font-weight="600">↑ masked ticket</text>
+<text x="612" y="283" font-size="11.5" fill="#a3b1c6" font-weight="600">↓ signed decision</text>
+<text x="698" y="192" font-size="11.5" fill="#a3b1c6" font-weight="600" text-anchor="middle">queue</text>
+<path d="M296 163 L400 163" fill="none" stroke="#f87171" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 5"/>
+<circle cx="348" cy="163" r="11" fill="#0b1020" stroke="#f87171" stroke-width="1.6"/>
+<text x="348" y="167.5" font-size="13" fill="#f87171" font-weight="700" text-anchor="middle">✕</text>
+<text x="348" y="145" font-size="11.5" fill="#f87171" font-weight="600" text-anchor="middle">no route</text>
+<rect x="36" y="116" width="260" height="124" rx="12" fill="#111827" stroke="#334155" stroke-width="1.2"/>
+<rect x="36" y="116" width="5" height="124" rx="2.5" fill="#89b4fa" stroke="none" stroke-width="1"/>
+<text x="54" y="142" font-size="16" fill="#e2e8f0" font-weight="700">agent</text>
+<text x="54" y="162" font-size="12" fill="#a3b1c6">Claude Code · Codex · lea</text>
+<rect x="36" y="350" width="260" height="104" rx="12" fill="#111827" stroke="#334155" stroke-width="1.2"/>
+<rect x="36" y="350" width="5" height="104" rx="2.5" fill="#89b4fa" stroke="none" stroke-width="1"/>
+<text x="54" y="376" font-size="16" fill="#e2e8f0" font-weight="700">Lock client</text>
+<text x="54" y="396" font-size="12" fill="#a3b1c6">MCP server</text>
+<text x="54" y="413" font-size="12" fill="#a3b1c6">no credential</text>
+<text x="54" y="430" font-size="12" fill="#a3b1c6">no connection</text>
+<rect x="400" y="326" width="260" height="140" rx="12" fill="#111827" stroke="#334155" stroke-width="1.2"/>
+<rect x="400" y="326" width="5" height="140" rx="2.5" fill="#5eead4" stroke="none" stroke-width="1"/>
+<text x="418" y="352" font-size="16" fill="#e2e8f0" font-weight="700">lock</text>
+<text x="418" y="372" font-size="12" fill="#a3b1c6">locksql · lockmq · lockfile · lockhttp</text>
+<text x="418" y="389" font-size="12" fill="#a3b1c6">holds the credentials</text>
+<text x="418" y="406" font-size="12" fill="#a3b1c6">masks every value it returns</text>
+<rect x="400" y="100" width="260" height="126" rx="12" fill="#111827" stroke="#334155" stroke-width="1.2"/>
+<rect x="400" y="100" width="5" height="126" rx="2.5" fill="#c4b5fd" stroke="none" stroke-width="1"/>
+<text x="418" y="126" font-size="16" fill="#e2e8f0" font-weight="700">hub</text>
+<text x="418" y="146" font-size="12" fill="#a3b1c6">queues tickets, signs decisions</text>
+<text x="418" y="163" font-size="12" fill="#a3b1c6">masked tickets only: no query,</text>
+<text x="418" y="180" font-size="12" fill="#a3b1c6">no result, no value in clear</text>
+<rect x="318" y="536" width="78" height="28" rx="8" fill="#1a2236" stroke="#334155" stroke-width="1"/>
+<text x="357" y="554.5" font-size="12" fill="#a3b1c6" text-anchor="middle">RabbitMQ</text>
+<rect x="404" y="536" width="78" height="28" rx="8" fill="#1a2236" stroke="#334155" stroke-width="1"/>
+<text x="443" y="554.5" font-size="12" fill="#a3b1c6" text-anchor="middle">files</text>
+<rect x="491" y="536" width="78" height="28" rx="8" fill="#111827" stroke="#5eead4" stroke-width="1.6"/>
+<text x="530" y="554.5" font-size="12" fill="#e2e8f0" font-weight="700" text-anchor="middle">Database</text>
+<rect x="578" y="536" width="78" height="28" rx="8" fill="#1a2236" stroke="#334155" stroke-width="1"/>
+<text x="617" y="554.5" font-size="12" fill="#a3b1c6" text-anchor="middle">HTTP</text>
+<rect x="664" y="536" width="78" height="28" rx="8" fill="#1a2236" stroke="#334155" stroke-width="1"/>
+<text x="703" y="554.5" font-size="12" fill="#a3b1c6" text-anchor="middle">logs</text>
+<rect x="736" y="74" width="448" height="452" rx="12" fill="#060a16" stroke="#334155" stroke-width="1.2"/>
+<rect x="736" y="74" width="448" height="34" rx="12" fill="#1e293b" stroke="none" stroke-width="1"/>
+<rect x="736" y="96" width="448" height="12" rx="0" fill="#1e293b" stroke="none" stroke-width="1"/>
+<circle cx="754" cy="91" r="5" fill="#f87171"/>
+<circle cx="770" cy="91" r="5" fill="#fbbf24"/>
+<circle cx="786" cy="91" r="5" fill="#4ade80"/>
+<circle cx="812" cy="87" r="4.2" fill="#e2e8f0"/>
+<path d="M804.5 101 a7.5 7 0 0 1 15 0 z" fill="#e2e8f0"/>
+<text x="828" y="96" font-size="12.5" fill="#e2e8f0" font-weight="600">you · your own terminal, outside the harness</text>
+<text x="750" y="132" font-size="12.5" fill="#e2e8f0" class="m" font-weight="700">lox run</text>
+<rect x="811" y="119" width="46" height="18" rx="4" fill="#14532d" stroke="none" stroke-width="1"/>
+<text x="834" y="132" font-size="11.5" fill="#bbf7d0" class="m" font-weight="700" text-anchor="middle">AUTO</text>
+<text x="1170" y="132" font-size="11.5" fill="#4ade80" class="m" text-anchor="end">● hub up · 1 lock</text>
+<text x="867" y="132" font-size="11.5" fill="#94a3b8" class="m">~/shop</text>
+<path d="M737 163 L1183 163" fill="none" stroke="#334155" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M737 492 L1183 492" fill="none" stroke="#334155" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="750" y="513" font-size="11.5" fill="#e2e8f0" class="m"><tspan fill="#e2e8f0" font-weight="700">Shift+Tab</tspan><tspan fill="#94a3b8"> mode</tspan><tspan fill="#e2e8f0" font-weight="700">  a</tspan><tspan fill="#94a3b8"> audit</tspan><tspan fill="#e2e8f0" font-weight="700">  ?</tspan><tspan fill="#94a3b8"> help</tspan><tspan fill="#e2e8f0" font-weight="700">  q</tspan><tspan fill="#94a3b8"> quit</tspan></text>
+<g class="a k1" opacity="1"><text x="54" y="194" font-size="11.5" fill="#89b4fa" class="m" font-weight="600">› SELECT email FROM customers</text></g>
+<g class="a k2" opacity="1"><text x="54" y="218" font-size="11.5" fill="#5eead4" class="m" font-weight="600">‹ j***@example.com ×20</text></g>
+<g class="a k3" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
+<g class="a k4" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
+<g class="a k5" opacity="0"><rect x="-62.61" y="-11" width="125.22" height="22" rx="11" fill="#0b1020" stroke="#c4b5fd" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#c4b5fd" class="m" text-anchor="middle" font-weight="600">ticket · masked</text></g>
+<g class="a k6" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#c4b5fd" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#c4b5fd" class="m" text-anchor="middle" font-weight="600">ticket</text></g>
+<g class="a k7" opacity="0"><rect x="-24.03" y="-11" width="48.06" height="22" rx="11" fill="#0b1020" stroke="#4ade80" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#4ade80" class="m" text-anchor="middle" font-weight="600">auto</text></g>
+<g class="a k8" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#0b1020" stroke="#4ade80" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#4ade80" class="m" text-anchor="middle" font-weight="600">signed ✓</text></g>
+<g class="a k9" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
+<g class="a k10" opacity="0"><rect x="-24.03" y="-11" width="48.06" height="22" rx="11" fill="#0b1020" stroke="#5eead4" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#5eead4" class="m" text-anchor="middle" font-weight="600">rows</text></g>
+<g class="a k11" opacity="0"><rect x="-48.58" y="-11" width="97.16" height="22" rx="11" fill="#0b1020" stroke="#5eead4" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#5eead4" class="m" text-anchor="middle" font-weight="600">masked rows</text></g>
+<g class="a k12" opacity="0"><rect x="-48.58" y="-11" width="97.16" height="22" rx="11" fill="#0b1020" stroke="#5eead4" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#5eead4" class="m" text-anchor="middle" font-weight="600">masked rows</text></g>
+<g class="a k13" opacity="1"><text x="750" y="374" font-size="11.5" fill="#e2e8f0" class="m"><tspan fill="#94a3b8">14:01 </tspan><tspan fill="#89b4fa">claude </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">replica </tspan><tspan fill="#94a3b8">read  </tspan><tspan fill="#e2e8f0">SELECT email…  </tspan><tspan fill="#4ade80" font-weight="700">auto ✓</tspan></text></g>
+<g class="a k14" opacity="0"><text x="418" y="450" font-size="11.5" fill="#a3b1c6" class="m">● replica   ○ primary</text></g>
+<g class="a k15" opacity="1"><text x="418" y="450" font-size="11.5" fill="#4ade80" class="m" font-weight="600">● replica   ● primary</text></g>
+<g class="a k16" opacity="0"><text x="54" y="194" font-size="11.5" fill="#89b4fa" class="m" font-weight="600">› SELECT count(*) FROM orders</text></g>
+<g class="a k17" opacity="0"><text x="54" y="218" font-size="11.5" fill="#5eead4" class="m" font-weight="600">‹ 1 row</text></g>
+<g class="a k18" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
+<g class="a k19" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
+<g class="a k20" opacity="0"><rect x="-69.63" y="-11" width="139.25" height="22" rx="11" fill="#0b1020" stroke="#c4b5fd" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#c4b5fd" class="m" text-anchor="middle" font-weight="600">connect · primary</text></g>
+<g class="a k21" opacity="0"><rect x="-34.55" y="-11" width="69.1" height="22" rx="11" fill="#0b1020" stroke="#c4b5fd" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#c4b5fd" class="m" text-anchor="middle" font-weight="600">connect</text></g>
+<g class="a k22" opacity="0"><rect x="746" y="174" width="428" height="150" rx="8" fill="#1c1917" stroke="#fbbf24" stroke-width="1.6"/><text x="760" y="196" font-size="12" fill="#fbbf24" class="m" font-weight="700">◆ QUESTION connect on shop/primary</text><text x="760" y="216" font-size="11.5" fill="#94a3b8" class="m">claude asks · ◆ locksql</text><text x="760" y="236" font-size="11.5" fill="#e2e8f0" class="m">shop / primary · connect db:5432/shop</text><text x="760" y="254" font-size="11.5" fill="#94a3b8" class="m">why asked: first connection to this</text><text x="760" y="272" font-size="11.5" fill="#94a3b8" class="m">profile in this session</text><text x="760" y="310" font-size="11.5" fill="#94a3b8" class="m">y approve   n deny   d details</text><path d="M1142 194 c0-5 2.5-8 6-8 s6 3 6 8 v4 l2 2 h-16 l2-2 z M1145.6 200.5 a2.4 2.4 0 0 0 4.8 0" fill="#fbbf24"/></g>
+<g class="a k23" opacity="0"><rect x="1128" y="298" width="32" height="20" rx="5" fill="#4ade80" stroke="none" stroke-width="1"/><text x="1144" y="313" font-size="13" fill="#0f172a" class="m" font-weight="700" text-anchor="middle">y</text></g>
+<g class="a k24" opacity="0"><text x="750" y="396" font-size="11.5" fill="#e2e8f0" class="m"><tspan fill="#94a3b8">14:02 </tspan><tspan fill="#89b4fa">claude </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#fbbf24">conn  </tspan><tspan fill="#e2e8f0">connect        </tspan><tspan fill="#fbbf24" font-weight="700">◆ asked</tspan></text></g>
+<g class="a k25" opacity="1"><text x="750" y="396" font-size="11.5" fill="#e2e8f0" class="m"><tspan fill="#94a3b8">14:02 </tspan><tspan fill="#89b4fa">claude </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#fbbf24">conn  </tspan><tspan fill="#e2e8f0">connect        </tspan><tspan fill="#4ade80" font-weight="700">✔ you ✓</tspan></text></g>
+<g class="a k26" opacity="0"><rect x="-13.51" y="-11" width="27.02" height="22" rx="11" fill="#0b1020" stroke="#4ade80" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#4ade80" class="m" text-anchor="middle" font-weight="600">y</text></g>
+<g class="a k27" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#0b1020" stroke="#4ade80" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#4ade80" class="m" text-anchor="middle" font-weight="600">signed ✓</text></g>
+<g class="a k28" opacity="0"><rect x="-34.55" y="-11" width="69.1" height="22" rx="11" fill="#0b1020" stroke="#4ade80" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#4ade80" class="m" text-anchor="middle" font-weight="600">connect</text></g>
+<g class="a k29" opacity="0"><text x="750" y="152" font-size="11.5" fill="#94a3b8" class="m">connected shop/replica 6m</text></g>
+<g class="a k30" opacity="1"><text x="750" y="152" font-size="11.5" fill="#94a3b8" class="m">connected shop/replica 6m · shop/primary 0s</text></g>
+<g class="a k31" opacity="0"><rect x="-62.61" y="-11" width="125.22" height="22" rx="11" fill="#0b1020" stroke="#c4b5fd" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#c4b5fd" class="m" text-anchor="middle" font-weight="600">ticket · masked</text></g>
+<g class="a k32" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#c4b5fd" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#c4b5fd" class="m" text-anchor="middle" font-weight="600">ticket</text></g>
+<g class="a k33" opacity="1"><text x="750" y="418" font-size="11.5" fill="#e2e8f0" class="m"><tspan fill="#94a3b8">14:02 </tspan><tspan fill="#89b4fa">claude </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#94a3b8">read  </tspan><tspan fill="#e2e8f0">SELECT count(… </tspan><tspan fill="#4ade80" font-weight="700">auto ✓</tspan></text></g>
+<g class="a k34" opacity="0"><rect x="-24.03" y="-11" width="48.06" height="22" rx="11" fill="#0b1020" stroke="#4ade80" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#4ade80" class="m" text-anchor="middle" font-weight="600">auto</text></g>
+<g class="a k35" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#0b1020" stroke="#4ade80" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#4ade80" class="m" text-anchor="middle" font-weight="600">signed ✓</text></g>
+<g class="a k36" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
+<g class="a k37" opacity="0"><rect x="-27.54" y="-11" width="55.07" height="22" rx="11" fill="#0b1020" stroke="#5eead4" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#5eead4" class="m" text-anchor="middle" font-weight="600">1 row</text></g>
+<g class="a k38" opacity="0"><rect x="-27.54" y="-11" width="55.07" height="22" rx="11" fill="#0b1020" stroke="#5eead4" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#5eead4" class="m" text-anchor="middle" font-weight="600">1 row</text></g>
+<g class="a k39" opacity="0"><rect x="-27.54" y="-11" width="55.07" height="22" rx="11" fill="#0b1020" stroke="#5eead4" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#5eead4" class="m" text-anchor="middle" font-weight="600">1 row</text></g>
+<g class="a k40" opacity="0"><text x="54" y="194" font-size="11.5" fill="#89b4fa" class="m" font-weight="600">› UPDATE orders SET status=…</text></g>
+<g class="a k41" opacity="0"><text x="54" y="218" font-size="11.5" fill="#4ade80" class="m" font-weight="600">‹ 1 row updated</text></g>
+<g class="a k42" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">UPDATE</text></g>
+<g class="a k43" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">UPDATE</text></g>
+<g class="a k44" opacity="0"><rect x="-59.1" y="-11" width="118.21" height="22" rx="11" fill="#0b1020" stroke="#c4b5fd" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#c4b5fd" class="m" text-anchor="middle" font-weight="600">ticket · write</text></g>
+<g class="a k45" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#c4b5fd" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#c4b5fd" class="m" text-anchor="middle" font-weight="600">ticket</text></g>
+<g class="a k46" opacity="0"><rect x="746" y="174" width="428" height="150" rx="8" fill="#1c1917" stroke="#fbbf24" stroke-width="1.6"/><text x="760" y="196" font-size="12" fill="#fbbf24" class="m" font-weight="700">◆ QUESTION write on shop/primary</text><text x="760" y="216" font-size="11.5" fill="#94a3b8" class="m">claude asks · ◆ locksql</text><text x="760" y="236" font-size="11.5" fill="#e2e8f0" class="m">UPDATE orders SET status = ‹p***(4)›</text><text x="760" y="254" font-size="11.5" fill="#e2e8f0" class="m">  WHERE id = ‹4***(5)›  -- 1 row</text><text x="760" y="272" font-size="11.5" fill="#94a3b8" class="m">why asked: write is always asked</text><text x="760" y="310" font-size="11.5" fill="#94a3b8" class="m">y approve   n deny   d details</text><path d="M1142 194 c0-5 2.5-8 6-8 s6 3 6 8 v4 l2 2 h-16 l2-2 z M1145.6 200.5 a2.4 2.4 0 0 0 4.8 0" fill="#fbbf24"/></g>
+<g class="a k47" opacity="0"><rect x="1128" y="298" width="32" height="20" rx="5" fill="#4ade80" stroke="none" stroke-width="1"/><text x="1144" y="313" font-size="13" fill="#0f172a" class="m" font-weight="700" text-anchor="middle">y</text></g>
+<g class="a k48" opacity="0"><text x="750" y="440" font-size="11.5" fill="#e2e8f0" class="m"><tspan fill="#94a3b8">14:03 </tspan><tspan fill="#89b4fa">claude </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#fbbf24" font-weight="700">write </tspan><tspan fill="#e2e8f0">UPDATE orders… </tspan><tspan fill="#fbbf24" font-weight="700">◆ asked</tspan></text></g>
+<g class="a k49" opacity="1"><text x="750" y="440" font-size="11.5" fill="#e2e8f0" class="m"><tspan fill="#94a3b8">14:03 </tspan><tspan fill="#89b4fa">claude </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#fbbf24" font-weight="700">write </tspan><tspan fill="#e2e8f0">UPDATE orders… </tspan><tspan fill="#4ade80" font-weight="700">✔ you ✓</tspan></text></g>
+<g class="a k50" opacity="0"><rect x="-13.51" y="-11" width="27.02" height="22" rx="11" fill="#0b1020" stroke="#4ade80" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#4ade80" class="m" text-anchor="middle" font-weight="600">y</text></g>
+<g class="a k51" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#0b1020" stroke="#4ade80" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#4ade80" class="m" text-anchor="middle" font-weight="600">signed ✓</text></g>
+<g class="a k52" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">UPDATE</text></g>
+<g class="a k53" opacity="0"><rect x="-27.54" y="-11" width="55.07" height="22" rx="11" fill="#0b1020" stroke="#5eead4" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#5eead4" class="m" text-anchor="middle" font-weight="600">1 row</text></g>
+<g class="a k54" opacity="0"><rect x="-55.6" y="-11" width="111.19" height="22" rx="11" fill="#0b1020" stroke="#4ade80" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#4ade80" class="m" text-anchor="middle" font-weight="600">1 row updated</text></g>
+<g class="a k55" opacity="0"><rect x="-55.6" y="-11" width="111.19" height="22" rx="11" fill="#0b1020" stroke="#4ade80" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#4ade80" class="m" text-anchor="middle" font-weight="600">1 row updated</text></g>
+<g class="a k56" opacity="0"><text x="54" y="194" font-size="11.5" fill="#89b4fa" class="m" font-weight="600">› DELETE FROM customers …</text></g>
+<g class="a k57" opacity="0"><text x="54" y="218" font-size="11.5" fill="#f87171" class="m" font-weight="600">‹ denied in lox run</text></g>
+<g class="a k58" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">DELETE</text></g>
+<g class="a k59" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">DELETE</text></g>
+<g class="a k60" opacity="0"><rect x="-59.1" y="-11" width="118.21" height="22" rx="11" fill="#0b1020" stroke="#c4b5fd" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#c4b5fd" class="m" text-anchor="middle" font-weight="600">ticket · write</text></g>
+<g class="a k61" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#c4b5fd" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#c4b5fd" class="m" text-anchor="middle" font-weight="600">ticket</text></g>
+<g class="a k62" opacity="0"><rect x="746" y="174" width="428" height="150" rx="8" fill="#1c1917" stroke="#fbbf24" stroke-width="1.6"/><text x="760" y="196" font-size="12" fill="#fbbf24" class="m" font-weight="700">◆ QUESTION write on shop/primary</text><text x="760" y="216" font-size="11.5" fill="#94a3b8" class="m">claude asks · ◆ locksql</text><text x="760" y="236" font-size="11.5" fill="#e2e8f0" class="m">DELETE FROM customers</text><text x="760" y="254" font-size="11.5" fill="#e2e8f0" class="m">  WHERE created &lt; ‹2***(10)›  -- 3812 rows</text><text x="760" y="272" font-size="11.5" fill="#94a3b8" class="m">why asked: write is always asked</text><text x="760" y="310" font-size="11.5" fill="#94a3b8" class="m">y approve   n deny   d details</text><path d="M1142 194 c0-5 2.5-8 6-8 s6 3 6 8 v4 l2 2 h-16 l2-2 z M1145.6 200.5 a2.4 2.4 0 0 0 4.8 0" fill="#fbbf24"/></g>
+<g class="a k63" opacity="0"><rect x="1128" y="298" width="32" height="20" rx="5" fill="#f87171" stroke="none" stroke-width="1"/><text x="1144" y="313" font-size="13" fill="#0f172a" class="m" font-weight="700" text-anchor="middle">n</text></g>
+<g class="a k64" opacity="0"><text x="750" y="462" font-size="11.5" fill="#e2e8f0" class="m"><tspan fill="#94a3b8">14:04 </tspan><tspan fill="#89b4fa">claude </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#fbbf24" font-weight="700">write </tspan><tspan fill="#e2e8f0">DELETE FROM c… </tspan><tspan fill="#fbbf24" font-weight="700">◆ asked</tspan></text></g>
+<g class="a k65" opacity="1"><text x="750" y="462" font-size="11.5" fill="#e2e8f0" class="m"><tspan fill="#94a3b8">14:04 </tspan><tspan fill="#89b4fa">claude </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#fbbf24" font-weight="700">write </tspan><tspan fill="#e2e8f0">DELETE FROM c… </tspan><tspan fill="#f87171" font-weight="700">✘ denied</tspan></text></g>
+<g class="a k66" opacity="0"><rect x="-13.51" y="-11" width="27.02" height="22" rx="11" fill="#0b1020" stroke="#f87171" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#f87171" class="m" text-anchor="middle" font-weight="600">n</text></g>
+<g class="a k67" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#0b1020" stroke="#f87171" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#f87171" class="m" text-anchor="middle" font-weight="600">signed ✘</text></g>
+<g class="a k68" opacity="0"><circle cx="530" cy="501" r="11" fill="#0b1020" stroke="#f87171" stroke-width="1.6"/><text x="530" y="505.5" font-size="13" fill="#f87171" font-weight="700" text-anchor="middle">✕</text><text x="548" y="505.5" font-size="11.5" fill="#f87171" font-weight="700">not run</text></g>
+<g class="a k69" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#f87171" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#f87171" class="m" text-anchor="middle" font-weight="600">denied</text></g>
+<g class="a k70" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#0b1020" stroke="#f87171" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#f87171" class="m" text-anchor="middle" font-weight="600">denied</text></g>
+<rect x="1024" y="584" width="34" height="5" rx="2.5" fill="#334155" stroke="none" stroke-width="1"/>
+<g class="a k71" opacity="0"><rect x="1024" y="584" width="34" height="5" rx="2.5" fill="#89b4fa" stroke="none" stroke-width="1"/></g>
+<g class="a k72" opacity="0"><text x="16" y="616" font-size="17" fill="#e2e8f0" font-weight="700">1 · A read: no question</text><text x="16" y="638" font-size="13" fill="#a3b1c6">SELECT on replica: the lock sends a masked ticket, an auto rule in lox run</text><text x="16" y="656" font-size="13" fill="#a3b1c6">approves it, the hub signs, masked rows come back to the agent.</text></g>
+<rect x="1064" y="584" width="34" height="5" rx="2.5" fill="#334155" stroke="none" stroke-width="1"/>
+<g class="a k73" opacity="0"><rect x="1064" y="584" width="34" height="5" rx="2.5" fill="#89b4fa" stroke="none" stroke-width="1"/></g>
+<g class="a k74" opacity="0"><text x="16" y="616" font-size="17" fill="#e2e8f0" font-weight="700">2 · First use of a profile: asked once</text><text x="16" y="638" font-size="13" fill="#a3b1c6">primary is not connected: the lock sends a connect ticket, lox run asks you</text><text x="16" y="656" font-size="13" fill="#a3b1c6">y/n once this session, the lock connects on the signed decision.</text></g>
+<rect x="1104" y="584" width="34" height="5" rx="2.5" fill="#334155" stroke="none" stroke-width="1"/>
+<g class="a k75" opacity="0"><rect x="1104" y="584" width="34" height="5" rx="2.5" fill="#89b4fa" stroke="none" stroke-width="1"/></g>
+<g class="a k76" opacity="0"><text x="16" y="616" font-size="17" fill="#e2e8f0" font-weight="700">3 · A write: always asked</text><text x="16" y="638" font-size="13" fill="#a3b1c6">UPDATE on primary is asked even in auto mode; the lock runs it only on</text><text x="16" y="656" font-size="13" fill="#a3b1c6">the signed approval, bound to that exact plan.</text></g>
+<rect x="1144" y="584" width="34" height="5" rx="2.5" fill="#334155" stroke="none" stroke-width="1"/>
+<g class="a k77" opacity="0"><rect x="1144" y="584" width="34" height="5" rx="2.5" fill="#89b4fa" stroke="none" stroke-width="1"/></g>
+<g class="a k78" opacity="0"><text x="16" y="616" font-size="17" fill="#e2e8f0" font-weight="700">4 · A denied write</text><text x="16" y="638" font-size="13" fill="#a3b1c6">DELETE on primary: you answer n, the signed denial reaches the lock,</text><text x="16" y="656" font-size="13" fill="#a3b1c6">which never runs it. The agent only learns it was denied.</text></g>
+<g class="a k79" opacity="1"><text x="16" y="616" font-size="15" fill="#e2e8f0" font-weight="700">agent → Lock client → socket → lock → masked ticket → hub → lox run → signed decision → lock → agent</text><text x="16" y="638" font-size="13" fill="#a3b1c6">Reads pass by an auto rule; a connection, a write and DDL wait for you in lox run.</text></g>
+</svg>

@@ -352,6 +352,11 @@ main { position: relative; outline: none; }
 .lea-demo img { display: block; width: 100%; border-radius: 12px; border: 1px solid var(--border); background: #11111b; }
 .lea-demo figcaption { margin-top: 8px; font-size: 0.85rem; color: var(--muted); }
 
+/* the request flow, animated (assets/flow-*.svg, from tools/flow_svg.py) */
+.flow-anim { margin: 24px 0 0; }
+.flow-anim img { display: block; width: 100%; height: auto; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
+.flow-anim figcaption { margin-top: 8px; font-size: 0.85rem; color: var(--muted); }
+
 /* quick start */
 .qs { margin-top: 24px; }
 .qs-panel { padding: 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }

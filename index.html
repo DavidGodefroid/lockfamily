@@ -155,6 +155,16 @@
     <h2 id="principle-title">The agent asks. The Lock checks. You answer in lox run.</h2>
     <p class="section-lead">In-agent approval is a convenience; an approval outside the harness is a boundary. The credentials and the only connections live in a Lock's console, in a container of its own that the agent cannot reach, and each Lock reaches only the endpoints of its reviewed profile. The console sends what it would run, masked, to the approval hub, and runs it only on the signed decision taken there: by an auto rule or by you in <code>lox run</code>, or from <code>lox approve</code>, Slack, Telegram or a paired phone.</p>
 
+    <figure class="flow-anim">
+      <picture>
+        <source media="(max-width: 640px) and (prefers-color-scheme: dark)" srcset="assets/flow-dark-narrow.svg" width="480" height="1468">
+        <source media="(max-width: 640px)" srcset="assets/flow-light-narrow.svg" width="480" height="1468">
+        <source media="(prefers-color-scheme: dark)" srcset="assets/flow-dark.svg">
+        <img src="assets/flow-light.svg" width="1200" height="680" alt="The request flow, animated: the agent and its Lock client run in the agent harness; the client reaches the lock over a socket; the lock sends a masked ticket to the hub; lox run, in your own terminal outside the harness, decides by an auto rule or asks you; the hub signs the decision and the lock runs the request only on it, then returns masked results to the agent. The agent never talks to the hub, and the hub never sees a query or a result in clear. Four scenarios loop: an auto SELECT, a connection asked once per profile, an UPDATE you approve, a DELETE you deny." loading="lazy" decoding="async">
+      </picture>
+      <figcaption>Four requests in a loop: an auto read, the first connection to a profile, an approved write, a denied write. With reduced motion, the whole flow shows at once.</figcaption>
+    </figure>
+
     <div class="flow" data-flow>
       <div class="flow-tabs" role="group" aria-label="Show the example of">
         <button type="button" class="t-sql" aria-pressed="true" data-product="sql">locksql</button>
