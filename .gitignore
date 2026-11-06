@@ -1,3 +1,4 @@
 screenshots/
 audit/
 node_modules/
+__pycache__/
