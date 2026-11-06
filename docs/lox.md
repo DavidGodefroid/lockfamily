@@ -50,8 +50,9 @@ Docker and cosign are required: `lox add` and `lox run` check every image's
 signature against its release workflow. On Linux the database must listen on
 the Docker bridge, not only on 127.0.0.1 (`host.docker.internal` is the host's
 gateway). For lea's agents, the lock names your uid (`allowed_uids: [1000]`
-in `lockfamily.yaml`; `lox add` adds it when lea is installed). Any Claude
-Code on the host reaches the lock through its launcher (`locksql mcp`), which
+in `lockfamily.yaml`; `lox add` adds it when lea is installed). Any agent
+on the host (an MCP client such as Claude Code, Codex, Cursor or Gemini CLI)
+reaches the lock through its launcher (`locksql mcp`), which
 finds the nearest `.lockfamily/up.json` up from the working directory. lea
 reads `.lockfamily/up.json` only at the root of its projects directory, so
 with lea run `lox add` and `lox run` there.
@@ -61,7 +62,7 @@ with lea run `lox add` and `lox run` there.
 | Command | What it does |
 |---|---|
 | `lox run [--manual] [--theme light\|dark] [--no-start] [--no-upgrade] [--review] [-v] [--pin sha256:DIGEST] [--rotate hub\|INSTANCE\|all]` | start (or reuse) the hub and the locks after a review, then show every ticket and decision live, masked, and serve decisions: auto mode by default, Shift+Tab for manual; `a` opens the audit; quitting fails closed. `--manual` starts in manual mode; `--no-start` only serves decisions (another `lox run` started the hub and the locks); `--no-upgrade` keeps the pinned images instead of upgrading those older than this `lox`'s releases (verified with cosign); `--review` shows everything, the profiles line by line, and asks; `-v` shows cosign's and docker's own output; `--pin` sets the hub image by digest (going back to a previous hub); `--rotate` replaces a key before starting: the hub's, a lock's, or all (repeatable, or comma-separated) |
-| `lox add TYPE` | set one source up (locksql, lockmq, lockfile, lockhttp): its questions, the lock's profile, the declaration pinned by digest to the latest signed release, a short review, the console's questions; nothing is kept on a failure |
+| `lox add TYPE` | set one source up (locksql, lockmq, lockfile, lockhttp; locklog is on lockhub's main branch, in its next release; lockssh is not a type yet): its questions, the lock's profile, the declaration pinned by digest to the latest signed release, a short review, the console's questions; nothing is kept on a failure |
 | `lox add TYPE INSTANCE [--version vX.Y.Z \| --image REF] [--profile P] [--hub-image REF]` | the older form: only declare a lock in `lockfamily.yaml`, pinned by digest |
 | `lox init [--review] [--hub-image REF]` | start the project's hub alone: prerequisites, the data sources its files name as hints (read only, no secret), a `lockfamily.yaml` with the hub alone; it asks nothing |
 | `lox remove NAME [--purge]` | take a lock out of `lockfamily.yaml` and stop its console after one review; its profile stays unless `--purge`; a `n`, a failure or Ctrl-C keeps the lock |
@@ -153,7 +154,7 @@ the projects directory declares locks and no `lox run` serves them, lea says
 so as it starts, and the agents' requests wait at the hub. lea gives its
 agents the locks' sockets named in `.lockfamily/up.json`, never the hub, and
 mounts them when its container starts: a lock added while lea runs needs
-`lea stop`, then `lea`. Host agents (any Claude Code) reach the same locks
+`lea stop`, then `lea`. Host agents (any MCP client) reach the same locks
 through each lock's launcher, which reads `up.json` too. The contract is
 lockhub's
 [docs/lox-run.md](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-run.md).

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the Lock Family logos (assets/{mark,locksql,lockmq,lockfile,lockhttp,lea}.svg).
+"""Generate the Lock Family logos (assets/{mark,locksql,lockmq,lockfile,lockhttp,locklog,lockssh,lea}.svg).
 
     python3 tools/logo_svg.py          # write them
     python3 tools/logo_svg.py --check  # fail if they differ from the generator
@@ -57,6 +57,13 @@ LOGOS = {
                  SHACKLE + BODY +
                  '<g class="i" %s><circle cx="64" cy="84" r="17"/><ellipse cx="64" cy="84" rx="7" ry="17"/>'
                  '<path d="M47 84 H81"/></g>' % G),
+    'locklog': ('locklog', 'The family padlock; engraved in its body, ruled log lines, a timestamp on each and one value masked.',
+                SHACKLE + BODY +
+                '<g class="i" %s><path d="M32 72 H40 M50 72 H94"/><path d="M32 84 H40"/><path d="M32 96 H40 M50 96 H86"/></g>'
+                '<path class="d" d="M50 84 H90" stroke-width="4.5" stroke-dasharray="0.5 7" stroke-linecap="round" fill="none"/>' % G),
+    'lockssh': ('lockssh', 'The family padlock; engraved in its body, a shell prompt.',
+                SHACKLE + BODY +
+                '<g class="i" %s><path d="M42 73 L54 84 L42 95"/><path d="M62 96 H84"/></g>' % G),
     'lea': ('lea', 'A sealed container drawn in the family style: three agents inside, one waiting for you.',
             '<rect class="p i" x="14" y="14" width="100" height="100" rx="14" stroke-width="6"/>'
             '<g fill="none" stroke-width="6" stroke-linecap="round"><path class="i" d="M56 44 H92"/>'

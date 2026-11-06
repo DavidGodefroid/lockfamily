@@ -1,4 +1,4 @@
-// lock family — the tab sets (quick start, hub). No dependencies.
+// lock family — the tab sets (quick start, hub) and the Copy buttons. No dependencies.
 (function () {
   "use strict";
   document.documentElement.classList.add("js");
@@ -27,5 +27,60 @@
       });
     });
     select(0, false);
+  });
+
+  // Copy buttons on the install boxes: copy the commands only (no prompt,
+  // no comment). Without JS the <pre> stays plain, selectable text.
+  function commands(pre) {
+    var code = pre.cloneNode(true);
+    Array.prototype.forEach.call(code.querySelectorAll(".c, .prompt"), function (n) { n.remove(); });
+    return code.textContent.split("\n").map(function (l) { return l.replace(/\s+$/, ""); })
+      .filter(function (l) { return l !== ""; }).join("\n") + "\n";
+  }
+  function fallbackCopy(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-copy]"), function (box) {
+    var pre = box.querySelector("pre");
+    var bar = box.querySelector(".install-bar");
+    if (!pre || !bar) return;
+    var actions = document.createElement("span");
+    actions.className = "install-actions";
+    var status = document.createElement("span");
+    status.className = "copy-status";
+    status.setAttribute("role", "status");
+    status.setAttribute("aria-live", "polite");
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "copy";
+    btn.textContent = "Copy";
+    btn.setAttribute("aria-label", "Copy the install commands");
+    var timer;
+    function done(ok) {
+      status.textContent = ok ? "Copied" : "Select and copy";
+      clearTimeout(timer);
+      timer = setTimeout(function () { status.textContent = ""; }, 2500);
+    }
+    btn.addEventListener("click", function () {
+      var text = commands(pre);
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(fallbackCopy(text)); });
+      } else {
+        done(fallbackCopy(text));
+      }
+    });
+    actions.appendChild(status);
+    actions.appendChild(btn);
+    bar.appendChild(actions);
   });
 })();

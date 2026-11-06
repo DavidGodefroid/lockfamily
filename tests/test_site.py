@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.join(ROOT, 'tools'))
 import flow_svg  # noqa: E402
 import logo_svg  # noqa: E402
 
-LOGOS = ['mark', 'locksql', 'lockmq', 'lockfile', 'lockhttp', 'lea']
+LOGOS = ['mark', 'locksql', 'lockmq', 'lockfile', 'lockhttp', 'locklog', 'lockssh', 'lea']
 
 
 def read(rel):
@@ -196,6 +196,49 @@ class Page(unittest.TestCase):
             self.assertIn('>%s</span>' % who, principle)
         hub = self.html[self.html.index('id="hub"'):self.html.index('id="quick-start"')]
         self.assertIn('class="board-hub"', hub)
+
+    def test_install_box_in_hero_and_quick_start(self):
+        # The brew copy-paste box: plain <pre> without JS, a Copy button
+        # added by main.js, in the hero and in the quick start.
+        hero = self.html[self.html.index('class="hero'):self.html.index('class="locks-section')]
+        qs = self.html[self.html.index('id="quick-start"'):]
+        block = ('brew trust davidgodefroid/tap\nbrew install davidgodefroid/tap/lockfamily</code></pre>')
+        for part in (hero, qs):
+            self.assertIn('data-copy', part)
+            self.assertIn(block, part)
+        self.assertNotIn('<button type="button" class="copy"', self.html)
+        js = read('assets/main.js')
+        for w in ('navigator.clipboard', 'execCommand("copy")', 'aria-live', '"Copied"', '".c, .prompt"'):
+            self.assertIn(w, js)
+
+    def test_every_lock_presented(self):
+        locks = self.html[self.html.index('class="locks-section'):self.html.index('id="principle"')]
+        fit = self.html[self.html.index('id="fit"'):self.html.index('id="hub"')]
+        qs = self.html[self.html.index('id="quick-start"'):]
+        footer = self.html[self.html.index('<footer'):]
+        meta = re.search(r'<meta name="description" content="([^"]+)"', self.html).group(1)
+        for name in ('locksql', 'lockmq', 'lockfile', 'lockhttp', 'locklog', 'lockssh'):
+            self.assertIn('https://github.com/DavidGodefroid/%s"' % name, locks, name)
+            self.assertIn('assets/%s.svg' % name, fit, name)
+            self.assertIn('role="tab"', qs)
+            self.assertIn('>%s</button>' % name, qs, name)
+            self.assertIn('https://github.com/DavidGodefroid/%s"' % name, footer, name)
+        for w in ('databases', 'RabbitMQ', 'files', 'HTTP', 'logs', 'servers'):
+            self.assertIn(w, meta)
+
+    def test_links_go_to_repos(self):
+        # A Lock's product site is never a link target: its repository is.
+        for site in ('locksql.com', 'lockmq.com', 'lockfile.pro', 'lockhttp.com', 'locklog.dev', 'leadeck.dev'):
+            self.assertNotRegex(self.html, r'href="https?://(www\.)?%s' % re.escape(site), site)
+
+    def test_agent_neutral(self):
+        # No agent is the default: claude is one example among several.
+        self.assertNotIn('asked by</dt><dd>claude', self.html)
+        self.assertNotRegex(self.html, r'\n claude +<span class="c">')
+        for w in ('Codex', 'Cursor', 'Gemini CLI', 'any MCP client'):
+            self.assertIn(w, self.html)
+        lead = re.search(r'<p class="lead">(.*?)</p>', self.html, re.S).group(1)
+        self.assertLessEqual(len(re.findall(r'[.!?](\s|$)', re.sub(r'<[^>]+>', '', lead))), 2, lead)
 
     def test_no_emoji_icons(self):
         for e in ('🤖', '🔑', '🗄', '📨', '📄', '⚙︎'):

@@ -164,7 +164,7 @@ STILL_SUB = 'Reads pass by an auto rule; a connection, a write and DDL wait for 
 
 TITLE = 'How a request flows through the Lock Family'
 DESC = (
-    'An agent (Claude Code, Codex, lea) runs in its harness with a Lock client, an MCP server '
+    'An agent (any MCP client: Claude Code, Codex, Cursor, lea, …) runs in its harness with a Lock client, an MCP server '
     'that holds no credential. The client reaches the lock over a socket; the lock holds the '
     'credentials and the only connection to the database, RabbitMQ, files, HTTP or logs. The '
     'lock sends a masked ticket to the hub; the hub passes it to lox run, which the human keeps '
@@ -356,7 +356,7 @@ def build(theme, layout):
     lx_, ly_, la = nr['label']
     s.add(s.text(lx_, ly_, 'no route', 11.5, t['deny'], 600, la))
 
-    for n in s.node(L['agent'], 'agent', ['Claude Code · Codex · lea'], t['req']):
+    for n in s.node(L['agent'], 'agent', ['Claude Code · Codex · Cursor · lea'], t['req']):
         s.add(n)
     for n in s.node(L['client'], 'Lock client', ['MCP server', 'no credential', 'no connection'], t['req']):
         s.add(n)
@@ -447,7 +447,7 @@ def feed_line(s, row, time, profile, kind, request, decision):
     run pads them. decision: (label, colour)."""
     y = s.feed_y + 22 * row
     kcol = TERM['write'] if kind in ('write', 'conn') else TERM['dim']
-    cells = [(time, TERM['dim'], None), ('claude', TERM['agent'], None), ('◆ shop', TERM['text'], None),
+    cells = [(time, TERM['dim'], None), ('agent', TERM['agent'], None), ('◆ shop', TERM['text'], None),
              (profile, TERM['dim'], None), (kind, kcol, 700 if kind == 'write' else None),
              (request, TERM['text'], None)]
     spans = []
@@ -466,7 +466,7 @@ def card(s, title, lines):
     tx = cx + 14
     out = [s.rect(cx, cy, cw_, ch, 8, '#1c1917', TERM['asked'], 1.6)]
     out.append(s.text(tx, cy + 22, '◆ QUESTION ' + title, 12, TERM['asked'], 700, mono=True, box=box))
-    out.append(s.text(tx, cy + 42, 'claude asks · ◆ locksql', 11.5, TERM['dim'], mono=True, box=box))
+    out.append(s.text(tx, cy + 42, 'agent asks · ◆ locksql', 11.5, TERM['dim'], mono=True, box=box))
     for i, (txt, colr) in enumerate(lines):
         out.append(s.text(tx, cy + 62 + 18 * i, txt, 11.5, colr, mono=True, box=box))
     out.append(s.text(tx, cy + 136, 'y approve   n deny   d details', 11.5, TERM['dim'], mono=True, box=box))

@@ -19,7 +19,7 @@ lox add locksql
 | `locksql`, `lockmq`, `lockhttp`, `lockfile` (Linux only) | the launchers, `~/.local/bin/<tool>`, which run their release's images by digest; lockfile's seccomp profile in `~/.local/share/lockfile/` |
 | `cosign` | `~/.local/bin/cosign`, only when no cosign is on your PATH (the meta formula installs it too; `lox init` and the launchers' `update` use it) |
 
-`locklog` has no published release yet and is skipped. Docker is required:
+`locklog` and `lockssh` are not in the tap yet, so the installer does not install them (it says `locklog` is skipped); each has its own install script, in its repository. Docker is required:
 Docker Engine (Linux) or Docker Desktop (macOS) must be installed and
 running. Next step: `lox add <lock>` in your project, then `lox run` in a terminal of its own, outside the agent.
 

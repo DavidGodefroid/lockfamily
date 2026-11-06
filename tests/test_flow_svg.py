@@ -250,8 +250,8 @@ class Pages(unittest.TestCase):
     def test_readme(self):
         self.check('README.md')
         readme = read('README.md')
-        # Under the pitch, before the family table.
-        self.assertLess(readme.index('<picture>'), readme.index('## The family'))
+        # In How it works, before the Lock Family table.
+        self.assertLess(readme.index('<picture>'), readme.index('## The Lock Family'))
         self.assertLess(readme.index('> signed decision'), readme.index('<picture>'))
 
     def test_site(self):
