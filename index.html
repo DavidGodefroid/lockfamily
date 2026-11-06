@@ -228,7 +228,7 @@ PII columns touched: customers.email
         <p class="layer-label">Shared core</p>
         <div class="layer-body">
           <span class="kit-icon" aria-hidden="true">⚙︎</span>
-          <div><h3><a href="https://github.com/DavidGodefroid/lockkit">lockkit</a></h3><p>The console, hub-attached only, its isolated account and socket, policies the AI may tighten and only you loosen, the approval screen and the hub's tickets, the audit log, credentials asked at the first connection in <code>lox run</code> and sealed to the Lock, personal-data masks, MCP and agent wiring.</p></div>
+          <div><h3><a href="https://github.com/DavidGodefroid/lockkit">lockkit</a></h3><p>The console, hub-attached only, its isolated account and socket, policies the AI may tighten and only you loosen, the approval screen and the hub's tickets, the audit log, credentials kept in the console (an <code>ask</code> password typed at the first connection in <code>lox run</code> and sealed to the Lock, or a login read from HashiCorp Vault), personal-data masks, MCP and agent wiring.</p></div>
         </div>
       </div>
     </div>
@@ -282,10 +282,14 @@ lox run</code></pre>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="hub-cli" aria-labelledby="hub-tab-cli">
-        <p class="qs-meta">lockhub v0.9.0 · <code>lox add</code> and <code>lox import</code> only edit <code>.lockfamily/lockfamily.yaml</code>: the next <code>lox run</code> reviews every change with you</p>
-        <pre class="term" tabindex="0"><code>lox run [--manual] [--no-start] [--no-upgrade]
+        <p class="qs-meta">lockhub v0.9.0 · <code>lox add TYPE INSTANCE</code> and <code>lox import</code> only edit <code>.lockfamily/lockfamily.yaml</code>: the next <code>lox run</code> reviews every change with you</p>
+        <pre class="term" tabindex="0"><code>lox run [--manual] [--no-start] [--no-upgrade] [--review] [-v]
+        [--pin sha256:DIGEST] [--rotate hub|INSTANCE|all]
                   <span class="c"># review, start the hub and the locks, then serve decisions live:</span>
-                  <span class="c"># auto mode (Shift+Tab: manual), a: the audit, q q: quit (fail closed)</span>
+                  <span class="c"># auto mode (Shift+Tab: manual), a: the audit, q q: quit (fail closed);</span>
+                  <span class="c"># --no-start: serve only; --no-upgrade: keep the pinned images;</span>
+                  <span class="c"># --review: everything, line by line; -v: cosign's and docker's output;</span>
+                  <span class="c"># --pin: the hub image by digest; --rotate: replace a key first</span>
 lox init [--review] [--hub-image REF]
                   <span class="c"># start the project's hub alone; asks nothing; hints at the sources its files name</span>
 lox add TYPE      <span class="c"># locksql, lockmq, lockfile, lockhttp: its questions, profile, declaration,</span>
@@ -294,6 +298,7 @@ lox add TYPE INSTANCE [--version vX.Y.Z | --image REF] [--profile P] [--hub-imag
                   <span class="c"># the older form: only declares the lock, pinned by digest, cosign-verified</span>
 lox add slack --team T… --channel C… --user U…    <span class="c"># tokens asked at the terminal</span>
 lox add telegram --chat ID --from ID               <span class="c"># bot token asked at the terminal</span>
+lox remove NAME [--purge] <span class="c"># take a lock out after one review; its profile stays unless --purge</span>
 lox import [SUB…]        <span class="c"># merge sub-projects' lockfamily.yaml, strictest routing kept</span>
 lox attach INSTANCE      <span class="c"># a console's start-up questions; detach: Ctrl-P Ctrl-Q</span>
 lox approve [--once]     <span class="c"># y, n reason, s, q; o (Ctrl-O + Enter, not macOS): clear values;</span>
