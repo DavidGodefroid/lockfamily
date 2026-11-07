@@ -215,6 +215,15 @@ class Page(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(ROOT, 'docs/mockups/directions.svg')))
         ET.fromstring(read('docs/mockups/directions.svg'))
 
+    def test_no_version_placeholder(self):
+        # Every version the page and the docs name is a real release
+        # (vX.Y.Z), never a placeholder left for later (#26).
+        for rel in ('index.html', 'README.md', 'docs/install.md', 'docs/lox.md'):
+            text = read(rel)
+            self.assertEqual(re.findall(r'[A-Z][A-Z0-9]*_VERSION\b', text), [], rel)
+            for m in re.finditer(r'\b(lox|lea|lockhub|locksql|lockmq|lockfile|lockhttp|locklog|lockkit) v([0-9A-Z]\S*?)[,.;:<)]?(?=\s|<|$)', text):
+                self.assertRegex(m.group(2), r'^[0-9]+\.[0-9]+\.[0-9]+$', '%s: %s' % (rel, m.group(0)))
+
 
 if __name__ == '__main__':
     unittest.main()

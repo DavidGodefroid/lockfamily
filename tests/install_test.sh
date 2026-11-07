@@ -308,6 +308,7 @@ fam lea lea 0.4.0
 fam locksql locksql 0.13.0
 fam lockmq lockmq 0.6.0
 fam lockhttp lockhttp 0.7.0
+fam locklog locklog 0.2.0
 fam lockfile lockfile 0.6.0
 # lox: the lockhub fixture of the tests above, at the tap's version. With
 # --version the mirror holds lockhub's vX.Y.Z/ folders; for the family,
@@ -348,16 +349,17 @@ make_tap() {
 	formula "$1" locksql locksql 0.13.0
 	formula "$1" lockmq lockmq 0.6.0
 	formula "$1" lockhttp lockhttp 0.7.0
+	formula "$1" locklog locklog 0.2.0
 	formula "$1" lockfile lockfile 0.6.0
 	cat >"$1/Formula/lockfamily.rb" <<'RB'
 class Lockfamily < Formula
   depends_on "cosign"
   depends_on "davidgodefroid/tap/lea"
   depends_on "davidgodefroid/tap/lockhttp"
+  depends_on "davidgodefroid/tap/locklog"
   depends_on "davidgodefroid/tap/lockmq"
   depends_on "davidgodefroid/tap/locksql"
   depends_on "davidgodefroid/tap/lox"
-  # locklog: no published release yet; added here with its first release.
 
   on_linux do
     depends_on "davidgodefroid/tap/lockfile"
@@ -376,7 +378,7 @@ retap() {
 }
 lb() { printf '%s' "$HOME/.local/bin/$1"; }
 nothing_installed() { [ ! -e "$HOME/.local/bin" ] && [ ! -e "$HOME/.local/share" ]; }
-launchers="locksql lockmq lockhttp"
+launchers="locksql lockmq lockhttp locklog"
 [ "$os" != linux ] || launchers="$launchers lockfile"
 
 # 20. The whole family, with cosign on PATH.
@@ -404,7 +406,12 @@ if [ "$os" = linux ]; then
 else
 	if [ ! -e "$(lb lockfile)" ] && grep -q 'lockfile: Linux only, skipped' "$root/out"; then pass "family: lockfile skipped (not Linux)"; else fail "family: lockfile skipped (not Linux)"; fi
 fi
-if grep -q 'locklog: no published release yet, skipped' "$root/out" && grep -q 'next step: lox add <lock> in your project, then lox run in a terminal of its own, outside the agent: approvals live there' "$root/out"; then pass "family: locklog skipped, next step lox add and lox run"; else fail "family: locklog skipped, next step lox add and lox run"; fi
+if [ -x "$(lb locklog)" ] && grep -qx 'launcher_version=0.2.0' "$(lb locklog)" &&
+	grep -q -- "verify --certificate-identity https://github.com/DavidGodefroid/locklog/.github/workflows/release.yml@refs/tags/v0.2.0 .* ghcr.io/davidgodefroid/locklog:0.2.0-vault\$" "$STUB_LOG" &&
+	! grep -q 'locklog.*skipped' "$root/out" &&
+	grep -q 'next step: lox add <lock> in your project, then lox run in a terminal of its own, outside the agent: approvals live there' "$root/out"; then
+	pass "family: locklog installed and verified, next step lox add and lox run"
+else fail "family: locklog installed and verified, next step lox add and lox run"; fi
 if [ ! -e "$(lb cosign)" ] && ! grep -q '^curl' "$STUB_LOG" && ! grep -q '^docker' "$STUB_LOG"; then pass "family: cosign on PATH used, nothing downloaded, no docker call"; else fail "family: cosign on PATH used, nothing downloaded, no docker call"; fi
 
 # 21. Installing again over it.

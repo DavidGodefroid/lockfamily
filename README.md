@@ -41,6 +41,7 @@ clear:
 | [lockmq](https://github.com/DavidGodefroid/lockmq) | RabbitMQ: catalogue at once, message reads and dangerous actions approved | [releases](https://github.com/DavidGodefroid/lockmq/releases) |
 | [lockfile](https://github.com/DavidGodefroid/lockfile) | files (Linux only) | [releases](https://github.com/DavidGodefroid/lockfile/releases) |
 | [lockhttp](https://github.com/DavidGodefroid/lockhttp) | outbound HTTP(S), with credentials injected at the gate (pre-release) | [releases](https://github.com/DavidGodefroid/lockhttp/releases) |
+| [locklog](https://github.com/DavidGodefroid/locklog) | log sources: masked log reads; local sources on Linux only, Loki and Elasticsearch/OpenSearch on Linux and macOS | [releases](https://github.com/DavidGodefroid/locklog/releases) |
 | [lockhub](https://github.com/DavidGodefroid/lockhub) | the approval hub and its `lox` CLI: `lox add`, `lox run`, `lox audit` | [releases](https://github.com/DavidGodefroid/lockhub/releases) |
 | [lea](https://github.com/DavidGodefroid/lea) | runs many agents in a container that never sees your SSH keys or private network (optional: `claude` on the host works too) | [releases](https://github.com/DavidGodefroid/lea/releases) |
 | [lockkit](https://github.com/DavidGodefroid/lockkit) | the library every Lock is built on: the console, tickets, masks, audit log | [releases](https://github.com/DavidGodefroid/lockkit/releases) |
@@ -79,7 +80,7 @@ Then, in another terminal, in lea's projects directory (without lea: in your
 project, and start `claude` or Codex there):
 
 ```sh
-lox add locksql      # one source at a time: locksql, lockmq, lockfile or lockhttp
+lox add locksql      # one source at a time: locksql, lockmq, lockfile, lockhttp or locklog
 lox run              # keep it open, outside the agent: approvals live here
 ```
 

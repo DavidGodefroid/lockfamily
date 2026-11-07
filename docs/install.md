@@ -16,10 +16,11 @@ lox add locksql
 |---|---|
 | `lox` ([lockhub](https://github.com/DavidGodefroid/lockhub)) | `~/.local/bin/lox` |
 | [`lea`](https://github.com/DavidGodefroid/lea) | the release tree in `~/.local/share/lea-install/vX.Y.Z`, linked as `~/.local/bin/lea` (as lea's own installer) |
-| `locksql`, `lockmq`, `lockhttp`, `lockfile` (Linux only) | the launchers, `~/.local/bin/<tool>`, which run their release's images by digest; lockfile's seccomp profile in `~/.local/share/lockfile/` |
+| `locksql`, `lockmq`, `lockhttp`, `locklog`, `lockfile` (Linux only) | the launchers, `~/.local/bin/<tool>`, which run their release's images by digest; lockfile's seccomp profile in `~/.local/share/lockfile/` |
 | `cosign` | `~/.local/bin/cosign`, only when no cosign is on your PATH (the meta formula installs it too; `lox init` and the launchers' `update` use it) |
 
-`locklog` has no published release yet and is skipped. Docker is required:
+locklog's local log sources are Linux only; on macOS it reads the remote
+sources (Loki, Elasticsearch/OpenSearch). Docker is required:
 Docker Engine (Linux) or Docker Desktop (macOS) must be installed and
 running. Next step: `lox add <lock>` in your project, then `lox run` in a terminal of its own, outside the agent.
 
