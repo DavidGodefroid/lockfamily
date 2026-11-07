@@ -71,6 +71,30 @@ main { outline: none; }
   padding: var(--s-2) 0 var(--s-2) 2.2rem; border-bottom: 1px solid var(--rule);
 }
 .three-steps li::before { content: counter(st) "."; position: absolute; left: 0; font: 600 0.9rem/1.9 var(--font-mono); color: var(--ink-2); }
+.three-steps { counter-reset: st 1; margin-top: var(--s-4); }
+.hero-note { margin: var(--s-3) 0 0; font-size: 0.95rem; }
+
+/* the install box: a terminal with a Copy button (added by main.js) */
+.install { margin: var(--s-5) 0 0; max-width: var(--measure); border-radius: var(--radius); background: var(--term-bg); border: 1px solid var(--ink); }
+.install-wide { max-width: 44rem; }
+.hero-text { min-width: 0; }
+@media (max-width: 420px) { .install .term { font-size: 0.8rem; padding-left: var(--s-3); padding-right: var(--s-3); } }
+.install-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+  padding: var(--s-2) var(--s-2) var(--s-2) var(--s-4); border-bottom: 1px solid var(--term-dim);
+}
+.install-title { font: 600 0.72rem/1.4 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--term-dim); }
+.install .term { border: 0; border-radius: 0 0 var(--radius) var(--radius); font-size: 0.9rem; padding: var(--s-3) var(--s-4) var(--s-4); }
+.copy {
+  flex: none; cursor: pointer; padding: 4px 12px; border-radius: var(--radius);
+  font: 600 0.78rem/1.4 var(--font-mono); color: var(--term-text); background: var(--term-bg);
+  border: 1px solid var(--term-dim);
+}
+.copy:hover { border-color: var(--term-text); }
+.copy:focus-visible { outline: 3px solid var(--term-text); outline-offset: 2px; }
+.copy-status { font: 0.78rem/1.4 var(--font-mono); color: var(--term-text); }
+.copy-status:empty { display: none; }
+.install-actions { display: flex; align-items: center; gap: var(--s-2); }
 
 /* the ticket: face, perforation, stub */
 .ticket { margin: 0; position: relative; }
@@ -149,6 +173,8 @@ main { outline: none; }
 .section-no { margin: 0 0 var(--s-2); padding-top: var(--s-2); border-top: 2px solid var(--ink); }
 .section h2 { font-size: clamp(1.6rem, 1.2rem + 1.8vw, 2.4rem); max-width: 28ch; }
 .section-lead { max-width: var(--measure); margin: var(--s-4) 0 0; font-size: 1.08rem; }
+.section-lead + .section-lead { margin-top: var(--s-3); }
+.section-note { max-width: var(--measure); margin: var(--s-4) 0 0; color: var(--ink-2); font-size: 0.95rem; }
 
 /* one ticket's life: an audit ledger */
 .ledger { list-style: none; margin: var(--s-6) 0 0; padding: 0; border-top: 1px solid var(--ink); }
@@ -181,12 +207,15 @@ main { outline: none; }
 .layer p:not(.label), .console p { margin: 2px 0 0; color: var(--ink-2); font-size: 0.98rem; }
 .consoles { display: grid; gap: var(--s-2); grid-template-columns: 1fr; }
 @media (min-width: 600px) { .consoles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 900px) { .consoles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 900px) { .consoles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .console { display: flex; gap: var(--s-3); align-items: center; padding: var(--s-2) var(--s-3); background: var(--card); border: 1px solid var(--rule); border-radius: var(--radius); min-width: 0; }
 .console img { flex: none; }
 .fit-notes { margin-top: var(--s-5); display: grid; gap: var(--s-5); align-items: start; }
 @media (min-width: 900px) { .fit-notes { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); } }
-.fit-notes > p { margin: 0; }
+.core-list { margin: var(--s-2) 0 0; padding-left: 1.2rem; color: var(--ink-2); font-size: 0.98rem; max-width: var(--measure); }
+.core-list li { margin: 2px 0; }
+.notes { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+.notes li { padding: var(--s-3) 0; border-bottom: 1px solid var(--rule); }
 .lea-demo { margin: 0; }
 .lea-demo img { display: block; width: 100%; border: 1px solid var(--ink); border-radius: var(--radius); background: #11111b; }
 .lea-demo figcaption { margin-top: var(--s-2); font-size: 0.9rem; color: var(--ink-2); }
@@ -223,6 +252,7 @@ main { outline: none; }
 
 .hub-points { max-width: 52rem; margin: var(--s-5) 0 0; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
 .hub-points li { padding: var(--s-3) 0; border-bottom: 1px solid var(--rule); }
+.hub-points li p { margin: var(--s-2) 0 0; color: var(--ink-2); }
 
 /* tabs: folder tabs on a sheet */
 .qs { margin-top: var(--s-5); }
@@ -239,7 +269,9 @@ main { outline: none; }
 .qs-panel + .qs-panel { margin-top: var(--s-3); }
 .js .qs-panel + .qs-panel { margin-top: 0; }
 .qs-panel[hidden] { display: none; }
-.qs-panel > p { margin: var(--s-3) 0 0; }
+.qs-panel > p { margin: var(--s-3) 0 0; max-width: 52rem; }
+.panel-notes { margin: var(--s-3) 0 0; padding-left: 1.2rem; max-width: 52rem; }
+.panel-notes li { margin: 0 0 var(--s-2); }
 .qs-meta { margin: 0 0 var(--s-3) !important; font: 0.82rem/1.5 var(--font-mono); color: var(--ink-2); }
 
 /* lox run and the shell: real terminals, dark in both themes */
@@ -260,7 +292,9 @@ main { outline: none; }
 /* known limits: the fine print */
 .limits { padding-bottom: var(--s-2); }
 .limits h2 { margin: 0 0 var(--s-3); padding-top: var(--s-2); border-top: 2px solid var(--ink); font: 600 0.75rem/1.4 var(--font-mono); }
-.limits p { max-width: 52rem; color: var(--ink-2); font-size: 0.95rem; }
+.limits p, .limits ul { max-width: 52rem; color: var(--ink-2); font-size: 0.95rem; }
+.limits ul { margin: 0 0 var(--s-3); padding-left: 1.2rem; }
+.limits li { margin: 0 0 var(--s-1); }
 
 /* footer */
 .site-footer { margin-top: clamp(var(--s-7), 8vw, 96px); border-top: 1px solid var(--ink); background: var(--paper-2); font-size: 0.95rem; }

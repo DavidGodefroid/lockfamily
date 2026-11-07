@@ -89,3 +89,19 @@ the display face, next to the mark.
 - **Tabs**: folder tabs on a sheet: square, mono, the selected one joins its panel.
 - Motion: only what tells the flow (the stamp, the flow SVG); everything stops
   under `prefers-reduced-motion`.
+
+## Lock sites and READMEs: the site kit
+
+The Lock sites (locksql, lockmq, lockfile, lockhttp, locklog) and every
+Lock README share one kit, kept in [`site-kit/`](../site-kit/KIT.md):
+
+- `site-kit/assets/lock-site.css` and `copy.js`: the shared stylesheet and
+  the install box's Copy button, identical bytes in every Lock repo.
+- `site-kit/snippets/`: the head, header, hero, install box, family strip
+  and footer of every page.
+- `site-kit/tools/banner_svg.py`: the README banners (light and dark);
+  `site-kit/tools/og.html`: the social card and touch icon.
+
+The kit does not copy the tokens, fonts or logos: a Lock site takes
+`assets/tokens.css`, `assets/fonts/` and `assets/<lock>.svg` from here.
+Change the kit in this repo first, then copy it to the Lock repos.

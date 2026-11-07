@@ -230,7 +230,8 @@ class Pages(unittest.TestCase):
 
     def check(self, rel):
         page = read(rel)
-        m = re.search(r'<picture>(.*?)</picture>', page, re.S)
+        # The flow's <picture> (the README also has the banner's).
+        m = re.search(r'<picture>((?:(?!</picture>).)*?assets/flow-.*?)</picture>', page, re.S)
         self.assertIsNotNone(m, rel)
         pic = m.group(1)
         sources = re.findall(r'<source media="([^"]+)" srcset="([^"]+)"', pic)
@@ -250,9 +251,10 @@ class Pages(unittest.TestCase):
     def test_readme(self):
         self.check('README.md')
         readme = read('README.md')
-        # Under the pitch, before the family table.
-        self.assertLess(readme.index('<picture>'), readme.index('## The family'))
-        self.assertLess(readme.index('> signed decision'), readme.index('<picture>'))
+        # In How it works, before the Lock Family table.
+        flow = readme.index('srcset="assets/flow-')
+        self.assertLess(flow, readme.index('## The Lock Family'))
+        self.assertLess(readme.index('> signed decision'), flow)
 
     def test_site(self):
         self.check('index.html')

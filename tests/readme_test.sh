@@ -38,7 +38,8 @@ first="${TMPDIR:-/tmp}/readme_head.$$"
 check "first screen names the Lock Family" "has '$first' 'Lock Family'"
 check "first screen says harness security" "has '$first' 'Harness security for AI agents'"
 check "first screen links to the site" "has '$first' 'href=\"https://lockfamily.dev\"'"
-check "first screen shows the logo" "has '$first' 'assets/mark.svg'"
+check "first screen shows the banner" "has '$first' 'docs/assets/banner-light.svg'"
+check "first screen has the dark banner" "has '$first' 'docs/assets/banner-dark.svg'"
 for w in 'Static HTML' 'static HTML' 'GitHub Pages' 'http.server' 'CNAME' 'vanilla JavaScript'; do
 	check "first screen has no site detail: $w" "! has '$first' '$w'"
 done
@@ -86,9 +87,9 @@ done
 #    URL, and its next step (lox add, then lox run).
 check "quick start: brew formula as install.sh names it" "has README.md 'brew install davidgodefroid/tap/lockfamily' && has install.sh 'brew install davidgodefroid/tap/lockfamily'"
 check "quick start: the installer's URL" "has README.md 'curl -fsSL https://lockfamily.dev/install.sh | sh' && has install.sh 'curl -fsSL https://lockfamily.dev/install.sh | sh'"
-check "quick start: lea" "grep -q '^lea  ' README.md"
-check "quick start: lox add, as install.sh's next step" "grep -q '^lox add locksql' README.md && has install.sh 'next step: lox add <lock> in your project, then lox run'"
-check "quick start: lox run" "grep -q '^lox run ' README.md"
+check "quick start: any agent, lea included" "has README.md '\`codex\`' && has README.md 'lea stop'"
+check "quick start: lox add, as install.sh's next step" "grep -q '^ *lox add locksql' README.md && has install.sh 'next step: lox add <lock> in your project, then lox run'"
+check "quick start: lox run" "grep -q '^ *lox run$' README.md"
 
 # 6. Nothing lost: what left the README is in docs/. The strings are
 #    literal text of the docs, not expansions.
