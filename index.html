@@ -224,7 +224,7 @@
       </div>
 
       <div class="qs-panel" role="tabpanel" id="hub-hand" aria-labelledby="hub-tab-hand">
-        <p class="qs-meta">What <code>lox add locksql</code> runs for you, by hand, with locksql · Linux and macOS · Docker and cosign · lockhub v0.9.0 · locksql v0.17.0</p>
+        <p class="qs-meta">What <code>lox add locksql</code> runs for you, by hand, with locksql · Linux and macOS · Docker and cosign · lockhub v0.10.0 · locksql v0.17.0</p>
         <pre class="term" tabindex="0"><code><span class="c"># 1. In the project: Claude Code's files (its MCP server is `locksql mcp`),</span>
 <span class="c">#    a database profile (engine, host, TLS, where the password comes from;</span>
 <span class="c">#    never the password), then doctor --fix (.locksql/ as lox run reads it)</span>
@@ -242,7 +242,7 @@ lox run</code></pre>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="hub-cli" aria-labelledby="hub-tab-cli">
-        <p class="qs-meta">lockhub v0.9.0 · <code>lox add TYPE INSTANCE</code> and <code>lox import</code> only edit <code>.lockfamily/lockfamily.yaml</code>: the next <code>lox run</code> reviews every change with you</p>
+        <p class="qs-meta">lockhub v0.10.0 · <code>lox add TYPE INSTANCE</code> and <code>lox import</code> only edit <code>.lockfamily/lockfamily.yaml</code>: the next <code>lox run</code> reviews every change with you</p>
         <pre class="term" tabindex="0"><code>lox run [--manual] [--no-start] [--no-upgrade] [--review] [-v]
         [--pin sha256:DIGEST] [--rotate hub|INSTANCE|all]
                   <span class="c"># review, start the hub and the locks, then serve decisions live:</span>
@@ -335,7 +335,7 @@ locks:
       </div>
 
       <div class="qs-panel" role="tabpanel" id="qs-init" aria-labelledby="qs-tab-init">
-        <p class="qs-meta">Linux and macOS · Docker · lockhub v0.9.0, lea v0.9.0</p>
+        <p class="qs-meta">Linux and macOS · Docker · lockhub v0.10.0, lea v0.10.0</p>
         <pre class="term" tabindex="0"><code><span class="c"># 1. Install the Lock Family: lox, lea, the Locks' launchers and cosign</span>
 <span class="c">#    (Homebrew asks you to trust a third-party tap once)</span>
 brew trust davidgodefroid/tap
@@ -395,7 +395,7 @@ lea                                           <span class="c"># in another termi
       </div>
 
       <div class="qs-panel" role="tabpanel" id="qs-log" aria-labelledby="qs-tab-log">
-        <p class="qs-meta">Linux and macOS · Docker · local log sources Linux only; on macOS, remote sources: Loki, Elasticsearch/OpenSearch · vLOCKLOG_VERSION</p>
+        <p class="qs-meta">Linux and macOS · Docker · local log sources Linux only; on macOS, remote sources: Loki, Elasticsearch/OpenSearch · v0.2.1</p>
         <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
 brew install davidgodefroid/tap/lockfamily   <span class="c"># or only this tool: brew install davidgodefroid/tap/locklog</span>
 cd ~/projects                                 <span class="c"># your project (with lea: lea's projects directory)</span>
@@ -419,7 +419,7 @@ lox run                                       <span class="c"># in another termi
 
   <section class="section wrap limits" aria-labelledby="limits-title">
     <h2 id="limits-title" class="label">Known limits</h2>
-    <p>All of them, the hub included, are before v1: lockhttp v0.8.0 is a pre-release; lockhub v0.9.0, lea v0.9.0, locksql v0.17.0, lockmq v0.8.0, lockfile v0.8.0, locklog vLOCKLOG_VERSION and lockkit v0.13.0 may still change. Auto mode approves reads by rule: switch to manual (<kbd>Shift+Tab</kbd>) to answer every ticket yourself. The console is the enforcement point and runs hub-attached only; skills and tool descriptions only guide the agent. Masking is best effort. Each project documents what the agent can see and its residual risks in its security model:
+    <p>All of them, the hub included, are before v1: lockhttp v0.8.0 is a pre-release; lockhub v0.10.0, lea v0.10.0, locksql v0.17.0, lockmq v0.8.0, lockfile v0.8.0, locklog v0.2.1 and lockkit v0.13.1 may still change. Auto mode approves reads by rule: switch to manual (<kbd>Shift+Tab</kbd>) to answer every ticket yourself. The console is the enforcement point and runs hub-attached only; skills and tool descriptions only guide the agent. Masking is best effort. Each project documents what the agent can see and its residual risks in its security model:
       <a href="https://locksql.com/security/">locksql</a>,
       <a href="https://github.com/DavidGodefroid/lockmq/blob/main/docs/security-model.md">lockmq</a>,
       <a href="https://github.com/DavidGodefroid/lockfile/blob/main/docs/security-model.md">lockfile</a>,
