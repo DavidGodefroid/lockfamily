@@ -17,15 +17,16 @@
 #   lox       ~/.local/bin/lox, the CLI of the approval hub (lockhub)
 #   lea       the release tree in ~/.local/share/lea-install/vX.Y.Z, linked
 #             as ~/.local/bin/lea (as lea's own installer, without lea init)
-#   locksql, lockmq, lockhttp, and lockfile (Linux only)
+#   locksql, lockmq, lockhttp, locklog, and lockfile (Linux only)
 #             the launchers, ~/.local/bin/<tool>, which run their release's
 #             images by digest; lockfile's seccomp profile goes to
-#             ~/.local/share/lockfile/seccomp.json
+#             ~/.local/share/lockfile/seccomp.json; locklog's local log
+#             sources are Linux only (on macOS it reads the remote sources:
+#             Loki, Elasticsearch/OpenSearch)
 #   cosign    ~/.local/bin/cosign, only when no cosign is on PATH: the pinned
 #             release below, checked against its sha256 (the meta formula
 #             installs cosign too; the launchers' `update` and `lox init`
 #             use it)
-# locklog has no published release yet: it is skipped.
 #
 # The set and the versions are read from the tap (DavidGodefroid/homebrew-tap):
 # the tools the meta formula Formula/lockfamily.rb depends on, and in each
@@ -388,7 +389,7 @@ stage_launcher() {
 	st_digest="$(formula_digest "$4" image_digest)" || die "the tap formula $1.rb has no valid image_digest"
 	st_vdigest=''
 	case "$1" in
-	locksql | lockmq | lockfile)
+	locksql | lockmq | lockfile | locklog)
 		st_vdigest="$(formula_digest "$4" vault_image_digest)" || die "the tap formula $1.rb has no valid vault_image_digest"
 		[ "$st_digest" != "$st_vdigest" ] || die "the tap formula $1.rb gives the same digest to both images"
 		;;
@@ -465,13 +466,12 @@ grep -q . "$tmp/components" || die "the tap's meta formula lockfamily.rb names n
 listed() { grep -qx "$1" "$tmp/components"; }
 while read -r c; do
 	case "$c" in
-	lox | lea | locksql | lockmq | lockhttp | lockfile) ;;
+	lox | lea | locksql | lockmq | lockhttp | locklog | lockfile) ;;
 	*) say "the meta formula also names $c, which this install.sh does not install yet: skipped (see https://lockfamily.dev/install.sh)" ;;
 	esac
 done <"$tmp/components"
-listed locklog || say "locklog: no published release yet, skipped"
 tools=''
-for t in lox lea locksql lockmq lockhttp lockfile; do
+for t in lox lea locksql lockmq lockhttp locklog lockfile; do
 	listed "$t" || continue
 	if [ "$t" = lockfile ] && [ "$os" != linux ]; then
 		say "lockfile: Linux only, skipped"

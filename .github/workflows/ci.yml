@@ -112,7 +112,7 @@ jobs:
           test "$("$bin/lox" version)" = "lox $(v lox)"
           test "$("$bin/lea" version)" = "v$(v lea)"
           if [ -x "$bin/cosign" ]; then "$bin/cosign" version; else cosign version; fi
-          tools="locksql lockmq lockhttp"
+          tools="locksql lockmq lockhttp locklog"
           if [ "$RUNNER_OS" = Linux ]; then tools="$tools lockfile"; else test ! -e "$bin/lockfile"; fi
           for t in $tools; do
             out=$("$bin/$t" version 2>&1 || true)

@@ -250,7 +250,7 @@ brew install davidgodefroid/tap/lockfamily</code></pre>
         <p><code>require_device</code> lists the risk classes only a phone's signature may approve; <code>seal_clear</code> seals the clear screen to the phones.</p></li>
       <li><strong>lea.</strong> Since v0.9.0, lea handles no approvals: it starts no hub and shows no ticket. When the projects directory declares Locks and no <code>lox run</code> serves them, lea says to run it, and the agents' requests wait at the hub.
         <p>lea mounts <code>.lockfamily/</code> read-only in its agents and gives them the Locks' sockets named in <code>.lockfamily/up.json</code>. No agent reaches the hub.</p></li>
-      <li><strong>Host agents.</strong> Any MCP client on the host reaches the same Locks through each Lock's launcher (<code>locksql mcp</code>, <code>lockmq mcp</code>, <code>lockfile mcp</code>), its MCP server.
+      <li><strong>Host agents.</strong> Any MCP client on the host reaches the same Locks through each Lock's launcher (<code>locksql mcp</code>, <code>lockmq mcp</code>, <code>lockfile mcp</code>, <code>locklog mcp</code>), its MCP server.
         <p>The launcher finds the nearest <code>.lockfamily/up.json</code> up from the working directory and mounts the Lock's socket read-only once Docker confirms it is <code>lox run</code>'s. Approve in <code>lox run</code>.</p></li>
     </ul>
 
@@ -263,7 +263,7 @@ brew install davidgodefroid/tap/lockfamily</code></pre>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="hub-hand" aria-labelledby="hub-tab-hand">
-        <p class="qs-meta">What <code>lox add locksql</code> runs for you, by hand, with locksql · Linux and macOS · Docker and cosign · lockhub v0.9.0 · locksql v0.17.0</p>
+        <p class="qs-meta">What <code>lox add locksql</code> runs for you, by hand, with locksql · Linux and macOS · Docker and cosign · lockhub v0.10.0 · locksql v0.17.0</p>
         <pre class="term" tabindex="0"><code><span class="c"># 1. In the project: the agent's files (init claude writes Claude Code's;</span>
 <span class="c">#    any MCP client can start `locksql mcp`), a database profile (engine,</span>
 <span class="c">#    host, TLS, where the password comes from; never the password), then</span>
@@ -287,7 +287,7 @@ lox run</code></pre>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="hub-cli" aria-labelledby="hub-tab-cli">
-        <p class="qs-meta">lockhub v0.9.0 · <code>lox add TYPE INSTANCE</code> and <code>lox import</code> only edit <code>.lockfamily/lockfamily.yaml</code>: the next <code>lox run</code> reviews every change with you</p>
+        <p class="qs-meta">lockhub v0.10.0 · <code>lox add TYPE INSTANCE</code> and <code>lox import</code> only edit <code>.lockfamily/lockfamily.yaml</code>: the next <code>lox run</code> reviews every change with you</p>
         <pre class="term" tabindex="0"><code>lox run [--manual] [--no-start] [--no-upgrade] [--review] [-v]
         [--pin sha256:DIGEST] [--rotate hub|INSTANCE|all]
                   <span class="c"># review, start the hub and the locks, then serve decisions live:</span>
@@ -297,7 +297,7 @@ lox run</code></pre>
                   <span class="c"># --pin: the hub image by digest; --rotate: replace a key first</span>
 lox init [--review] [--hub-image REF]
                   <span class="c"># start the project's hub alone; asks nothing; hints at the sources its files name</span>
-lox add TYPE      <span class="c"># locksql, lockmq, lockfile, lockhttp: its questions, profile, declaration,</span>
+lox add TYPE      <span class="c"># locksql, lockmq, lockfile, lockhttp, locklog: its questions, profile, declaration,</span>
                   <span class="c"># a short review, the console's questions; nothing kept on a failure</span>
                   <span class="c"># (locklog: on lockhub's main branch, in its next release)</span>
 lox add TYPE INSTANCE [--version vX.Y.Z | --image REF] [--profile P] [--hub-image REF]
@@ -390,7 +390,7 @@ brew install davidgodefroid/tap/lockfamily</code></pre>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="qs-init" aria-labelledby="qs-tab-init">
-        <p class="qs-meta">Linux and macOS · Docker · lockhub v0.9.0, lea v0.10.0</p>
+        <p class="qs-meta">Linux and macOS · Docker · lockhub v0.10.0, lea v0.11.0</p>
         <pre class="term" tabindex="0"><code><span class="c"># 2. In your project (with lea: lea's projects directory), one source at a time</span>
 cd ~/projects
 lox add locksql          <span class="c"># or lockmq, lockfile, lockhttp</span>
@@ -450,15 +450,12 @@ lea                                           <span class="c"># in another termi
       </div>
 
       <div class="qs-panel" role="tabpanel" id="qs-log" aria-labelledby="qs-tab-log">
-        <p class="qs-meta">A Linux host with the logs · Docker ≥ 19.03 · cosign · v0.2.0, early release</p>
-        <pre class="term" tabindex="0"><code><span class="c"># Today: locklog's launcher alone, verified with cosign</span>
-<span class="c"># (no Homebrew formula yet: it comes with the next lockhub release)</span>
-curl -fsSL https://locklog.dev/install.sh | sh
-<span class="c"># With that lockhub release: lox add knows locklog</span>
+        <p class="qs-meta">Linux and macOS · Docker · local log sources Linux only; on macOS, remote sources: Loki, Elasticsearch/OpenSearch · v0.2.1, early release</p>
+        <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
+brew install davidgodefroid/tap/lockfamily   <span class="c"># or only this tool: brew install davidgodefroid/tap/locklog</span>
 cd ~/projects/shop                            <span class="c"># the project whose logs the agent investigates</span>
-lox add locklog                               <span class="c"># this host's logs: /var/log, the journal, containers</span>
+lox add locklog                               <span class="c"># its questions, then the review; lea stop, then lea, if lea runs</span>
 lox run                                       <span class="c"># in a terminal of its own, outside the agent</span></code></pre>
-        <p><code>lox add locklog</code> is on lockhub's main branch; lockhub v0.9.0 does not know it yet. Until its release, the launcher's own verbs set locklog up (its <code>docs/setup.md</code>).</p>
         <p>Then ask your agent: “when did the 502s start?”. Counts, patterns and traces come back free and masked; a scan or an unmask waits for you in <code>lox run</code>. On the host, locklog is a trial for non-production data; for production, run the agent in lea or a container of its own. <a href="https://github.com/DavidGodefroid/locklog#quick-start">locklog on GitHub</a></p>
       </div>
 
@@ -495,7 +492,7 @@ lox run                                       <span class="c"># in another termi
   <section class="section wrap limits" aria-labelledby="limits-title">
     <h2 id="limits-title" class="label">Known limits</h2>
     <ul>
-      <li>Everything, the hub included, is before v1. lockhttp v0.8.0 and lockssh v0.1.0 are pre-releases; locklog v0.2.0 is an early release. lockhub v0.9.0, lea v0.10.0, locksql v0.17.0, lockmq v0.8.0, lockfile v0.8.0 and lockkit v0.13.1 may still change.</li>
+      <li>Everything, the hub included, is before v1. lockhttp v0.8.0 and lockssh v0.1.0 are pre-releases; locklog v0.2.1 is an early release. lockhub v0.10.0, lea v0.11.0, locksql v0.17.0, lockmq v0.8.0, lockfile v0.8.0 and lockkit v0.13.1 may still change.</li>
       <li>Auto mode approves reads by rule: switch to manual (<kbd>Shift+Tab</kbd>) to answer every ticket yourself.</li>
       <li>The console is the enforcement point and runs hub-attached only; skills and tool descriptions only guide the agent. Masking is best effort.</li>
       <li>Chat facades never answer production tickets: a chat account is only as safe as the devices signed in to it.</li>
