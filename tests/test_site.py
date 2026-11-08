@@ -265,8 +265,23 @@ class Page(unittest.TestCase):
         for rel in ('index.html', 'README.md', 'docs/install.md', 'docs/lox.md'):
             text = read(rel)
             self.assertEqual(re.findall(r'[A-Z][A-Z0-9]*_VERSION\b(?!=)', text), [], rel)
-            for m in re.finditer(r'\b(lox|lea|lockhub|locksql|lockmq|lockfile|lockhttp|locklog|lockkit) v([0-9A-Z]\S*?)[,.;:<)]?(?=\s|<|$)', text):
+            for m in re.finditer(r'\b(lox|lea|lockhub|locksql|lockmq|lockfile|lockhttp|locklog|lockssh|lockkit) v([0-9A-Z]\S*?)[,.;:<)]?(?=\s|<|$)', text):
                 self.assertRegex(m.group(2), r'^[0-9]+\.[0-9]+\.[0-9]+$', '%s: %s' % (rel, m.group(0)))
+
+    def test_lockssh_release_state(self):
+        # lockssh is a lox lock type on lockhub's main branch (lockhub#169),
+        # in no lockhub release yet (#27): the docs never say it is not a
+        # type, and mark what is not released.
+        lox = read('docs/lox.md')
+        self.assertNotIn('lockssh is not a type yet', lox)
+        self.assertIn('lockssh: unreleased', lox)
+        for w in ('`lox withdraw INSTANCE/ID', '`lox tickets', '**A tab per lock**', '**Withdraw stuck tickets**'):
+            self.assertIn(w, lox)
+        self.assertIn('no released hub knows lockssh yet', self.html)
+        self.assertIn('no released hub knows lockssh yet', read('README.md'))
+        self.assertIn('lockssh', read('install.sh'))
+        for theme in ('light', 'dark', 'light-narrow', 'dark-narrow'):
+            self.assertIn('lockhttp · locklog · lockssh', read('assets/flow-%s.svg' % theme), theme)
 
 
 if __name__ == '__main__':

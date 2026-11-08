@@ -31,7 +31,8 @@ for you in `lox run`, a terminal outside the agent's harness.
 
 > [!NOTE]
 > Every tool is before v1. lockhttp and lockssh are pre-releases, locklog an
-> early release; lockssh is not in the Homebrew tap yet.
+> early release. lockssh is not in the Homebrew tap yet, and `lox add lockssh`
+> comes with lockhub's next release: no released hub knows lockssh yet.
 
 ## Why the Lock Family
 

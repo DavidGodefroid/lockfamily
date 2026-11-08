@@ -113,6 +113,8 @@ jobs:
           test "$("$bin/lea" version)" = "v$(v lea)"
           if [ -x "$bin/cosign" ]; then "$bin/cosign" version; else cosign version; fi
           tools="locksql lockmq lockhttp locklog"
+          # lockssh, once the meta formula names it (homebrew-tap#6).
+          if curl -fsSL "$tap/lockfamily.rb" | grep -q '"davidgodefroid/tap/lockssh"'; then tools="$tools lockssh"; else test ! -e "$bin/lockssh"; fi
           if [ "$RUNNER_OS" = Linux ]; then tools="$tools lockfile"; else test ! -e "$bin/lockfile"; fi
           for t in $tools; do
             out=$("$bin/$t" version 2>&1 || true)
