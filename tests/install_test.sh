@@ -309,6 +309,7 @@ fam locksql locksql 0.13.0
 fam lockmq lockmq 0.6.0
 fam lockhttp lockhttp 0.7.0
 fam locklog locklog 0.2.0
+fam lockssh lockssh 0.1.0
 fam lockfile lockfile 0.6.0
 # lox: the lockhub fixture of the tests above, at the tap's version. With
 # --version the mirror holds lockhub's vX.Y.Z/ folders; for the family,
@@ -350,6 +351,7 @@ make_tap() {
 	formula "$1" lockmq lockmq 0.6.0
 	formula "$1" lockhttp lockhttp 0.7.0
 	formula "$1" locklog locklog 0.2.0
+	formula "$1" lockssh lockssh 0.1.0
 	formula "$1" lockfile lockfile 0.6.0
 	cat >"$1/Formula/lockfamily.rb" <<'RB'
 class Lockfamily < Formula
@@ -358,6 +360,7 @@ class Lockfamily < Formula
   depends_on "davidgodefroid/tap/lockhttp"
   depends_on "davidgodefroid/tap/locklog"
   depends_on "davidgodefroid/tap/lockmq"
+  depends_on "davidgodefroid/tap/lockssh"
   depends_on "davidgodefroid/tap/locksql"
   depends_on "davidgodefroid/tap/lox"
 
@@ -378,7 +381,7 @@ retap() {
 }
 lb() { printf '%s' "$HOME/.local/bin/$1"; }
 nothing_installed() { [ ! -e "$HOME/.local/bin" ] && [ ! -e "$HOME/.local/share" ]; }
-launchers="locksql lockmq lockhttp locklog"
+launchers="locksql lockmq lockhttp locklog lockssh"
 [ "$os" != linux ] || launchers="$launchers lockfile"
 
 # 20. The whole family, with cosign on PATH.
@@ -412,6 +415,12 @@ if [ -x "$(lb locklog)" ] && grep -qx 'launcher_version=0.2.0' "$(lb locklog)" &
 	grep -q 'next step: lox add <lock> in your project, then lox run in a terminal of its own, outside the agent: approvals live there' "$root/out"; then
 	pass "family: locklog installed and verified, next step lox add and lox run"
 else fail "family: locklog installed and verified, next step lox add and lox run"; fi
+if [ -x "$(lb lockssh)" ] && grep -qx 'launcher_version=0.1.0' "$(lb lockssh)" &&
+	grep -qx "vault_image_digest=$(cat "$root/digests/ghcr.io_davidgodefroid_lockssh_0.1.0-vault")" "$(lb lockssh)" &&
+	grep -q -- "verify --certificate-identity https://github.com/DavidGodefroid/lockssh/.github/workflows/release.yml@refs/tags/v0.1.0 .* ghcr.io/davidgodefroid/lockssh:0.1.0-vault\$" "$STUB_LOG" &&
+	! grep -q 'lockssh.*skipped' "$root/out"; then
+	pass "family: lockssh installed, its images verified against its release workflow"
+else fail "family: lockssh installed, its images verified against its release workflow"; fi
 if [ ! -e "$(lb cosign)" ] && ! grep -q '^curl' "$STUB_LOG" && ! grep -q '^docker' "$STUB_LOG"; then pass "family: cosign on PATH used, nothing downloaded, no docker call"; else fail "family: cosign on PATH used, nothing downloaded, no docker call"; fi
 
 # 21. Installing again over it.
@@ -459,6 +468,14 @@ if [ "$code" != 0 ] && nothing_installed && grep -q 'cannot read the tap' "$root
 retap extra lockfamily.rb 's|^  depends_on "cosign"$|  depends_on "davidgodefroid/tap/lockfoo"|'
 TAP="$root/tap-extra" run familyextra
 if [ "$code" = 0 ] && grep -q 'also names lockfoo' "$root/out" && [ "$("$(lb lox)")" = "lox 0.3.0" ]; then pass "family: an unknown tool of the meta formula is skipped"; else fail "family: an unknown tool of the meta formula is skipped"; fi
+
+# 29b. A meta formula that does not name lockssh yet (before homebrew-tap#6):
+# the others installed, lockssh neither installed nor reported as unknown.
+retap nossh lockfamily.rb '/davidgodefroid\/tap\/lockssh/d'
+TAP="$root/tap-nossh" run familynossh
+if [ "$code" = 0 ] && [ ! -e "$(lb lockssh)" ] && [ -x "$(lb locklog)" ] && ! grep -q 'lockssh' "$root/out"; then
+	pass "family: a meta formula without lockssh installs the others"
+else fail "family: a meta formula without lockssh installs the others"; fi
 
 # 30. ~/.local/bin/lea a directory: refused.
 mkdir -p "$root/home/leadir/.local/bin/lea"

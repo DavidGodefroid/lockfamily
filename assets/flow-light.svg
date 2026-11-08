@@ -205,9 +205,10 @@
 <rect x="400" y="326" width="260" height="140" rx="12" fill="#fffcf5" stroke="#b9af98" stroke-width="1.2"/>
 <rect x="400" y="326" width="5" height="140" rx="2.5" fill="#1d1b17" stroke="none" stroke-width="1"/>
 <text x="418" y="352" font-size="16" fill="#1d1b17" font-weight="700">lock</text>
-<text x="418" y="372" font-size="12" fill="#575146">locksql · lockmq · lockfile · lockhttp</text>
-<text x="418" y="389" font-size="12" fill="#575146">holds the credentials</text>
-<text x="418" y="406" font-size="12" fill="#575146">masks every value it returns</text>
+<text x="418" y="372" font-size="12" fill="#575146">locksql · lockmq · lockfile</text>
+<text x="418" y="389" font-size="12" fill="#575146">lockhttp · locklog · lockssh</text>
+<text x="418" y="406" font-size="12" fill="#575146">holds the credentials</text>
+<text x="418" y="423" font-size="12" fill="#575146">masks every value it returns</text>
 <rect x="400" y="100" width="260" height="126" rx="12" fill="#fffcf5" stroke="#b9af98" stroke-width="1.2"/>
 <rect x="400" y="100" width="5" height="126" rx="2.5" fill="#0e6158" stroke="none" stroke-width="1"/>
 <text x="418" y="126" font-size="16" fill="#1d1b17" font-weight="700">hub</text>

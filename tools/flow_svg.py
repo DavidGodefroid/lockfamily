@@ -360,7 +360,8 @@ def build(theme, layout):
         s.add(n)
     for n in s.node(L['client'], 'Lock client', ['MCP server', 'no credential', 'no connection'], t['req']):
         s.add(n)
-    for n in s.node(L['lock'], 'lock', ['locksql · lockmq · lockfile · lockhttp',
+    for n in s.node(L['lock'], 'lock', ['locksql · lockmq · lockfile',
+                                        'lockhttp · locklog · lockssh',
                                         'holds the credentials', 'masks every value it returns'],
                     t['lock']):
         s.add(n)
