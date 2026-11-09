@@ -179,6 +179,7 @@ What ships in `lox run` today:
 | Doc | What it covers |
 |---|---|
 | [docs/lox.md](docs/lox.md) | The `lox` reference: [setting a source up by hand](docs/lox.md#by-hand-with-locksql), [every command](docs/lox.md#commands-lox), [facades and routing](docs/lox.md#facades-and-routing), [`lockfamily.yaml`](docs/lox.md#lockfamilylockfamilyyaml), [lea](docs/lox.md#lea) |
+| [docs/managed.md](docs/managed.md) | The company-managed configuration: [where the file lives](docs/managed.md#where-the-file-lives), [trust](docs/managed.md#trust), [rule kinds](docs/managed.md#rule-kinds), [precedence](docs/managed.md#precedence), [every section](docs/managed.md#sections) |
 | [docs/install.md](docs/install.md) | What the installer installs, where the [versions](docs/install.md#versions) come from, how every signature and digest is [verified](docs/install.md#verification) |
 | [docs/identity.md](docs/identity.md) | The family's visual identity: tokens, fonts, logos |
 | [docs/design-note.md](docs/design-note.md) | Why the site looks like a signed ticket |

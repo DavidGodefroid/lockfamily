@@ -123,6 +123,21 @@ check "README: key rotation and hub pinning" "has README.md 'lox run --rotate' &
 check "index.html: lockkit credentials not all asked in lox run" "! has index.html 'credentials asked at the first connection in'"
 check "index.html: an ask password typed in lox run" "has index.html 'an <code>ask</code> password typed at the first connection in <code>lox run</code>'"
 
+# 9. The managed.toml v1 schema: both paths, the trust rules, every rule
+#    kind and section, the precedence, and an example that is valid TOML.
+# shellcheck disable=SC2016
+for w in '/etc/lockfamily/managed.toml' '/Library/Application Support/lockfamily/managed.toml' \
+	'managed.toml.sigstore.json' 'require_signature' 'require_confined_agent' 'refused-managed' \
+	'`[<tool>.bounds]`' '`[<tool>.defaults]`' '`[<tool>.profiles.<name>]`' '**enforced**' \
+	'> managed bounds and profiles' '> project file > user file' '> managed defaults > built-in defaults' \
+	'`[locksql]`' '`[lockmq]`' '`[lockssh]`' '`[lockfile]`' '`[lockhttp]`' '### `[lox]`' '### `[lea]`'; do
+	keeps docs/managed.md "$w"
+done
+if command -v python3 >/dev/null 2>&1 && python3 -c 'import tomllib' 2>/dev/null; then
+	check "docs/managed.md: the example is valid TOML" \
+		"sed -n '/^\`\`\`toml\$/,/^\`\`\`\$/p' docs/managed.md | sed '1d;\$d' | python3 -I -c 'import sys, tomllib; tomllib.loads(sys.stdin.read())'"
+fi
+
 echo
 if [ "$fails" -ne 0 ]; then
 	echo "$fails of $runs failed"
