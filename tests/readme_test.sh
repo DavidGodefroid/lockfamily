@@ -130,6 +130,8 @@ for w in '/etc/lockfamily/managed.toml' '/Library/Application Support/lockfamily
 	'managed.toml.sigstore.json' 'require_signature' 'require_confined_agent' 'refused-managed' \
 	'`[<tool>.bounds]`' '`[<tool>.defaults]`' '`[<tool>.profiles.<name>]`' '**enforced**' \
 	'> managed bounds and profiles' '> project file > user file' '> managed defaults > built-in defaults' \
+	'## Fail closed' 'a default outside the bounds;' 'a managed profile that itself violates the bounds.' \
+	'a file with a `[locklog]` section is' '### Older tools' \
 	'`[locksql]`' '`[lockmq]`' '`[lockssh]`' '`[lockfile]`' '`[lockhttp]`' '### `[lox]`' '### `[lea]`'; do
 	keeps docs/managed.md "$w"
 done

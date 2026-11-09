@@ -7,9 +7,10 @@ their own files, never looser, and no one can approve a loosening beyond it
 in `lox run`: the managed file is above the human at the console.
 
 This page is the v1 schema of `managed.toml`. Its implementation lands Lock
-by Lock (lockkit first, then each Lock, `lox` and lea); a tool that does not
-read the managed file yet ignores it. Deployment recipes and signing come
-with [lockfamily#32](https://github.com/DavidGodefroid/lockfamily/issues/32).
+by Lock (lockkit first, then each Lock, `lox` and lea): see
+[older tools](#older-tools) for what a release without it does. Deployment
+recipes and signing come with
+[lockfamily#32](https://github.com/DavidGodefroid/lockfamily/issues/32).
 
 ## Where the file lives
 
@@ -44,6 +45,42 @@ No file means no managed policy: every tool runs as today.
 Remote distribution (`managed_url`) is for v2: in v1 the administrator
 places the file.
 
+## Fail closed
+
+A managed file that is present but not valid is a refusal to start, never
+a file or a key dropped. Each of these refuses:
+
+- a file that is not valid TOML;
+- `version` missing or other than `1`;
+- an unknown top-level section, or an unknown key in `[family]` or in the
+  tool's own section;
+- a value of the wrong type (a string for a bool, a bad duration, an
+  unknown tier or TLS mode);
+- a default outside the bounds;
+- a managed profile that itself violates the bounds.
+
+While a tool runs, a managed file that changes to an invalid one ends its
+sessions and refuses new ones, until the file is valid again.
+
+### Strictness per section
+
+Each tool decodes `[family]` and its own section strictly, and checks that
+every other top-level section names a tool of the family (`locksql`,
+`lockmq`, `lockssh`, `lockfile`, `lockhttp`, `lox`, `lea`). It does not
+decode the other tools' sections: a typo in `[lockmq.bounds]` makes lockmq
+refuse to start, not locksql.
+
+`[locklog]` is not part of v1: a file with a `[locklog]` section is
+refused, so that no one believes the logs bounded while locklog does not
+read the file.
+
+### Older tools
+
+A release that predates managed support does not read the file at all and
+runs on the user's files alone. To keep such releases off the fleet, set
+`[lox] image_min` to the first managed release of each Lock: `lox` then
+refuses to run an older image.
+
 ## Rule kinds
 
 Every tool section has up to three tables:
@@ -75,11 +112,8 @@ tool therefore keeps deciding what "looser" means for its own fields:
   `credentials = ["vault", "ask"]` forbids `keychain`;
 - `hosts` is a list of host patterns (`*.db.example.internal`): a profile
   whose host matches none is refused;
-- a duration is clamped the way ticket lifetimes are: a longer value is a
-  violation, a shorter one is fine.
-
-A key the tool does not know is refused when the file is read, as in every
-config of the family: a typo never weakens a bound silently.
+- a duration is a ceiling: a longer value is a violation, refused like any
+  other, never shortened silently; a shorter one is fine.
 
 ### Defaults
 
@@ -149,7 +183,7 @@ own profile keys; the fields a company most often bounds:
 | `[lockssh]` | `host`, `port`, `user`, `known_hosts`, `production`, `credentials`, `credentials_ttl`, `allow`, `auto`, `limits.*` | `auto` (per action), `credentials`, `hosts`, `limits.max_session` |
 | `[lockfile]` | `source`, `endpoint`, `bucket`, `host`, `production`, `credentials`, `credentials_ttl`, `marketplaces`, `limits.*` | `credentials`, `hosts`, `marketplaces`, `limits.max_object_bytes` |
 | `[lockhttp]` | `mode`, `rules`, `deny`, `internal_hosts`, `trusted` | `mode = "enforce"` (no `shadow`), `trusted` |
-| `[locklog]` | not in v1: locklog reads the managed file in a later release | |
+| `[locklog]` | not in v1: refused (see [strictness per section](#strictness-per-section)) | |
 
 Each Lock's own documentation lists the exact keys and what loosens each
 one, with its managed support.
@@ -207,7 +241,7 @@ vault = { address = "https://vault.example.com", required = true }
 
 [locksql.bounds]
 tier = "write"                       # never ddl or admin
-credentials = ["vault", "ask"]       # no keychain
+credentials = ["vault"]              # family.vault.required: Vault only
 tls = "verify-full"
 credentials_ttl = "8h"
 hosts = ["*.db.example.internal"]
