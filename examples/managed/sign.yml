@@ -1,0 +1,39 @@
+# .github/workflows/sign.yml of the company's policy repository: signs
+# managed.toml keyless with cosign and publishes the file, its bundle and
+# signer.toml as a release your deployment fetches
+# (lockfamily docs/managed.md#signing).
+#
+# signer.toml names this workflow on main:
+#   certificate_identity_regexp = "^https://github.com/<org>/<repo>/.github/workflows/sign.yml@refs/heads/main$"
+#   oidc_issuer = "https://token.actions.githubusercontent.com"
+name: sign
+
+on:
+  push:
+    branches: [main]
+    paths: [managed.toml, signer.toml]
+
+permissions:
+  contents: write   # the release
+  id-token: write   # the OIDC token cosign signs with
+
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+        with:
+          cosign-release: v3.0.6
+      - name: sign
+        run: cosign sign-blob --yes --bundle managed.toml.sigstore.json managed.toml
+      - name: verify, as the hosts will
+        run: |
+          cosign verify-blob --bundle managed.toml.sigstore.json \
+            --certificate-identity "https://github.com/${GITHUB_REPOSITORY}/.github/workflows/sign.yml@refs/heads/main" \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            managed.toml
+      - name: publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "policy-${GITHUB_RUN_NUMBER}" managed.toml managed.toml.sigstore.json signer.toml --title "managed.toml ${GITHUB_RUN_NUMBER}" --notes "sha256 $(sha256sum managed.toml | cut -d' ' -f1)"

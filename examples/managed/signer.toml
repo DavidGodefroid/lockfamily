@@ -1,0 +1,5 @@
+# /etc/lockfamily/signer.toml: the identity managed.toml's signature must
+# carry (lockfamily docs/managed.md#signing). Root-owned, 0644, next to
+# managed.toml and managed.toml.sigstore.json.
+certificate_identity_regexp = "^https://github.com/example-corp/lockfamily-policy/.github/workflows/sign.yml@refs/heads/main$"
+oidc_issuer = "https://token.actions.githubusercontent.com"

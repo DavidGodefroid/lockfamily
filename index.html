@@ -321,6 +321,7 @@ lox audit [show ID]      <span class="c"># every exchange: masked request, rule 
 lox audit verify --data DIR --hub-key-file FILE [--lock INSTANCE=PATH] [--anchors FILE]
                   <span class="c"># the hub's audit chain and every decision's signature</span></code></pre>
         <p>The workspace commands take <code>--file</code> to name another <code>lockfamily.yaml</code>. <code>lox up</code> is deprecated: it says to use <code>lox run</code>. <a href="https://github.com/DavidGodefroid/lockfamily/blob/main/docs/lox.md">The full lox reference</a></p>
+        <p>A company bounds every lock, <code>lox</code> included, with one root-owned file its administrator signs and deploys. <a href="https://github.com/DavidGodefroid/lockfamily/blob/main/docs/managed.md">Managed configuration</a></p>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="hub-yaml" aria-labelledby="hub-tab-yaml">

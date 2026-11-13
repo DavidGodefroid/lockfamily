@@ -1,0 +1,13 @@
+# ansible-playbook -i inventory playbook.yml
+# (lockfamily docs/managed.md#ansible)
+- name: Lock Family managed configuration
+  hosts: all
+  become: true
+  vars:
+    lockfamily_managed_dir: "{{ '/Library/Application Support/lockfamily' if ansible_facts['system'] == 'Darwin' else '/etc/lockfamily' }}"
+    lockfamily_root_group: "{{ 'wheel' if ansible_facts['system'] == 'Darwin' else 'root' }}"
+    lockfamily_files: "{{ playbook_dir }}/.."   # managed.toml sits beside ansible/
+    lockfamily_signed: false
+  tasks:
+    - name: Install managed.toml
+      ansible.builtin.include_tasks: tasks.yml

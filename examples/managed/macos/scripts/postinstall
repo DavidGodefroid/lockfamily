@@ -1,0 +1,9 @@
+#!/bin/sh
+# The managed directory and its files: root:wheel, 0755 and 0644, as every
+# Lock and lox require (lockfamily docs/managed.md#trust).
+set -eu
+dir="/Library/Application Support/lockfamily"
+chown root:wheel "$dir" "$dir"/*
+chmod 0755 "$dir"
+chmod 0644 "$dir"/*
+exit 0

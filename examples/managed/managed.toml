@@ -1,0 +1,87 @@
+# /etc/lockfamily/managed.toml
+version = 1
+organisation = "Example Corp"
+
+[family]
+require_signature = false
+vault = { address = "https://vault.example.com", required = true }
+
+[locksql.bounds]
+tier = "write"                       # never ddl or admin
+tls = "verify-full"
+credentials = ["vault"]
+hosts = ["*.db.example.internal"]
+credentials_ttl = "8h"
+write_functions = "allowlist"
+auto = { ddl = "deny", unmask = "ask" }
+detectors = ["email", "iban"]
+limits.max_rows = 10000
+limits.max_session = "8h"
+
+[[locksql.bounds.pii_mask]]
+column = "*.*.email"
+mode = "email"
+
+[locksql.defaults]
+limits.statement_timeout = "30s"
+
+[locksql.profiles.prod-erp]          # provided and locked
+engine = "postgres"
+host = "erp.db.example.internal"
+database = "erp"
+tls = "verify-full"
+tier = "read"
+production = true
+credentials = "vault"
+vault_path = "database/creds/erp-readonly"
+credentials_ttl = "1h"
+write_functions = "allowlist"
+auto = { ddl = "deny", unmask = "ask" }  # within locksql.bounds.auto
+
+[lockmq.bounds]
+tier = "read"                        # never peek
+tls = "verify-full"
+credentials = ["vault"]
+hosts = ["*.mq.example.internal"]
+auto = { purge = "deny", delete = "deny", publish = "ask" }
+limits.read_max = 100
+
+[[lockmq.bounds.pii_mask]]
+queue = ["*/*"]
+body = "$.customer.email"
+
+[lockssh.bounds]
+hosts = ["*.example.internal"]
+known_hosts = "/etc/ssh/ssh_known_hosts"
+auth = ["key"]
+exec = false
+auto = { connect = "ask", run = "ask", exec = "deny", unmask = "deny" }
+limits.max_session = "4h"
+
+[lockfile.bounds]
+source = ["s3", "sftp"]
+hosts = ["*.example.internal", "s3.eu-west-1.amazonaws.com"]
+max_object_bytes = "10MiB"
+marketplaces = ["official"]
+
+[lockhttp.bounds]
+mode = "enforce"                     # no shadow mode
+trusted = ["*.example.com"]
+deny = ["pastebin.com"]
+
+[[lockhttp.bounds.rules]]
+id = "no-prod-writes"
+host = "api.example.com"
+methods = ["POST", "PUT", "PATCH", "DELETE"]
+verdict = "ask"
+
+[locklog.bounds]
+kinds = ["file", "loki"]
+unmask = "never"
+detectors = ["email"]
+
+[lox]
+auto_max = { ddl = "deny", write = "ask", policy = "ask" }
+production_auto_max = { read = "ask" }
+allow_no_upgrade = false
+image_min = { locksql = "v0.18.0", lockmq = "v0.9.0", lockfile = "v0.9.0", lockhttp = "v0.9.0", lockssh = "v0.2.0", locklog = "v0.3.0" }

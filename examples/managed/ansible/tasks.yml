@@ -1,0 +1,27 @@
+# Tasks that install the company's managed.toml on a Linux or macOS host
+# (lockfamily docs/managed.md#ansible). Include them from a play that runs
+# with become: true and sets:
+#
+#   lockfamily_managed_dir  /etc/lockfamily, or on macOS
+#                           /Library/Application Support/lockfamily
+#   lockfamily_root_group   root, or wheel on macOS
+#   lockfamily_files        the directory that holds managed.toml (and, when
+#                           you sign it, signer.toml and
+#                           managed.toml.sigstore.json)
+#   lockfamily_signed       true to deploy the signature with the file
+- name: Lock Family managed directory
+  ansible.builtin.file:
+    path: "{{ lockfamily_managed_dir }}"
+    state: directory
+    owner: root
+    group: "{{ lockfamily_root_group }}"
+    mode: "0755"
+
+- name: Lock Family managed files
+  ansible.builtin.copy:
+    src: "{{ lockfamily_files }}/{{ item }}"
+    dest: "{{ lockfamily_managed_dir }}/{{ item }}"
+    owner: root
+    group: "{{ lockfamily_root_group }}"
+    mode: "0644"
+  loop: "{{ ['managed.toml'] + (['signer.toml', 'managed.toml.sigstore.json'] if lockfamily_signed | bool else []) }}"

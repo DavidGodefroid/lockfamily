@@ -1,0 +1,46 @@
+# A deb and an rpm that install the company's managed.toml
+# (lockfamily docs/managed.md#debian-and-rpm-packages).
+#
+#   nfpm package -p deb -f nfpm.yaml    # or -p rpm
+#
+# Run it from the directory that holds managed.toml (and, when you sign it,
+# signer.toml and managed.toml.sigstore.json). Bump version with every
+# change of the policy: the package manager then replaces the files.
+name: example-corp-lockfamily-managed
+arch: all
+platform: linux
+version: 1.0.0
+release: 1
+section: admin
+maintainer: IT <it@example.com>
+description: Example Corp's managed configuration for the Lock Family
+license: Proprietary
+contents:
+  - dst: /etc/lockfamily
+    type: dir
+    file_info:
+      mode: 0755
+      owner: root
+      group: root
+  - src: ./managed.toml
+    dst: /etc/lockfamily/managed.toml
+    type: config
+    file_info:
+      mode: 0644
+      owner: root
+      group: root
+  # When you sign managed.toml, ship its identity and its bundle with it:
+  # - src: ./signer.toml
+  #   dst: /etc/lockfamily/signer.toml
+  #   type: config
+  #   file_info:
+  #     mode: 0644
+  #     owner: root
+  #     group: root
+  # - src: ./managed.toml.sigstore.json
+  #   dst: /etc/lockfamily/managed.toml.sigstore.json
+  #   type: config
+  #   file_info:
+  #     mode: 0644
+  #     owner: root
+  #     group: root
