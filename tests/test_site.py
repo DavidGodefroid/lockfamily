@@ -258,6 +258,12 @@ class Page(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(ROOT, 'docs/mockups/directions.svg')))
         ET.fromstring(read('docs/mockups/directions.svg'))
 
+    def test_managed_link(self):
+        # The page links the managed configuration reference (#32), as it
+        # links the full lox reference, and the target exists.
+        self.assertIn('<a href="https://github.com/DavidGodefroid/lockfamily/blob/main/docs/managed.md">Managed configuration</a>', self.html)
+        self.assertTrue(os.path.exists(os.path.join(ROOT, 'docs/managed.md')))
+
     def test_no_version_placeholder(self):
         # Every version the page and the docs name is a real release
         # (vX.Y.Z), never a placeholder left for later (#26). An installer's

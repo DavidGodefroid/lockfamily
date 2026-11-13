@@ -131,13 +131,49 @@ for w in '/etc/lockfamily/managed.toml' '/Library/Application Support/lockfamily
 	'`[<tool>.bounds]`' '`[<tool>.defaults]`' '`[<tool>.profiles.<name>]`' '**enforced**' \
 	'> managed bounds and profiles' '> project file > user file' '> managed defaults > built-in defaults' \
 	'## Fail closed' 'a default outside the bounds;' 'a managed profile that itself violates the bounds.' \
-	'a file with a `[locklog]` section is' '### Older tools' \
-	'`[locksql]`' '`[lockmq]`' '`[lockssh]`' '`[lockfile]`' '`[lockhttp]`' '### `[lox]`' '### `[lea]`'; do
+	'### Older tools' 'signer.toml' 'certificate_identity_regexp' 'oidc_issuer' 'managed.toml.verified' \
+	'cosign sign-blob --yes --bundle managed.toml.sigstore.json managed.toml' 'id-token: write' \
+	'`[[lockhttp.bounds.rules]]`' '`[[locksql.bounds.pii_mask]]`' '`max_object_bytes`' \
+	'blocked by company policy: <key> does not allow <value>' \
+	'`<tool> managed show`' '`<tool> managed check [--profile NAME]`' '`lox managed show`' \
+	'## Signing' '## Deploying' '### Ansible' '### Debian and rpm packages' '### macOS' '## Troubleshooting' \
+	'### `[locksql]`' '### `[lockmq]`' '### `[lockssh]`' '### `[lockfile]`' '### `[lockhttp]`' '### `[locklog]`' \
+	'### `[lox]`' '### `[lea]`' 'lea#399'; do
 	keeps docs/managed.md "$w"
 done
+# Key-pair signing is not supported in v1 (lockkit#15); [locklog] is
+# applied since locklog v0.3.0, no longer refused.
+check "docs/managed.md: keyless only" "has docs/managed.md 'Signing with a key pair waits for'"
+check "docs/managed.md: [locklog] no longer refused" "! has docs/managed.md 'a file with a \`[locklog]\` section is'"
+
+# 10. The recipes: every file the page links is there, the page's example
+#     is examples/managed/managed.toml byte for byte, both parse, its
+#     top-level sections are ones managed.Parse accepts, and the YAML
+#     recipes parse.
+for f in managed.toml signer.toml sign.yml nfpm.yaml ansible/tasks.yml ansible/playbook.yml macos/build.sh macos/scripts/postinstall; do
+	check "examples/managed/$f exists" "[ -f examples/managed/$f ]"
+done
+check "examples/managed/macos scripts are executable" "[ -x examples/managed/macos/build.sh ] && [ -x examples/managed/macos/scripts/postinstall ]"
+ex="${TMPDIR:-/tmp}/managed_example.$$"
+# shellcheck disable=SC2016
+sed -n '/^## Example$/,/^## /p' docs/managed.md | sed -n '/^```toml$/,/^```$/p' | sed '1d;$d' >"$ex"
+check "docs/managed.md: the example is examples/managed/managed.toml" "cmp -s '$ex' examples/managed/managed.toml"
 if command -v python3 >/dev/null 2>&1 && python3 -c 'import tomllib' 2>/dev/null; then
-	check "docs/managed.md: the example is valid TOML" \
-		"sed -n '/^\`\`\`toml\$/,/^\`\`\`\$/p' docs/managed.md | sed '1d;\$d' | python3 -I -c 'import sys, tomllib; tomllib.loads(sys.stdin.read())'"
+	check "docs/managed.md: the example is valid TOML" "python3 -I -c 'import sys, tomllib; tomllib.load(open(sys.argv[1], \"rb\"))' '$ex'"
+	check "examples/managed/signer.toml is valid TOML" "python3 -I -c 'import sys, tomllib; tomllib.load(open(sys.argv[1], \"rb\"))' examples/managed/signer.toml"
+	# The names managed.Parse accepts (lockkit managed.lockTools, wholeTools).
+	check "the example's sections are ones managed.Parse accepts" \
+		"python3 -I -c 'import sys, tomllib; d = tomllib.load(open(sys.argv[1], \"rb\")); ok = {\"version\", \"organisation\", \"family\", \"lockfile\", \"lockhttp\", \"locklog\", \"lockmq\", \"locksql\", \"lockssh\", \"lea\", \"lox\"}; sys.exit(sorted(set(d) - ok) != [] or d.get(\"version\") != 1)' '$ex'"
+fi
+rm -f "$ex"
+if command -v python3 >/dev/null 2>&1 && python3 -c 'import yaml' 2>/dev/null; then
+	for f in nfpm.yaml ansible/tasks.yml ansible/playbook.yml sign.yml; do
+		check "examples/managed/$f is valid YAML" "python3 -I -c 'import sys, yaml; yaml.safe_load(open(sys.argv[1]))' examples/managed/$f"
+	done
+elif [ "${README_YAML:-}" = required ]; then
+	fail "YAML checks: no PyYAML (README_YAML=required)"
+else
+	echo "skip YAML checks: no PyYAML"
 fi
 
 echo

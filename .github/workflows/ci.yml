@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: shellcheck
-        run: shellcheck -s sh install.sh tests/install_test.sh tests/readme_test.sh tests/flow_svg_test.sh tests/site_test.sh
+        run: shellcheck -s sh install.sh tests/install_test.sh tests/readme_test.sh tests/flow_svg_test.sh tests/site_test.sh tests/managed_e2e.sh examples/managed/macos/build.sh examples/managed/macos/scripts/postinstall
 
   # The README and its docs: the first screen, every relative link and
   # anchor, the quick start against install.sh, the lox run flags.
@@ -28,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: tests
-        run: sh tests/readme_test.sh
+        run: README_YAML=required sh tests/readme_test.sh
 
   # The animated request flow: generated files up to date, accessible,
   # under 200 KB, and played in a headless Chrome (reduced motion included).
@@ -124,3 +124,42 @@ jobs:
             *) echo "unexpected: $out" >&2; exit 1 ;;
             esac
           done
+
+  # docs/managed.md's recipes with the released lox and locksql: the deb
+  # built from examples/managed/nfpm.yaml, then a file signed keyless the
+  # way examples/managed/sign.yml does it (not on a fork's pull request,
+  # which gets no OIDC token).
+  managed-linux:
+    name: managed.toml recipes (Linux)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+        with:
+          cosign-release: v3.0.6
+      - name: deb
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: sh tests/managed_e2e.sh deb
+      - name: signing
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: sh tests/managed_e2e.sh sign
+
+  # The .pkg of examples/managed/macos/build.sh. macOS runs on main,
+  # nightly and by hand, not on pull requests: hosted macOS runners are too
+  # often not acquired to gate a PR.
+  managed-macos:
+    name: managed.toml recipes (macOS)
+    if: github.event_name != 'pull_request'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: pkg
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: sh tests/managed_e2e.sh pkg
