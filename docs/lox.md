@@ -10,10 +10,9 @@ README. lockhub's own documentation is the contract:
 `lox help` prints every command and flag of the `lox` you have.
 
 > [!NOTE]
-> **Unreleased** marks what is in lockhub's main branch but in no lockhub
-> release yet (the latest is v0.10.1): the lockssh lock type, `lox run`'s tab
-> per lock and withdrawing tickets. They come with lockhub's next release
-> ([CHANGELOG](https://github.com/DavidGodefroid/lockhub/blob/main/CHANGELOG.md#unreleased)).
+> The lockssh lock type, `lox run`'s tab per lock and withdrawing tickets
+> came with lockhub v0.11.0
+> ([CHANGELOG](https://github.com/DavidGodefroid/lockhub/blob/main/CHANGELOG.md#v0110-2026-11-13)).
 
 Every lock runs attached to lockhub: `lox run` starts the hub and each lock's console, and there is no
 standalone console. The console holds the credentials and checks each
@@ -67,8 +66,8 @@ with lea run `lox add` and `lox run` there.
 
 | Command | What it does |
 |---|---|
-| `lox run [--manual] [--theme light\|dark] [--no-start] [--no-upgrade] [--review] [-v] [--pin sha256:DIGEST] [--rotate hub\|INSTANCE\|all]` | start (or reuse) the hub and the locks after a review, then show every ticket and decision live, masked, and serve decisions: auto mode by default, Shift+Tab for manual; `a` opens the audit; `0`…`9` and `Tab` a lock's own tab, `w` the pending tickets to withdraw (both unreleased, [below](#lox-runs-screen)); quitting fails closed. `--manual` starts in manual mode; `--no-start` only serves decisions (another `lox run` started the hub and the locks); `--no-upgrade` keeps the pinned images instead of upgrading those older than this `lox`'s releases (verified with cosign); `--review` shows everything, the profiles line by line, and asks; `-v` shows cosign's and docker's own output; `--pin` sets the hub image by digest (going back to a previous hub); `--rotate` replaces a key before starting: the hub's, a lock's, or all (repeatable, or comma-separated) |
-| `lox add TYPE` | set one source up (locksql, lockmq, lockfile, lockhttp, locklog, and lockssh: unreleased): its questions, the lock's profile, the declaration pinned by digest to the latest signed release, a short review, the console's questions; nothing is kept on a failure |
+| `lox run [--manual] [--theme light\|dark] [--no-start] [--no-upgrade] [--review] [-v] [--pin sha256:DIGEST] [--rotate hub\|INSTANCE\|all]` | start (or reuse) the hub and the locks after a review, then show every ticket and decision live, masked, and serve decisions: auto mode by default, Shift+Tab for manual; `a` opens the audit; `0`…`9` and `Tab` a lock's own tab, `w` the pending tickets to withdraw ([below](#lox-runs-screen)); quitting fails closed. `--manual` starts in manual mode; `--no-start` only serves decisions (another `lox run` started the hub and the locks); `--no-upgrade` keeps the pinned images instead of upgrading those older than this `lox`'s releases (verified with cosign); `--review` shows everything, the profiles line by line, and asks; `-v` shows cosign's and docker's own output; `--pin` sets the hub image by digest (going back to a previous hub); `--rotate` replaces a key before starting: the hub's, a lock's, or all (repeatable, or comma-separated) |
+| `lox add TYPE` | set one source up (locksql, lockmq, lockfile, lockhttp, locklog, lockssh): its questions, the lock's profile, the declaration pinned by digest to the latest signed release, a short review, the console's questions; nothing is kept on a failure |
 | `lox add TYPE INSTANCE [--version vX.Y.Z \| --image REF] [--profile P] [--hub-image REF]` | the older form: only declare a lock in `lockfamily.yaml`, pinned by digest |
 | `lox init [--review] [--hub-image REF]` | start the project's hub alone: prerequisites, the data sources its files name as hints (read only, no secret), a `lockfamily.yaml` with the hub alone; it asks nothing |
 | `lox remove NAME [--purge]` | take a lock out of `lockfamily.yaml` and stop its console after one review; its profile stays unless `--purge`; a `n`, a failure or Ctrl-C keeps the lock |
@@ -78,8 +77,8 @@ with lea run `lox add` and `lox run` there.
 | `lox import [SUB…]` | merge sub-projects' `lockfamily.yaml`, keeping the strictest routing |
 | `lox attach INSTANCE` | answer a lock console's start-up questions (policy, credentials) |
 | `lox approve [--once]` | answer tickets in a plain terminal prompt: `y`, `n reason`, `s`, `q`; `o` (or Ctrl-O then Enter, where the terminal passes it: not on macOS) shows clear values; `r` approves an expired ticket again |
-| `lox tickets [--lock NAME] [--error] [--json]` | unreleased: list the tickets pending at the hub, without `lox run` (scripts, recovery) |
-| `lox withdraw INSTANCE/ID…`, `lox withdraw --lock NAME --all-pending\|--error` | unreleased: withdraw stuck tickets: each ends `withdrawn` at the hub, audited with you and the reason, and its lock gets the hub's signed denial |
+| `lox tickets [--lock NAME] [--error] [--json]` | list the tickets pending at the hub, without `lox run` (scripts, recovery) |
+| `lox withdraw INSTANCE/ID…`, `lox withdraw --lock NAME --all-pending\|--error` | withdraw stuck tickets: each ends `withdrawn` at the hub, audited with you and the reason, and its lock gets the hub's signed denial |
 | `lox audit [show ID]` | list the hub's exchanges (ticket, masked request, decision with its rule or human, outcome), with filters, `--follow` and `--json`; `show` draws one exchange's masked plan, deciding rule, timings and signatures |
 | `lox audit verify --data DIR --hub-key-file FILE [--lock INSTANCE=PATH] [--anchors FILE]` | check the hub's audit chain and every decision's signature, and optionally a lock's own log against them |
 | `lox mobile pair --name NAME`, `lox mobile list`, `lox mobile revoke NAME` | pair a phone (one-time code, confirmed at the terminal), list or revoke phones |
@@ -94,8 +93,7 @@ change with you.
 ## `lox run`'s screen
 
 The global feed shows every ticket and decision, masked; a question is a
-card above it (`y`, `n`, `d` details, `x` forget the profile). The rest of
-this section is unreleased.
+card above it (`y`, `n`, `d` details, `x` forget the profile).
 
 - **A tab per lock** (`1`…`9`, `Tab`; `0` is the global feed): what the
   lock decides on its own side, which never reaches the hub, read at its
@@ -114,7 +112,7 @@ this section is unreleased.
 The contract:
 [docs/lox-run.md](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-run.md).
 
-## lockssh (unreleased)
+## lockssh
 
 `lox add lockssh` asks the SSH host (a name, never an IP address), the port,
 the login, a key or a password, the key file and an optional known_hosts file
@@ -125,8 +123,7 @@ profile's `host`:`port` only. `lox run` reads the profile's auto rules
 (`connect`, `run`, `exec`, `unmask`); an `unmask` and an `exec` on
 production are never approved by a rule. A lockssh lock's `read-pii` (its
 connections and its output in clear) is answered on the local facades only,
-never in a chat. Until that lockhub release, no hub knows lockssh and its
-console cannot start. See lockhub's
+never in a chat. See lockhub's
 [lox-add.md](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-add.md#lockssh)
 and [lox-run.md](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-run.md#lockssh-one-ssh-host-per-profile).
 

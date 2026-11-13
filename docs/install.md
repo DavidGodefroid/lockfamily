@@ -19,7 +19,7 @@ lox add locksql
 | `locksql`, `lockmq`, `lockhttp`, `locklog`, `lockssh`, `lockfile` (Linux only) | the launchers, `~/.local/bin/<tool>`, which run their release's images by digest; lockfile's seccomp profile in `~/.local/share/lockfile/` |
 | `cosign` | `~/.local/bin/cosign`, only when no cosign is on your PATH (the meta formula installs it too; `lox init` and the launchers' `update` use it) |
 
-locklog's local log sources are Linux only; on macOS it reads the remote sources (Loki, Elasticsearch/OpenSearch). lockssh is installed once the meta formula names it ([homebrew-tap#6](https://github.com/DavidGodefroid/homebrew-tap/issues/6)); until then it has its own install script, in [its repository](https://github.com/DavidGodefroid/lockssh#install). Docker is required:
+locklog's local log sources are Linux only; on macOS it reads the remote sources (Loki, Elasticsearch/OpenSearch). Docker is required:
 Docker Engine (Linux) or Docker Desktop (macOS) must be installed and
 running. Next step: `lox add <lock>` in your project, then `lox run` in a terminal of its own, outside the agent.
 

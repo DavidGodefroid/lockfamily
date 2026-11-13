@@ -22,8 +22,7 @@
 #             images by digest; lockfile's seccomp profile goes to
 #             ~/.local/share/lockfile/seccomp.json; locklog's local log
 #             sources are Linux only (on macOS it reads the remote sources:
-#             Loki, Elasticsearch/OpenSearch); lockssh once the meta
-#             formula names it
+#             Loki, Elasticsearch/OpenSearch)
 #   cosign    ~/.local/bin/cosign, only when no cosign is on PATH: the pinned
 #             release below, checked against its sha256 (the meta formula
 #             installs cosign too; the launchers' `update` and `lox init`

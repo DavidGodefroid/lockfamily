@@ -31,8 +31,7 @@ for you in `lox run`, a terminal outside the agent's harness.
 
 > [!NOTE]
 > Every tool is before v1. lockhttp and lockssh are pre-releases, locklog an
-> early release. lockssh is not in the Homebrew tap yet, and `lox add lockssh`
-> comes with lockhub's next release: no released hub knows lockssh yet.
+> early release.
 
 ## Why the Lock Family
 
@@ -69,7 +68,7 @@ curl -fsSL https://lockfamily.dev/install.sh | sh
 
    ```sh
    cd ~/projects/shop
-   lox add locksql      # or lockmq, lockfile, lockhttp, locklog
+   lox add locksql      # or lockmq, lockfile, lockhttp, locklog, lockssh
    ```
 
 2. In a terminal of its own, outside the agent, keep `lox run` open:
