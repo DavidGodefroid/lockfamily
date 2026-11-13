@@ -269,16 +269,22 @@ class Page(unittest.TestCase):
                 self.assertRegex(m.group(2), r'^[0-9]+\.[0-9]+\.[0-9]+$', '%s: %s' % (rel, m.group(0)))
 
     def test_lockssh_release_state(self):
-        # lockssh is a lox lock type on lockhub's main branch (lockhub#169),
-        # in no lockhub release yet (#27): the docs never say it is not a
-        # type, and mark what is not released.
+        # lockssh is a lox lock type since lockhub v0.11.0 (lockhub#133) and
+        # the meta formula pulls it in (homebrew-tap#6): the docs no longer
+        # mark it, or the rest of that release, as unreleased.
         lox = read('docs/lox.md')
         self.assertNotIn('lockssh is not a type yet', lox)
-        self.assertIn('lockssh: unreleased', lox)
+        self.assertNotIn('unreleased', lox.lower())
+        self.assertIn('locklog, lockssh)', lox)
         for w in ('`lox withdraw INSTANCE/ID', '`lox tickets', '**A tab per lock**', '**Withdraw stuck tickets**'):
             self.assertIn(w, lox)
-        self.assertIn('no released hub knows lockssh yet', self.html)
-        self.assertIn('no released hub knows lockssh yet', read('README.md'))
+        for rel in ('index.html', 'README.md', 'docs/install.md', 'install.sh'):
+            text = read(rel)
+            self.assertNotIn('no released hub knows lockssh', text, rel)
+            self.assertNotIn('meta formula names it', text, rel)
+        self.assertNotIn('unreleased', self.html.lower())
+        self.assertIn('brew install davidgodefroid/tap/lockssh', self.html)
+        self.assertIn('lox add lockssh', self.html)
         self.assertIn('lockssh', read('install.sh'))
         for theme in ('light', 'dark', 'light-narrow', 'dark-narrow'):
             self.assertIn('lockhttp · locklog · lockssh', read('assets/flow-%s.svg' % theme), theme)
