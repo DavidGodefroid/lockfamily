@@ -24,10 +24,16 @@ Your agent works on real systems; a Lock holds the credentials, and you approve 
 ---
 
 The Lock Family lets any AI agent (Claude Code, Codex, Cursor, Gemini CLI,
-any MCP client) work on your databases, queues, files, logs, servers and the
-web. Each data source sits behind a Lock that holds the credentials and
+any MCP client) work on your databases, queues, files, logs and servers, and
+agents running inside [lea](https://github.com/DavidGodefroid/lea) on the web
+too. Each data source sits behind a Lock that holds the credentials and
 masks the data. Reads flow; a connection, a write or anything risky waits
 for you in `lox run`, a terminal outside the agent's harness.
+
+The Locks and their hub run in Docker (Docker Compose, signed images), so
+Docker and cosign are required. An agent on the host is protected by every
+Lock but lockhttp: lockhttp's gate runs beside lea's proxy, so it guards
+only agents running inside lea.
 
 > [!NOTE]
 > Every tool is before v1. lockhttp and lockssh are pre-releases, locklog an
@@ -46,7 +52,8 @@ for you in `lox run`, a terminal outside the agent's harness.
 
 ## Install
 
-Docker must be installed and running. On Linux or macOS:
+Docker must be installed and running: every Lock and the hub run in
+containers. On Linux or macOS:
 
 ```sh
 brew trust davidgodefroid/tap
@@ -195,7 +202,7 @@ repository's own README and `docs/`; the docs of this repository are:
 | [locksql](https://github.com/DavidGodefroid/locksql) | SQL databases: the agent queries, PII comes back masked; connections and writes wait for you. |
 | [lockmq](https://github.com/DavidGodefroid/lockmq) | RabbitMQ: masked queue inspection; connections, peeks and unmasked reads wait for you. |
 | [lockfile](https://github.com/DavidGodefroid/lockfile) | Files (S3, SFTP, disk): the agent asks yes/no questions about files it never reads. |
-| [lockhttp](https://github.com/DavidGodefroid/lockhttp) | Outbound HTTP(S): reads of trusted hosts pass; anything that sends data or reaches an unknown host waits for you. Credentials injected by the proxy, never seen by the agent. |
+| [lockhttp](https://github.com/DavidGodefroid/lockhttp) | Outbound HTTP(S): reads of trusted hosts pass; anything that sends data or reaches an unknown host waits for you. Credentials injected by the proxy, never seen by the agent. For agents inside lea only. |
 | [locklog](https://github.com/DavidGodefroid/locklog) | Logs: masked, bounded log search; the agent reads the logs, not the people in them. |
 | [lockssh](https://github.com/DavidGodefroid/lockssh) | Commands over SSH: allow-listed commands run at once, the rest waits for you; the SSH key never leaves the console. |
 | [lockhub](https://github.com/DavidGodefroid/lockhub) | The approval hub and its `lox` CLI: `lox run` approves outside the agent's harness, signs decisions, never sees values in clear. |

@@ -2,10 +2,15 @@
 
 The Lock Family is harness security for AI agents. Your agent (Claude Code,
 Codex, Cursor, Gemini CLI, any MCP client) works on your databases, queues,
-files, logs, servers and the web through a **Lock** that holds the
-credentials and masks the data. Reads flow; a connection, a write or
-anything risky waits for you in **`lox run`**, a terminal outside the
-agent's harness.
+files, logs and servers, and an agent running inside lea on the web too,
+through a **Lock** that holds the credentials and masks the data. Reads
+flow; a connection, a write or anything risky waits for you in
+**`lox run`**, a terminal outside the agent's harness.
+
+The Locks and the hub run in Docker (Docker Compose, signed images): Docker
+and cosign are required. An agent on the host is protected by every Lock but
+lockhttp, whose gate runs beside lea's proxy and so guards only agents
+running inside lea.
 
 These docs cover the whole family: the Locks, the hub and its `lox` CLI,
 and lea, which runs many agents in containers wired to the Locks.
