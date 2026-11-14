@@ -2,9 +2,12 @@
 
 A company can set one policy for every machine of its fleet: a
 `managed.toml` file, placed by an administrator (Ansible, a package, an
-MDM), that every Lock and `lox` read. The user can make a rule stricter in
-their own files, never looser, and no one can approve a loosening beyond it
-in `lox run`: the managed file is above the human at the console.
+MDM), that every Lock, `lox` and lea read. The user can make a rule
+stricter in their own files, never looser, and no one can approve a
+loosening beyond it, at a Lock's console, in `lox run` or in lea: the
+managed file is above the human. A file that is present but badly owned,
+badly signed or not valid stops the tool from starting: it is never
+ignored ([fail closed](#fail-closed)).
 
 This page is for the administrator who writes, signs and deploys that file.
 It needs no code reading: every key, every refusal line and every command
@@ -469,6 +472,8 @@ each use of one records the file's sha256. The daemon reads the file again
 at every grant decision: a file that stops loading ends every grant until
 it is fixed. The configuration keys apply at the next `lea`, and
 `claude_enforced` to the lea containers started after the change.
+lea's own side of it is in its
+[README](https://github.com/DavidGodefroid/lea/blob/main/README.md#company-policy-managedtoml).
 
 ## Example
 
