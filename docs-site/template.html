@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}} · {{TAB}} · lock family docs</title>
+<meta name="description" content="{{DESCRIPTION}}">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f4efe4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16140f" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="{{URL}}">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="lock family docs">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{DESCRIPTION}}">
+<meta property="og:url" content="{{URL}}">
+<link rel="icon" href="/assets/mark.svg" type="image/svg+xml">
+<link rel="preload" href="/assets/fonts/zilla-slab-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/source-serif-4-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/assets/tokens.css">
+<link rel="stylesheet" href="/docs/_assets/theme.css">
+<link rel="stylesheet" href="/docs/_assets/docs.css">
+<script>try{var t=localStorage.getItem('lf-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
+<script src="/docs/_assets/docs.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="docs-header">
+  <div class="docs-bar">
+    <button type="button" class="menu-button" aria-controls="sidebar" aria-expanded="false">Menu</button>
+    <a class="brand" href="/" aria-label="lock family, home">
+      <img src="/assets/mark.svg" alt="" width="28" height="28">
+      <span class="wordmark">lock family</span>
+    </a>
+    <a class="docs-home" href="/docs/">docs</a>
+    <button type="button" class="search-button" aria-haspopup="dialog" aria-keyshortcuts="/ Control+K">
+      <span>Search the docs</span> <kbd>/</kbd>
+    </button>
+    <button type="button" class="theme-button" aria-label="Colour theme: system">system</button>
+    <a class="github" href="https://github.com/DavidGodefroid/lockfamily">GitHub</a>
+  </div>
+  <nav class="tabs" aria-label="Docs sections">
+    <ul>
+{{TABS}}
+    </ul>
+  </nav>
+</header>
+
+<div class="docs-layout">
+  <nav class="sidebar" id="sidebar" aria-label="{{TAB}}">
+    <p class="label sidebar-tab">{{TAB}}</p>
+{{SIDEBAR}}
+  </nav>
+
+  <main id="main" tabindex="-1">
+    <article class="doc">
+      <p class="eyebrow">{{EYEBROW}}</p>
+      <h1 id="{{TITLE_ID}}">{{TITLE}}</h1>
+{{BODY}}
+    </article>
+    <nav class="prev-next" aria-label="Previous and next pages">
+{{PREVNEXT}}
+    </nav>
+    <footer class="doc-source">
+      <p><span class="label">source</span> <a href="{{SOURCE_URL}}">{{SOURCE}}</a> · <a href="{{EDIT_URL}}">Edit this page</a></p>
+      <p>lock family · harness security for AI agents · <a href="https://github.com/DavidGodefroid/lockfamily/blob/HEAD/LICENSE">Apache 2.0</a></p>
+    </footer>
+  </main>
+
+  <aside class="toc-wrap">
+{{TOC}}
+  </aside>
+</div>
+
+<dialog class="search" aria-label="Search the docs">
+  <form method="dialog" class="search-form" role="search">
+    <label class="visually-hidden" for="search-input">Search the docs</label>
+    <input id="search-input" type="search" placeholder="Search the docs" autocomplete="off" spellcheck="false">
+    <button type="submit" class="search-close">Close</button>
+  </form>
+  <p class="search-status" role="status" aria-live="polite"></p>
+  <ul class="search-results"></ul>
+</dialog>
+</body>
+</html>

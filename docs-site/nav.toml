@@ -1,0 +1,305 @@
+# The docs of lockfamily.dev/docs/ (#34): which file, or which sections of
+# a README, make which page, in which tab.
+#
+# src      "repo:path" in the repo's default branch ("lockfamily" is this repo)
+# slug     the page's path in its tab ("" for the tab's first page)
+# sections the README's H2 sections the page takes, in order, or one H3 as
+#          "H2 > H3" (that H3 then leaves its H2's page); none: the whole file
+# intro    also take the README's top (banner, badges and link line dropped)
+# bullets  H2 sections whose "- **Label.** …" bullets become headings
+# title    the page's title (needed with several sections); nav: a shorter
+#          label for the sidebar
+#
+# A section that disappears from its README fails the build: rename it here.
+#
+# Every repo's README.md, CHANGELOG.md, GUIDE.md and docs/**/*.md must be a
+# page, or be listed in skip below: a new doc in any repo fails the build
+# until it is given a place here (or skipped, with a reason).
+
+[sources]
+skip = [
+  # Internal to lockfamily: the identity's design notes, not user docs.
+  "lockfamily:docs/identity.md",
+  "lockfamily:docs/design-note.md",
+]
+
+# ------------------------------------------------------------ Get started
+[[tab]]
+id = ""
+title = "Get started"
+
+  [[tab.group]]
+  title = "Get started"
+  pages = [
+    { slug = "", src = "lockfamily:docs-site/pages/overview.md", nav = "Overview" },
+    { slug = "concepts", src = "lockfamily:docs-site/pages/concepts.md", nav = "Concepts" },
+    { slug = "install", src = "lockfamily:README.md", sections = ["Install"], title = "Install" },
+    { slug = "quick-start", src = "lockfamily:README.md", sections = ["Quick start"], title = "Quick start" },
+    { slug = "choose-a-lock", src = "lockfamily:docs-site/pages/choose-a-lock.md", nav = "Choose a Lock" },
+  ]
+
+  [[tab.group]]
+  title = "The family"
+  pages = [
+    { slug = "why", src = "lockfamily:README.md", sections = ["Why the Lock Family", "Highlights"], title = "Why the Lock Family", nav = "Why the Lock Family" },
+    { slug = "how-it-works", src = "lockfamily:README.md", sections = ["How it works"], title = "How it works" },
+    { slug = "installer", src = "lockfamily:docs/install.md", title = "The one-line installer", nav = "The one-line installer" },
+    { slug = "homebrew", src = "homebrew-tap:README.md", title = "The Homebrew tap", nav = "The Homebrew tap" },
+  ]
+
+# ------------------------------------------------------------ lea
+[[tab]]
+id = "lea"
+title = "lea"
+
+  [[tab.group]]
+  title = "Start"
+  pages = [
+    { slug = "", src = "lea:README.md", intro = true, sections = ["Why lea"], title = "lea", nav = "What lea is" },
+    { slug = "quick-start", src = "lea:README.md", sections = ["Quick start"], nav = "Quick start" },
+    { slug = "commands", src = "lea:README.md", sections = ["Commands"], nav = "Commands" },
+    { slug = "configure", src = "lea:README.md", sections = ["Configure"], nav = "Configure" },
+  ]
+
+  [[tab.group]]
+  title = "Agents at work"
+  pages = [
+    { slug = "git", src = "lea:README.md", sections = ["Git and forges"], nav = "Git and forges" },
+    { slug = "go", src = "lea:README.md", sections = ["Go"], title = "Go in the container", nav = "Go" },
+    { slug = "locks", src = "lea:README.md", sections = ["Databases, with locksql", "Queues and files, with lockmq and lockfile", "Logs, with locklog", "Web requests, with LockHTTP"], title = "The Locks in lea", nav = "The Locks in lea" },
+    { slug = "resources", src = "lea:README.md", sections = ["CPUs", "Heavy jobs", "Host pressure"], title = "CPUs, heavy jobs and host pressure", nav = "CPUs and heavy jobs" },
+  ]
+
+  [[tab.group]]
+  title = "Teams of agents"
+  pages = [
+    { slug = "teams", src = "lea:README.md", sections = ["Teams of agents"], nav = "Teams of agents" },
+    { slug = "providers", src = "lea:README.md", sections = ["Teams of agents > Other providers: Codex, Ollama, vLLM"], nav = "Other providers" },
+    { slug = "plugins", src = "lea:README.md", sections = ["Teams of agents > Plugins and permissions in lea"], nav = "Plugins and permissions" },
+    { slug = "control-tower", src = "lea:README.md", sections = ["Teams of agents > Control tower"], nav = "Control tower" },
+    { slug = "allowances", src = "lea:README.md", sections = ["Teams of agents > Allowances: let agents deliver, merge, close issues without asking"], title = "Allowances", nav = "Allowances" },
+  ]
+
+  [[tab.group]]
+  title = "Help"
+  pages = [
+    { slug = "faq", src = "lea:README.md", sections = ["FAQ"], nav = "FAQ" },
+    { slug = "troubleshooting", src = "lea:README.md", sections = ["Troubleshooting"], nav = "Troubleshooting" },
+    { slug = "limitations", src = "lea:README.md", sections = ["Known limitations"], nav = "Known limitations" },
+    { slug = "from-source", src = "lea:README.md", sections = ["Install from source", "Uninstall", "Development"], title = "Install from source, uninstall, develop", nav = "From source, uninstall" },
+  ]
+
+# ------------------------------------------------------------ lea deck
+[[tab]]
+id = "deck"
+title = "lea deck"
+
+  [[tab.group]]
+  title = "lea deck"
+  pages = [
+    { slug = "", src = "lea:README.md", sections = ["The deck"], bullets = ["The deck"], title = "lea deck", nav = "The deck" },
+    { slug = "without", src = "lea:README.md", sections = ["Without the deck"], bullets = ["Without the deck"], nav = "Without the deck" },
+  ]
+
+# ------------------------------------------------------------ lox & hub
+[[tab]]
+id = "hub"
+title = "lox & hub"
+
+  [[tab.group]]
+  title = "lox"
+  pages = [
+    { slug = "", src = "lockfamily:docs/lox.md", nav = "lox at a glance" },
+    { slug = "getting-started", src = "lockhub:docs/getting-started.md", nav = "Getting started" },
+    { slug = "lox-init", src = "lockhub:docs/lox-init.md", nav = "lox init" },
+    { slug = "lox-add", src = "lockhub:docs/lox-add.md", nav = "lox add" },
+    { slug = "lox-run", src = "lockhub:docs/lox-run.md", nav = "lox run" },
+  ]
+
+  [[tab.group]]
+  title = "lockhub"
+  pages = [
+    { slug = "lockhub", src = "lockhub:README.md", intro = true, sections = ["Why lockhub", "Install", "Quick start", "Highlights", "How it works", "Safety model"], title = "lockhub", nav = "lockhub" },
+    { slug = "approvals", src = "lockhub:docs/approvals.md", nav = "How approvals work" },
+    { slug = "mobile", src = "lockhub:docs/mobile.md", nav = "Mobile" },
+    { slug = "networks", src = "lockhub:docs/networks.md", nav = "Networks" },
+    { slug = "design-notes", src = "lockhub:docs/design-notes.md", nav = "Design notes" },
+  ]
+
+# ------------------------------------------------------------ Locks
+[[tab]]
+id = "locks"
+title = "Locks"
+fold = true
+
+  [[tab.group]]
+  title = "locksql"
+  pages = [
+    { slug = "locksql", src = "locksql:README.md", intro = true, sections = ["Why locksql", "Install", "Quick start", "Highlights", "How it works"], title = "locksql", nav = "Overview" },
+    { slug = "locksql/install", src = "locksql:docs/install.md", nav = "Install" },
+    { slug = "locksql/usage", src = "locksql:docs/usage.md", nav = "Usage" },
+    { slug = "locksql/configuration", src = "locksql:docs/configuration.md", nav = "Configuration" },
+    { slug = "locksql/console", src = "locksql:docs/console.md", nav = "The console" },
+    { slug = "locksql/launcher", src = "locksql:docs/launcher.md", nav = "The launcher" },
+    { slug = "locksql/docker", src = "locksql:docs/docker.md", nav = "Docker" },
+    { slug = "locksql/architecture", src = "locksql:docs/architecture.md", nav = "Architecture" },
+    { slug = "locksql/refused-constructs", src = "locksql:docs/refused-constructs.md", nav = "Refused constructs" },
+    { slug = "locksql/1.0", src = "locksql:docs/1.0.md", nav = "Path to 1.0" },
+  ]
+
+  [[tab.group]]
+  title = "lockmq"
+  pages = [
+    { slug = "lockmq", src = "lockmq:README.md", intro = true, sections = ["Why lockmq", "Install", "Quick start", "Highlights", "How it works"], title = "lockmq", nav = "Overview" },
+    { slug = "lockmq/install", src = "lockmq:docs/install.md", nav = "Install" },
+    { slug = "lockmq/usage", src = "lockmq:docs/usage.md", nav = "Usage" },
+    { slug = "lockmq/configuration", src = "lockmq:docs/configuration.md", nav = "Configuration" },
+    { slug = "lockmq/docker", src = "lockmq:docs/docker.md", nav = "Docker" },
+    { slug = "lockmq/architecture", src = "lockmq:docs/architecture.md", nav = "Architecture" },
+  ]
+
+  [[tab.group]]
+  title = "lockfile"
+  pages = [
+    { slug = "lockfile", src = "lockfile:README.md", intro = true, sections = ["Why lockfile", "Install", "Quick start", "Highlights", "How it works"], title = "lockfile", nav = "Overview" },
+    { slug = "lockfile/install", src = "lockfile:docs/install.md", nav = "Install" },
+    { slug = "lockfile/usage", src = "lockfile:docs/usage.md", nav = "Usage" },
+    { slug = "lockfile/configuration", src = "lockfile:docs/configuration.md", nav = "Configuration" },
+    { slug = "lockfile/plugins", src = "lockfile:docs/plugins.md", nav = "Plugins" },
+    { slug = "lockfile/plugin-contract", src = "lockfile:docs/plugin-contract.md", nav = "Plugin contract" },
+    { slug = "lockfile/docker", src = "lockfile:docs/docker.md", nav = "Docker" },
+    { slug = "lockfile/architecture", src = "lockfile:docs/architecture.md", nav = "Architecture" },
+  ]
+
+  [[tab.group]]
+  title = "lockhttp"
+  pages = [
+    { slug = "lockhttp", src = "lockhttp:README.md", intro = true, sections = ["Why lockhttp", "Install", "Quick start", "Highlights", "How it works"], title = "lockhttp", nav = "Overview" },
+    { slug = "lockhttp/install", src = "lockhttp:docs/install.md", nav = "Install" },
+    { slug = "lockhttp/usage", src = "lockhttp:docs/usage.md", nav = "Usage" },
+    { slug = "lockhttp/configuration", src = "lockhttp:docs/configuration.md", nav = "Configuration" },
+    { slug = "lockhttp/policy", src = "lockhttp:docs/policy.md", nav = "Policy reference" },
+    { slug = "lockhttp/how-it-works", src = "lockhttp:docs/how-it-works.md", nav = "How it works" },
+    { slug = "lockhttp/lea", src = "lockhttp:docs/lea.md", nav = "lockhttp in lea" },
+    { slug = "lockhttp/docker", src = "lockhttp:docs/docker.md", nav = "Docker" },
+    { slug = "lockhttp/decisions", src = "lockhttp:docs/decisions.md", nav = "Decisions" },
+  ]
+
+  [[tab.group]]
+  title = "locklog"
+  pages = [
+    { slug = "locklog", src = "locklog:README.md", intro = true, sections = ["Why locklog", "Install", "Quick start", "Highlights", "How it works"], title = "locklog", nav = "Overview" },
+    { slug = "locklog/install", src = "locklog:docs/install.md", nav = "Install" },
+    { slug = "locklog/setup", src = "locklog:docs/setup.md", nav = "Setup" },
+    { slug = "locklog/usage", src = "locklog:docs/usage.md", nav = "Usage" },
+    { slug = "locklog/sources", src = "locklog:docs/sources.md", nav = "Log sources" },
+    { slug = "locklog/loki", src = "locklog:docs/loki.md", nav = "Loki" },
+    { slug = "locklog/holmesgpt", src = "locklog:docs/recipes/holmesgpt.md", nav = "HolmesGPT recipe" },
+    { slug = "locklog/architecture", src = "locklog:docs/architecture.md", nav = "Architecture" },
+    { slug = "locklog/performance", src = "locklog:docs/performance.md", nav = "Performance" },
+  ]
+
+  [[tab.group]]
+  title = "lockssh"
+  pages = [
+    { slug = "lockssh", src = "lockssh:README.md", intro = true, sections = ["Why lockssh", "Install", "Quick start", "Highlights", "How it works"], title = "lockssh", nav = "Overview" },
+    { slug = "lockssh/usage", src = "lockssh:docs/usage.md", nav = "Usage" },
+    { slug = "lockssh/configuration", src = "lockssh:docs/configuration.md", nav = "Configuration" },
+    { slug = "lockssh/docker", src = "lockssh:docs/docker.md", nav = "Docker" },
+    { slug = "lockssh/decisions", src = "lockssh:docs/decisions.md", nav = "Decisions" },
+  ]
+
+  [[tab.group]]
+  title = "lockkit"
+  pages = [
+    { slug = "lockkit", src = "lockkit:README.md", intro = true, sections = ["Why lockkit", "Install", "Quick start", "Highlights", "How it works", "Safety model"], title = "lockkit", nav = "Overview" },
+    { slug = "lockkit/guide", src = "lockkit:GUIDE.md", nav = "Guide" },
+  ]
+
+# ------------------------------------------------------------ Managed
+[[tab]]
+id = "managed"
+title = "Managed"
+
+  [[tab.group]]
+  title = "Managed configuration"
+  pages = [
+    { slug = "", src = "lockfamily:docs/managed.md", intro = true, sections = ["Where the file lives", "Trust", "Fail closed", "Rule kinds", "Precedence", "Violations", "Sections", "Example", "Commands"], title = "Managed configuration", nav = "managed.toml" },
+    { slug = "deployment", src = "lockfamily:docs/managed.md", sections = ["Signing", "Deploying", "Verifying a deployment", "Troubleshooting"], title = "Sign, deploy and verify managed.toml", nav = "Deployment recipes" },
+  ]
+
+# ------------------------------------------------------------ Security
+[[tab]]
+id = "security"
+title = "Security"
+fold = true
+
+  [[tab.group]]
+  title = "The family"
+  pages = [
+    { slug = "", src = "lockfamily:docs-site/pages/security.md", nav = "Security model" },
+    { slug = "safety-model", src = "lockfamily:README.md", sections = ["Safety model"], title = "Safety model, in short", nav = "Safety model, in short" },
+    { slug = "lea", src = "lea:README.md", sections = ["How lea keeps your machine safe"], nav = "How lea keeps your machine safe" },
+    { slug = "lockhub", src = "lockhub:README.md", sections = ["Safety model"], title = "lockhub safety model", nav = "lockhub" },
+  ]
+
+  [[tab.group]]
+  title = "locksql"
+  pages = [
+    { slug = "locksql", src = "locksql:docs/security-model.md", title = "locksql security model", nav = "Security model" },
+    { slug = "locksql/safety", src = "locksql:docs/safety.md", nav = "Safety and limitations" },
+    { slug = "locksql/pii-analysis", src = "locksql:docs/pii-analysis.md", nav = "PII analysis" },
+  ]
+
+  [[tab.group]]
+  title = "lockmq"
+  pages = [
+    { slug = "lockmq", src = "lockmq:docs/security-model.md", nav = "Security model" },
+    { slug = "lockmq/safety", src = "lockmq:docs/safety.md", nav = "Safety and limitations" },
+  ]
+
+  [[tab.group]]
+  title = "lockfile"
+  pages = [
+    { slug = "lockfile", src = "lockfile:docs/security-model.md", nav = "Security model" },
+    { slug = "lockfile/safety", src = "lockfile:docs/safety.md", nav = "Safety, in short" },
+  ]
+
+  [[tab.group]]
+  title = "lockhttp"
+  pages = [
+    { slug = "lockhttp", src = "lockhttp:docs/security-model.md", nav = "Security model" },
+    { slug = "lockhttp/safety", src = "lockhttp:docs/safety.md", nav = "Safety model" },
+  ]
+
+  [[tab.group]]
+  title = "locklog"
+  pages = [
+    { slug = "locklog", src = "locklog:docs/security-model.md", title = "locklog security model", nav = "Security model" },
+  ]
+
+  [[tab.group]]
+  title = "lockssh"
+  pages = [
+    { slug = "lockssh", src = "lockssh:docs/security-model.md", nav = "Security model" },
+  ]
+
+# ------------------------------------------------------------ Changelog
+[[tab]]
+id = "changelog"
+title = "Changelog"
+
+  [[tab.group]]
+  title = "Changelogs"
+  pages = [
+    { slug = "", src = "lockfamily:docs-site/pages/changelog.md", nav = "Releases" },
+    { slug = "lea", src = "lea:CHANGELOG.md", title = "lea changelog", nav = "lea" },
+    { slug = "lockhub", src = "lockhub:CHANGELOG.md", title = "lockhub and lox changelog", nav = "lockhub and lox" },
+    { slug = "locksql", src = "locksql:CHANGELOG.md", title = "locksql changelog", nav = "locksql" },
+    { slug = "lockmq", src = "lockmq:CHANGELOG.md", title = "lockmq changelog", nav = "lockmq" },
+    { slug = "lockfile", src = "lockfile:CHANGELOG.md", title = "lockfile changelog", nav = "lockfile" },
+    { slug = "lockhttp", src = "lockhttp:CHANGELOG.md", title = "lockhttp changelog", nav = "lockhttp" },
+    { slug = "locklog", src = "locklog:CHANGELOG.md", title = "locklog changelog", nav = "locklog" },
+    { slug = "lockssh", src = "lockssh:CHANGELOG.md", title = "lockssh changelog", nav = "lockssh" },
+    { slug = "lockkit", src = "lockkit:CHANGELOG.md", title = "lockkit changelog", nav = "lockkit" },
+  ]

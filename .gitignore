@@ -2,3 +2,5 @@ screenshots/
 audit/
 node_modules/
 __pycache__/
+_site/
+.docs-cache/
