@@ -35,6 +35,12 @@ Docker and cosign are required. An agent on the host is protected by every
 Lock but lockhttp: lockhttp's gate runs beside lea's proxy, so it guards
 only agents running inside lea.
 
+The guarantees below hold against a compromised or prompt-injected agent
+only when the agent itself runs confined, as in lea. An agent on the host
+runs as you and can still drive Docker: for it, the Locks keep credentials
+and clear values out of its context and stop its mistakes
+([security model](https://lockfamily.dev/docs/security/)).
+
 > [!NOTE]
 > Every tool is before v1. lockhttp and lockssh are pre-releases, locklog an
 > early release.
@@ -43,10 +49,13 @@ only agents running inside lea.
 
 - **The agent never holds a credential.** Passwords, keys and tokens stay in
   a Lock's console, in an account and container the agent cannot reach.
-- **Personal data stays masked.** Values come back masked before they reach
-  the model; a clear value needs your approval.
-- **An agent cannot approve itself.** Every approval is answered in `lox run`,
-  outside the harness, and the hub signs it, bound to the exact plan.
+- **Personal data stays masked.** Personal and secret values come back
+  masked, best effort, before they reach the model; a clear value needs your
+  approval.
+- **An agent cannot approve itself.** Every approval is answered outside the
+  harness, in `lox run` or a facade the hub routes it to (`lox approve`,
+  lea's deck, a paired phone, a chat for non-production tickets), and the
+  hub signs it, bound to the exact plan.
 - **One place for every source.** One hub, one terminal and one audit log for
   all your Locks.
 
@@ -108,8 +117,8 @@ and container. The agent talks to a socket, never to the database.
 <td width="50%" valign="top">
 
 **🎭 Masked by default**<br>
-Every value the agent sees is masked first: emails, IPs, cards, secrets.
-The hub only ever sees masked screens.
+Personal and secret values are masked before the agent sees them, best
+effort: emails, IPs, cards, secrets. The hub only ever sees masked screens.
 
 </td>
 </tr>
@@ -146,9 +155,10 @@ decided, the outcome. Each decision is signed.
 </p>
 
 An agent harness is the program that runs a model as an agent and hands it
-tools. **Harness security** is the layer around it: it holds whatever the
-model is talked into, because every approval is answered outside the
-harness.
+tools. **Harness security** is the layer around it: every approval is
+answered outside the harness. For an agent that runs confined (in lea), it
+holds whatever the model is talked into; an agent on the host runs as you
+and could still drive Docker.
 
 - The agent's Lock client is an MCP server with no credential and no
   connection. It passes each request over a socket to the Lock.
@@ -162,8 +172,9 @@ What ships in `lox run` today:
 - **Auto mode by default.** Reads are approved by rule, writes and DDL are
   asked every time, a connection once per profile per session, a new
   lockhttp endpoint once per session.
-- **Auto rules per profile** in locksql and lockmq (`auto`, `ask` or `deny`
-  per action); a looser rule is a reviewed policy loosening.
+- **Auto rules per profile** in locksql, lockmq, locklog and lockssh
+  (`auto`, `ask` or `deny` per action); a looser rule is a reviewed policy
+  loosening.
 - **Key rotation and hub pinning.** `lox run --rotate hub|INSTANCE|all`
   replaces a key; `lox run --pin sha256:…` sets the hub image by digest.
 
@@ -173,7 +184,9 @@ What ships in `lox run` today:
   allowlist: only the endpoints of its reviewed profile, no internet, cloud
   metadata or other host port.
 - The hub never runs a request, never sees its results and never sees a
-  value in clear. No agent reaches the hub.
+  value in clear. No lea agent reaches the hub; an agent on the host runs
+  as you and can reach its local facade
+  ([lockhub#221](https://github.com/DavidGodefroid/lockhub/issues/221)).
 - The console is the enforcement point; skills and tool descriptions only
   guide the agent. Masking is best effort.
 - Chat facades (Slack, Telegram) never answer production tickets.
