@@ -56,7 +56,7 @@ result in clear.
 - **Auto mode**: `lox run`'s default. Reads are approved by rule, writes and
   DDL are asked every time, a connection once per profile per session.
   Shift+Tab switches to manual.
-- **lea**: runs many agents (Claude Code by default, other providers too)
+- **lea**: runs many coding agents (Claude Code by default, Codex and others too)
   in a container that sees one directory of your projects and none of your
   secrets, behind an egress proxy. lea wires its agents to the Locks.
 - **lea deck**: the terminal you drive lea from: your agents in a column on
