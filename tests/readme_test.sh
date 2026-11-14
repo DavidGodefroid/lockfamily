@@ -104,7 +104,8 @@ for w in '| `lox approve [--once]` |' '| `lox audit verify' '| `lox mobile pair'
 done
 # shellcheck disable=SC2088
 for w in '~/.local/share/lea-install/vX.Y.Z' 'checksums.txt' 'cosign v3.0.6' '--sha256 <hash>' \
-	'Formula/lockfamily.rb' 'locklog' 'sh tests/install_test.sh' 'COSIGN_REAL'; do
+	'Formula/lockfamily.rb' 'locklog' 'sh tests/install_test.sh' 'COSIGN_REAL' \
+	'The installer itself never uses sudo' 'bridge lea_egress' 'lea-egress-log.service'; do
 	keeps docs/install.md "$w"
 done
 check "docs/install.md: the cosign it pins is install.sh's" "grep -q '^cosign_version=v3.0.6$' install.sh"

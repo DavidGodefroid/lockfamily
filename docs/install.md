@@ -23,6 +23,15 @@ locklog's local log sources are Linux only; on macOS it reads the remote sources
 Docker Engine (Linux) or Docker Desktop (macOS) must be installed and
 running. Next step: `lox add <lock>` in your project, then `lox run` in a terminal of its own, outside the agent.
 
+The installer itself never uses sudo. On Linux, lea does, once, in `lea init`
+(the first `lea` runs it), and again only when what it installs changed: its
+AppArmor profile where Docker uses AppArmor, and its egress log (an nftables
+table `bridge lea_egress` in `/etc/lea/egress-log.nft`, loaded by
+`lea-egress-log.service`) where Docker runs rootful and `nft` and systemd are
+installed. When sudo would prompt, the first `lea` stops for AppArmor, or skips
+the egress log, and says to run `lea init`. See lea's
+[README](https://github.com/DavidGodefroid/lea#requirements).
+
 ## Versions
 
 They come from the tap,
