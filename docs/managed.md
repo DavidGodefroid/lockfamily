@@ -19,7 +19,7 @@ below is the released tools' own.
 | lockssh | v0.2.0 |
 | locklog | v0.3.0 |
 | lox | v0.11.0 |
-| lea | planned: the `[lea]` section is [lea#399](https://github.com/DavidGodefroid/lea/issues/399) |
+| lea | the next release ([lea#399](https://github.com/DavidGodefroid/lea/issues/399)) |
 
 An older release ignores the file: see [older tools](#older-tools).
 
@@ -443,10 +443,32 @@ before anything starts, with exit code 3.
 
 ### `[lea]`
 
-Planned: lea does not read the managed file yet. Its keys are designed in
-[lea#399](https://github.com/DavidGodefroid/lea/issues/399) and this page
-documents them when it is released. Today every tool accepts a `[lea]`
-section and none applies it: do not count on it.
+lea ([lea#399](https://github.com/DavidGodefroid/lea/issues/399), in lea's
+next release) reads the host's file in its launcher and its daemon, after
+the user's `lea.conf`, and wins over it. A file lea refuses (ownership,
+signature, an unknown `[lea]` key, a bad value) stops `lea` and its daemon
+from starting, with the reason.
+
+| Key | Type | Meaning |
+|---|---|---|
+| `approvals` | `"deck"` or `"pane"` | Who answers the agents' permission requests (`LEA_APPROVALS`), enforced. lea's approvals are never off: there is no `"required"`. |
+| `autoupdate` | `true` only | Forces `LEA_AUTOUPDATE=1`. Every release lea installs is checked with cosign anyway (no way to turn that off). |
+| `grant_ttl_max` | duration from `1m` to `30d` (`8h`, `90m`, `7d`) | The longest life of a grant. `lea allow --for` and `lea approve --expires` beyond it are refused; a lead's grant request is shortened to it; a grant recorded before ends once it is that old. An allowance that holds until revoked is refused too. |
+| `standing_grants` | bool, default `true` | `false` refuses `lea allow` without `--for`; the allowances already recorded until revoked stop applying (`lea allow` shows them suspended by company policy). |
+| `egress_allow` | list of domain names, each with its subdomains; `"default"` is lea's default list | The agents' web egress at most: lea-proxy gets the user's `LEA_EGRESS_ALLOW` within it, and the model API (anthropic.com, claude.ai, claude.com) always. `lea egress allow` refuses a domain outside it. With it, `LEA_LOCKHTTP=1` is refused unless the file has a `[lockhttp]` section for the gate. An empty list is refused: remove the key instead. |
+| `claude_enforced` | table: Claude Code setting → value | Set in every agent's managed settings, over `lea config claude`, which refuses to change them: `defaultMode` (not `bypassPermissions`), `model`, `language`, `outputStyle`, `alwaysThinkingEnabled`, `disableBypassPermissionsMode = "disable"`. Any other key is refused. |
+
+A user value beyond the file is ignored with a warning
+(`warning: LEA_APPROVALS=pane is ignored: blocked by company policy:
+lea.approvals = deck (...)`), or refused for the commands that would record
+it: `lea allow`, `lea approve --expires`, `lea egress allow`, `lea config
+claude`, and `lea config import`, refused as a whole with nothing written.
+`lea doctor` prints `Managed by <organisation> (sha256:…)` and the active
+rules, the deck's header names the organisation, and each allowance and
+each use of one records the file's sha256. The daemon reads the file again
+at every grant decision: a file that stops loading ends every grant until
+it is fixed. The configuration keys apply at the next `lea`, and
+`claude_enforced` to the lea containers started after the change.
 
 ## Example
 
@@ -542,6 +564,16 @@ auto_max = { ddl = "deny", write = "ask", policy = "ask" }
 production_auto_max = { read = "ask" }
 allow_no_upgrade = false
 image_min = { locksql = "v0.18.0", lockmq = "v0.9.0", lockfile = "v0.9.0", lockhttp = "v0.9.0", lockssh = "v0.2.0", locklog = "v0.3.0" }
+
+[lea]                                # applied from lea's next release
+approvals = "deck"
+autoupdate = true
+grant_ttl_max = "7d"
+standing_grants = false
+egress_allow = ["default", "example.com"]
+
+[lea.claude_enforced]
+defaultMode = "default"
 ```
 
 ## Commands
