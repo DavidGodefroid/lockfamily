@@ -49,22 +49,43 @@ keyless signature of the release's `checksums.txt` must come from that
 project's release workflow run for that very tag, the archive must match
 `checksums.txt` and the formula, and a launcher's image digests must be the
 ones cosign verifies for that tag. Everything is verified before anything is
-installed. The signatures are checked with the cosign on your PATH; without
-one, it downloads cosign v3.0.6, checks it against the sha256 pinned in
-`install.sh`, and, once everything else is installed, installs it as
-`~/.local/bin/cosign`.
+installed. The signatures are checked with the cosign on your PATH when it
+is v3 or later. Otherwise the installer downloads the cosign release pinned
+in `install.sh` and checks it against the sha256 pinned there. A cosign
+older than v3 on your PATH is used for nothing and left alone; only when no
+cosign is on your PATH at all is the downloaded one installed as
+`~/.local/bin/cosign`, once everything else is installed.
 
 ## lox alone
 
 `--version vX.Y.Z` installs only `lox`, from that lockhub
-release, as before (a downloaded cosign is then used for the check only);
-offline, add `--sha256 <hash>` with a hash you trust:
+release, as before (a downloaded cosign is then used for the check only).
+Without cosign, add `--sha256 <hash>` with a hash you trust: the archive is
+checked against that hash only, and the cosign check is skipped. It is
+still downloaded, from GitHub's releases or the [mirror](#mirrors) you set:
 
 ```sh
 curl -fsSL https://lockfamily.dev/install.sh | sh -s -- --version vX.Y.Z
 ```
 
-The per-tool install scripts stay.
+## Mirrors
+
+Two variables point the installer at copies you host (an `https://` URL, or
+an absolute local directory):
+
+| Variable | What it holds |
+|---|---|
+| `LOCK_RELEASE_BASE` | the releases, as `<repository>/vX.Y.Z/` folders (with `--version`: lockhub's `vX.Y.Z/` folders) |
+| `LOCK_TAP_BASE` | the tap, as `Formula/<tool>.rb` |
+
+The signatures are checked against the same release-workflow identities as
+from GitHub, so a mirror must hold the releases' own `checksums.txt` and
+signature bundles. Without GitHub, put a cosign v3 on your PATH (the
+fallback cosign is downloaded from GitHub), or use `--version` with
+`--sha256`.
+
+The per-tool install scripts stay, except lockhttp's, which is removed
+(lockhttp#40).
 
 ## Tests
 

@@ -22,7 +22,7 @@ below is the released tools' own.
 | lockssh | v0.2.0 |
 | locklog | v0.3.0 |
 | lox | v0.11.0 |
-| lea | the next release ([lea#399](https://github.com/DavidGodefroid/lea/issues/399)) |
+| lea | v0.17.0 |
 
 An older release ignores the file: see [older tools](#older-tools).
 
@@ -76,7 +76,11 @@ signature on the host (a container has neither cosign nor the network for
 it) and adds `signer.toml`, the bundle and `managed.toml.verified`, a stamp
 of the three files the Lock trusts instead of calling cosign. Each Lock's
 own launcher (`locksql`, `lockmq`, … run outside `lox`) mounts the host
-directory read-only at the same place.
+directory read-only at the same place, as it is: no stamp, and its image has
+no cosign. So today a **signed** file works under `lox run` only: run
+outside it, `<tool> managed show`, `<tool> managed check` and
+`<tool> doctor` refuse it (`the signature does not verify: cosign is not
+installed`, exit 3). An unsigned file works everywhere.
 
 ## Trust
 
@@ -91,9 +95,11 @@ directory read-only at the same place.
   signing is supported, and `cosign` must be on the host's `PATH`.
   `[family] require_signature = true` makes the bundle mandatory.
 - **Fingerprint.** The sha256 of the file's bytes is recorded with every
-  approval (`managed_sha256` in the console's approved policy,
-  `managed_fingerprint` in `lox`'s `applied.json`) and in every audit
-  record, so an action can be tied to the company policy it ran under.
+  approval (`managed_sha256` in the console's approved policy) and in every
+  audit record, so an action can be tied to the company policy it ran
+  under. `lox`'s `applied.json` records `managed_fingerprint`, a sha256
+  over the file, its bundle and `signer.toml`, each prefixed with its
+  length: it changes when any of the three does.
 - **No secrets.** A key that looks like a secret (`token`, `password`, …) is
   refused: the file is readable by every user of the machine.
 
@@ -211,7 +217,10 @@ in one of these forms:
 blocked by company policy: <key> = <bound> (profile <p>: <field> = <value>)
 blocked by company policy: <key> does not allow <value> (profile <p>: <field> + <value>)
 blocked by company policy: <key> requires <value> (profile <p>: <field> - <value>)
+blocked by company policy: <key> does not allow <field> = <value> (profile <p>; allowed: <bound>)
 ```
+
+The last form is locklog's, for its source kinds.
 
 For example, from the released tools on the [example](#example):
 
@@ -237,8 +246,11 @@ blocked by company policy: family.vault.required = true (profile dev: credential
   and audited `managed-changed`. A policy in force beyond the new bounds is
   replaced at once by the files' policy when that one is within them (a
   changed connection field ends the session, as any tightening), else the
-  session ends. In `lox run`, a change of the managed file alone recreates
-  the Locks without an `Apply?` question: the administrator decided it.
+  session ends. This holds for a console reading the host's file. Under
+  `lox run`, the Locks read the copy `lox run` made at its start, and its
+  `[lox]` caps are fixed for the session: a change reaches them at the next
+  `lox run`, which recreates the Locks without an `Apply?` question (the
+  administrator decided it).
 - **In `lox run`**, each Lock's `managed check` runs on its reviewed
   profile before the Lock starts. A Lock beyond the bounds is not started,
   the others are: `lock crm: not started: blocked by company policy:
@@ -256,7 +268,7 @@ These apply to every tool:
 | `version` | integer | Schema version: `1`. Missing or any other value is refused. |
 | `organisation` | string, printable, 128 bytes at most | Shown as `Managed by <organisation> (sha256:…)` in the consoles, `lox run`'s header and `lox doctor`. |
 | `family.require_signature` | bool | The cosign bundle must be present and valid. Default `false`. |
-| `family.require_confined_agent` | bool | Agents must run confined ([lockkit#133](https://github.com/DavidGodefroid/lockkit/issues/133)). Accepted; no released tool enforces it yet. Default `false`. |
+| `family.require_confined_agent` | bool | Agents must run confined ([lockkit#133](https://github.com/DavidGodefroid/lockkit/issues/133)): no profile may serve an unconfined agent, whatever its `unconfined`. Enforced by the Locks built on lockkit v0.20.0 or later. Default `false`. Today a host agent going through a Lock's launcher is reported confined ([lockkit#207](https://github.com/DavidGodefroid/lockkit/issues/207)). |
 | `family.vault.address` | string | The Vault every Lock uses: `lox` puts it in place of `lockfamily.yaml`'s `vault:` for the Locks with `vault: true`. |
 | `family.vault.namespace` | string | Its namespace. |
 | `family.vault.ca` | path | Its CA bundle. |
@@ -277,9 +289,9 @@ These apply to every tool:
 | `write_functions` | `"allowlist"` only | the denylist |
 | `credentials_ttl` | duration, at least `1m`: ceiling | longer, or unset |
 | `auto.<action>` (`connect`, `read`, `write`, `ddl`, `unmask`) | `deny` < `ask` < `auto`: ceiling | a looser auto rule |
-| `limits.statement_timeout`, `limits.max_rows`, `limits.max_cell_chars`, `limits.max_output_bytes`, `limits.explain_rows_refuse` | ceiling (integers at least 1) | higher, or 0 (unlimited) |
+| `limits.max_rows`, `limits.max_cell_chars`, `limits.max_output_bytes`, `limits.explain_rows_refuse` | ceiling (integers at least 1) | higher, or 0 (unlimited) |
 | `limits.k_anonymity` | floor | lower |
-| `limits.idle_timeout`, `limits.max_session` | duration: ceiling | longer |
+| `limits.statement_timeout`, `limits.idle_timeout`, `limits.max_session` | duration: ceiling | longer |
 | `limits.grant_max_duration` | duration, or `0` (grants off): ceiling | longer |
 | `limits.grant_max_statements`, `limits.grant_max_rows`, `limits.grant_max_bytes` | ceiling | larger |
 | `detectors` | required set of `email`, `phone`, `phone_loose`, `iban`, `card`, `be_niss`, `fr_nir`, `nl_bsn`, `us_ssn` | nothing: added to every profile |
@@ -446,8 +458,7 @@ before anything starts, with exit code 3.
 
 ### `[lea]`
 
-lea ([lea#399](https://github.com/DavidGodefroid/lea/issues/399), in lea's
-next release) reads the host's file in its launcher and its daemon, after
+lea (from v0.17.0) reads the host's file in its launcher and its daemon, after
 the user's `lea.conf`, and wins over it. A file lea refuses (ownership,
 signature, an unknown `[lea]` key, a bad value) stops `lea` and its daemon
 from starting, with the reason.
@@ -458,8 +469,8 @@ from starting, with the reason.
 | `autoupdate` | `true` only | Forces `LEA_AUTOUPDATE=1`. Every release lea installs is checked with cosign anyway (no way to turn that off). |
 | `grant_ttl_max` | duration from `1m` to `30d` (`8h`, `90m`, `7d`) | The longest life of a grant. `lea allow --for` and `lea approve --expires` beyond it are refused; a lead's grant request is shortened to it; a grant recorded before ends once it is that old. An allowance that holds until revoked is refused too. |
 | `standing_grants` | bool, default `true` | `false` refuses `lea allow` without `--for`; the allowances already recorded until revoked stop applying (`lea allow` shows them suspended by company policy). |
-| `egress_allow` | list of domain names, each with its subdomains; `"default"` is lea's default list | The agents' web egress at most: lea-proxy gets the user's `LEA_EGRESS_ALLOW` within it, and the model API (anthropic.com, claude.ai, claude.com) always. `lea egress allow` refuses a domain outside it. With it, `LEA_LOCKHTTP=1` is refused unless the file has a `[lockhttp]` section for the gate. An empty list is refused: remove the key instead. |
-| `claude_enforced` | table: Claude Code setting → value | Set in every agent's managed settings, over `lea config claude`, which refuses to change them: `defaultMode` (not `bypassPermissions`), `model`, `language`, `outputStyle`, `alwaysThinkingEnabled`, `disableBypassPermissionsMode = "disable"`. Any other key is refused. |
+| `egress_allow` | list of domain names, each with its subdomains; `"default"` is lea's default list | The agents' web egress at most: lea-proxy gets the user's `LEA_EGRESS_ALLOW` within it, and Anthropic's API (anthropic.com, claude.ai, claude.com) always. Other providers' APIs are not: Codex's openai.com and chatgpt.com are in `"default"` only, so a list without `"default"` must name them for Codex agents. `lea egress allow` refuses a domain outside it. With it, `LEA_LOCKHTTP=1` is refused unless the file has a `[lockhttp]` section for the gate. An empty list is refused: remove the key instead. |
+| `claude_enforced` | table: Claude Code setting → value | Set in every Claude Code agent's managed settings (not other providers'), over `lea config claude`, which refuses to change them: `defaultMode` (not `bypassPermissions`), `model`, `language`, `outputStyle`, `alwaysThinkingEnabled`, `disableBypassPermissionsMode = "disable"`. Any other key is refused. |
 
 A user value beyond the file is ignored with a warning
 (`warning: LEA_APPROVALS=pane is ignored: blocked by company policy:
@@ -570,7 +581,7 @@ production_auto_max = { read = "ask" }
 allow_no_upgrade = false
 image_min = { locksql = "v0.18.0", lockmq = "v0.9.0", lockfile = "v0.9.0", lockhttp = "v0.9.0", lockssh = "v0.2.0", locklog = "v0.3.0" }
 
-[lea]                                # applied from lea's next release
+[lea]                                # applied from lea v0.17.0
 approvals = "deck"
 autoupdate = true
 grant_ttl_max = "7d"
@@ -589,22 +600,35 @@ credential:
 | Command | What it prints | Exit code |
 |---|---|---|
 | `<tool> managed show` | The file as the tool reads it: the `Managed by …` line, `path:`, `organisation:`, `fingerprint:`, `signed: yes` or `no`, then its bounds, defaults and managed profiles. | 0; 3 when the file is refused, with the reason on stderr. |
-| `<tool> managed check [--profile NAME]` | Checks the configured profiles (or one) against the file, as the console does at start: one `blocked by company policy: …` line per violation, else a line naming the profiles within it (`ok: 2 profiles within the company policy (prod-erp, uat)`). | 0 within; 3 beyond, or when the file is refused. |
+| `<tool> managed check [--profile NAME]` | Checks the configured profiles (or one) against the file, as the console does at start: one `blocked by company policy: …` line per violation, else a line naming the profiles within it, in each tool's words ([below](#the-within-line)). | 0 within; 3 beyond, or when the file is refused. |
 | `lox managed show` | The file as `lox` applies it: the same header, its `[lox]` rules, the `[family] vault` line and the sections it holds. | 0; 3 when the file is refused. |
-| `lox doctor`, `<tool> doctor` | A `managed` line: `Managed by …`, `no managed configuration`, or `FAIL managed: <reason> (lox run refuses to start: ask your administrator to fix it)`. | |
+| `lox doctor`, `<tool> doctor` | A `managed` line: `Managed by …`, `no managed configuration`, or the refusal. `lox doctor` prints `FAIL managed: <reason> (lox run refuses to start: ask your administrator to fix it)`; each `<tool> doctor` words it its own way. | |
 
 `managed check` takes `--project DIR` in lockmq, lockssh and locklog, and
 `--config FILE` in lockhttp; lockfile and lockhttp exit 1 when the tool's
 own config file is missing. lockhttp's `managed show` starts at `path:`.
 Without a file, each prints `no managed configuration` and exits 0. `lox
 run` runs each Lock's `managed check` before it starts it; its output and
-exit codes are a contract. `lox managed show` on the example:
+exit codes are a contract.
+
+### The within line
+
+`managed check`'s line when the profiles are within the file:
+
+| Tool | Line |
+|---|---|
+| locksql, lockmq, locklog | `ok: 2 profiles within the company policy (prod-erp, uat)` |
+| lockfile | `2 profile(s) within the company policy (Managed by …)` |
+| lockssh | `within the company policy: prod-erp, uat` |
+| lockhttp | `profile default: within the company's managed configuration`, one line per profile |
+
+`lox managed show` on the example:
 
 ```
-Managed by Example Corp (sha256:a7948fe2424a)
+Managed by Example Corp (sha256:1b811173aae5)
 path: /etc/lockfamily/managed.toml
 organisation: Example Corp
-fingerprint: sha256:a7948fe2424ab232b7fa7505701e64f01a2e3bc9e707c0b1f1ce1279224aacd1
+fingerprint: sha256:1b811173aae537ad005611725b77fafa90a3404939bf97765c1acecb10f93967
 signed: no
 lox:
   auto_max.ddl = deny
@@ -619,7 +643,7 @@ lox:
   image_min.lockssh = v0.2.0
   allow_no_upgrade = false
 vault from the managed configuration ([family] vault): https://vault.example.com, required
-sections: lockfile, lockhttp, locklog, lockmq, locksql, lockssh
+sections: lea, lockfile, lockhttp, locklog, lockmq, locksql, lockssh
 ```
 
 ## Signing
@@ -671,8 +695,10 @@ cosign verify-blob --bundle managed.toml.sigstore.json \
   managed.toml
 ```
 
-`<tool> managed show` and `lox managed show` then print `signed: yes` and
-`Managed by <organisation> (sha256:…, signed)`. Any change to one byte of
+`lox managed show` then prints `signed: yes` and
+`Managed by <organisation> (sha256:…, signed)`, and so does each Lock under
+`lox run`. A Lock's own launcher, run outside `lox`, refuses a signed file
+today ([Locks in containers](#locks-in-containers)). Any change to one byte of
 `managed.toml`, of the bundle or of `signer.toml` without signing again is a
 refusal: `the signature does not verify`. The tools re-check the signature
 only when one of the three files changes.
@@ -681,8 +707,9 @@ only when one of the three files changes.
 
 Each recipe installs the directory `0755` and the files `0644`, owned by
 `root:root` (macOS `root:wheel`). It installs `managed.toml`, and
-`signer.toml` with the bundle when you sign. No restart is needed: a
-running console reads the new file at its next policy check, and `lox run`
+`signer.toml` with the bundle when you sign. A console that reads the
+host's file picks the new one up at its next policy check. `lox run` reads
+the file once, at its start: quit it and run it again on each host, and it
 applies a change of the file alone without an `Apply?` question.
 
 ### Ansible
@@ -723,8 +750,11 @@ nfpm package -p rpm -f nfpm.yaml
 sudo apt install ./example-corp-lockfamily-managed_1.0.0-1_all.deb
 ```
 
-The files are not marked as configuration files: an upgrade of the package
-replaces them, even if someone changed them by hand.
+The files are marked as configuration files (`type: config`). A file
+someone changed by hand is not silently overwritten by an upgrade: `apt`
+asks (`--force-confnew` replaces it), and `rpm` replaces it and keeps the
+changed copy as `.rpmsave`. Drop `type: config` to have every upgrade
+replace the files.
 
 ### macOS
 
@@ -756,8 +786,10 @@ On a host, after the deployment:
    `drwxr-xr-x` and `-rw-r--r--`.
 2. `lox managed show`: `Managed by <organisation> (sha256:…)`, `signed:
    yes` when you sign, and the rules you wrote.
-3. `<tool> managed check` in a project of each Lock: `… within the company
-   policy`, or the lines to fix in the user's or project's profiles.
+3. `<tool> managed check` in a project of each Lock: its
+   [within line](#the-within-line) (`… within the company policy`, lockhttp's
+   `… within the company's managed configuration`), or the lines to fix in
+   the user's or project's profiles.
 4. `lox doctor`: `managed: Managed by …`.
 
 ## Troubleshooting
@@ -778,7 +810,7 @@ check`); a refused file always exits 3.
 | `[locksql.profiles.prod-erp]: the managed profile is beyond the managed bounds: locksql.bounds.auto.ddl = deny (profile prod-erp: auto.ddl = ask)` | A managed profile must sit within the bounds, built-in defaults included: set the field in the profile (`auto = { ddl = "deny" }`). |
 | `is signed but …/signer.toml, the company identity to check it against, is missing` | Deploy `signer.toml` with the bundle. |
 | `certificate_identity_regexp must be an anchored ^https:// regexp and oidc_issuer an https:// URL` | Fix `signer.toml`. |
-| `the signature does not verify: cosign is not installed` | Install `cosign` on the host's `PATH`. |
+| `the signature does not verify: cosign is not installed` | Install `cosign` on the host's `PATH`. A Lock's own launcher, run outside `lox run`, has no cosign in its image: use the signed file under `lox run`, or deploy it unsigned. |
 | `the signature does not verify: …` | The file, the bundle or `signer.toml` changed since signing, or the identity does not match: sign again, or fix `signer.toml`. |
 | `[family] require_signature is set but managed.toml.sigstore.json is missing` | Deploy the bundle. |
 | `is signed, but this lox cannot vouch for its signature inside the locks' containers (…): upgrade lox` | Upgrade `lox` to v0.11.0 or later. |
