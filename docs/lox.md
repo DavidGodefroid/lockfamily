@@ -7,7 +7,8 @@ README. lockhub's own documentation is the contract:
 [docs/lox-run.md](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-run.md),
 [docs/lox-add.md](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-add.md),
 [docs/lox-init.md](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-init.md);
-`lox help` prints every command and flag of the `lox` you have.
+`lox help` lists every command of the `lox` you have and its main flags;
+`lox CMD -h` lists all of a command's flags.
 
 > [!NOTE]
 > The lockssh lock type, `lox run`'s tab per lock and withdrawing tickets
@@ -37,7 +38,8 @@ the agent's files `init claude` wrote and the doctor's repairs stay. Once
 the console has started, nothing is rolled back. Run it again for the next
 source.
 [`lox init`](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-init.md)
-starts a project's hub alone first, if you prefer: it asks nothing, checks
+starts a project's hub alone first, if you prefer: for a hub alone it asks
+nothing (locks already declared are reviewed with `Apply? [y/N]`), checks
 Docker, cosign and the launchers, and lists the data sources the project's
 files name (`.env*`, `compose*.yaml`, `config/`: hints only, never a secret).
 
@@ -51,12 +53,14 @@ cd ~/projects                             # your project (with lea: lea's projec
 locksql init claude                       # Claude Code's files (its MCP server is `locksql mcp`)
 locksql profile add --profile orders      # engine, host, TLS, where the password comes from; never the password
 locksql doctor --fix --yes                # .locksql/ as lox run reads it
-lox add locksql orders --profile orders   # latest signed locksql, by digest; pins the hub's image too
+lox add locksql orders --profile orders   # latest signed locksql, by digest; a new lockfamily.yaml pins the hub's image too
 lox run                                   # review, start the hub and the console, then serve decisions
 ```
 
-Docker and cosign are required: `lox add` and `lox run` check every image's
-signature against its release workflow. On Linux the database must listen on
+Docker and cosign are required: `lox add` checks the signature of the
+release it pins against its release workflow, and `lox run` checks every
+image before it starts anything (an `--image` or `--hub-image` you give
+`lox add` is taken as is, and checked at the next `lox run`). On Linux the database must listen on
 the Docker bridge, not only on 127.0.0.1 (`host.docker.internal` is the host's
 gateway). For lea's agents, the lock names your uid (`allowed_uids: [1000]`
 in `lockfamily.yaml`; `lox add` adds it when lea is installed). Any agent
@@ -73,22 +77,25 @@ with lea run `lox add` and `lox run` there.
 |---|---|
 | `lox run [--manual] [--theme light\|dark] [--no-start] [--no-upgrade] [--review] [-v] [--pin sha256:DIGEST] [--rotate hub\|INSTANCE\|all]` | start (or reuse) the hub and the locks after a review, then show every ticket and decision live, masked, and serve decisions: auto mode by default, Shift+Tab for manual; `a` opens the audit; `0`…`9` and `Tab` a lock's own tab, `w` the pending tickets to withdraw ([below](#lox-runs-screen)); quitting fails closed. `--manual` starts in manual mode; `--no-start` only serves decisions (another `lox run` started the hub and the locks); `--no-upgrade` keeps the pinned images instead of upgrading those older than this `lox`'s releases (verified with cosign); `--review` shows everything, the profiles line by line, and asks; `-v` shows cosign's and docker's own output; `--pin` sets the hub image by digest (going back to a previous hub); `--rotate` replaces a key before starting: the hub's, a lock's, or all (repeatable, or comma-separated) |
 | `lox add TYPE` | set one source up (locksql, lockmq, lockfile, lockhttp, locklog, lockssh): its questions, the lock's profile, the declaration pinned by digest to the latest signed release, a short review, the console's questions; a failure before the console starts restores the profile and `lockfamily.yaml` (not `init claude`'s files) |
-| `lox add TYPE INSTANCE [--version vX.Y.Z \| --image REF] [--profile P] [--hub-image REF]` | the older form: only declare a lock in `lockfamily.yaml`, pinned by digest |
-| `lox init [--review] [--hub-image REF]` | start the project's hub alone: prerequisites, the data sources its files name as hints (read only, no secret), a `lockfamily.yaml` with the hub alone; it asks nothing |
+| `lox add TYPE INSTANCE [--version vX.Y.Z \| --image REF] [--profile P] [--hub-image REF]` | the older form: only declare a lock in `lockfamily.yaml`, pinned by digest (an `--image` or `--hub-image` is taken as is, checked at the next `lox run`) |
+| `lox init [--review] [--hub-image REF]` | start the project's hub alone: prerequisites, the data sources its files name as hints (read only, no secret), a `lockfamily.yaml` with the hub alone; it asks nothing for a hub alone (declared locks: `Apply? [y/N]`) |
 | `lox remove NAME [--purge]` | take a lock out of `lockfamily.yaml` and stop its console after one review; its profile stays unless `--purge`; a `n`, a failure or Ctrl-C keeps the lock |
+| `lox down` | stop the workspace's stack (the hub, the locks, their gateways); volumes, keys and tickets are kept, and `lox run` starts it again |
 | `lox vault set --address URL [--namespace NS] [--ca-file PATH]` | write the shared `vault:` block; `lox run` reviews and applies it |
 | `lox add slack --team T… --channel C… --user U…` | enable the Slack facade; its tokens are asked at the terminal and kept with the hub's data, never in the workspace |
 | `lox add telegram --chat ID --from ID` | enable the Telegram facade (bot token asked at the terminal) |
 | `lox import [SUB…]` | merge sub-projects' `lockfamily.yaml`, keeping the strictest routing |
-| `lox attach INSTANCE` | answer a lock console's start-up questions (policy, credentials) |
+| `lox attach INSTANCE` | a lock console's terminal, for debugging: `lox run` asks the console's questions (policy, credentials) in its cards |
+| `lox managed show` | the company's [managed configuration](managed.md) as `lox` applies it |
+| `lox refresh INSTANCE` | rewrite a locklog lock's containers map once, from the globs `lox run` applied |
 | `lox approve [--once]` | answer tickets in a plain terminal prompt: `y`, `n reason`, `s`, `q`; `o` (or Ctrl-O then Enter, where the terminal passes it: not on macOS) shows clear values; `r` approves an expired ticket again |
 | `lox tickets [--lock NAME] [--error] [--json]` | list the tickets pending at the hub, without `lox run` (scripts, recovery) |
-| `lox withdraw INSTANCE/ID…`, `lox withdraw --lock NAME --all-pending\|--error` | withdraw stuck tickets: each ends `withdrawn` at the hub, audited with you and the reason, and its lock gets the hub's signed denial |
+| `lox withdraw INSTANCE/ID…`, `lox withdraw --lock NAME --all-pending\|--error` | withdraw stuck tickets: each ends `withdrawn` at the hub, audited with you and the reason, and its lock gets the hub's signed denial; a ticket the hub cannot verify is withdrawn without telling its lock, whose TTL ends it |
 | `lox audit [show ID]` | list the hub's exchanges (ticket, masked request, decision with its rule or human, outcome), with filters, `--follow` and `--json`; `show` draws one exchange's masked plan, deciding rule, timings and signatures |
 | `lox audit verify --data DIR --hub-key-file FILE [--lock INSTANCE=PATH] [--anchors FILE]` | check the hub's audit chain and every decision's signature, and optionally a lock's own log against them |
 | `lox mobile pair --name NAME`, `lox mobile list`, `lox mobile revoke NAME` | pair a phone (one-time code, confirmed at the terminal), list or revoke phones |
 | `lox doctor` | check the hub, the locks, keys, each lock's egress allowlist, the facade socket and the network; changes nothing |
-| `lox version`, `lox help` | print the version; list every command and flag |
+| `lox version`, `lox help` | print the version; list every command and its main flags (`lox CMD -h`: all of them) |
 | `lox up` | deprecated: it says to use `lox run` and only starts the hub and the locks |
 
 The workspace commands take `--file` to name another `lockfamily.yaml`.
@@ -111,7 +118,8 @@ card above it (`y`, `n`, `d` details, `x` forget the profile).
 - **Withdraw stuck tickets** with `w`: every ticket pending at the hub,
   oldest first, with its age; `x` withdraws the selected one, `X` every
   pending ticket of its lock, `U` its lock's unverifiable ones, each after
-  `[y/N]`. Its agent is told the human withdrew it. Without `lox run`:
+  `[y/N]`. Its agent is told the human withdrew it (an unverifiable
+  ticket's lock is not told: its TTL ends it). Without `lox run`:
   `lox tickets` and `lox withdraw`.
 
 The contract:
@@ -119,14 +127,15 @@ The contract:
 
 ## lockssh
 
-`lox add lockssh` asks the SSH host (a name, never an IP address), the port,
+`lox add lockssh` asks the SSH host (a name; an IP address is refused, but
+a loopback one, as for locksql's and lockfile's hosts), the port,
 the login, a key or a password, the key file and an optional known_hosts file
 in the lock's home (it offers to copy yours there), the allowed commands and
 whether the agent may ask for others (`--exec`, each one on a ticket). The
 console holds the key and the only SSH connection; its egress reaches the
 profile's `host`:`port` only. `lox run` reads the profile's auto rules
-(`connect`, `run`, `exec`, `unmask`); an `unmask` and an `exec` on
-production are never approved by a rule. A lockssh lock's `read-pii` (its
+(`connect`, `run`, `exec`, `unmask`); an `unmask` (on any profile) and an
+`exec` on production are never approved by a rule. A lockssh lock's `read-pii` (its
 connections and its output in clear) is answered on the local facades only,
 never in a chat. See lockhub's
 [lox-add.md](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-add.md#lockssh)
@@ -144,6 +153,13 @@ hub serves; optional Web Push with no payload), and routes each risk class:
 | prod-write, policy-loosen | yes | yes | no |
 | unlock, grant | yes | no | no |
 | clear values | on demand, `o` (or Ctrl-O) in `lox approve` (`reveal: true`) | sealed to it (`seal_clear`) | never |
+
+The local facades (`lox approve`, lea's deck) reach the hub over a socket
+that only your uid can open: a lea agent never sees it, but an agent run on
+the host as you can, and can approve its own tickets there
+([lockhub#221](https://github.com/DavidGodefroid/lockhub/issues/221)). Only
+the risk classes `hub.mobile.require_device` lists need a phone's signature.
+Run agents in lea to keep them off it.
 
 A chat facade never answers a production ticket, whatever its risk class. A
 workspace's `hub.routing` can narrow this per instance, never widen it. An

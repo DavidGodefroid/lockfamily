@@ -298,16 +298,19 @@ lox run</code></pre>
                   <span class="c"># --review: everything, line by line; -v: cosign's and docker's output;</span>
                   <span class="c"># --pin: the hub image by digest; --rotate: replace a key first</span>
 lox init [--review] [--hub-image REF]
-                  <span class="c"># start the project's hub alone; asks nothing; hints at the sources its files name</span>
+                  <span class="c"># start the project's hub alone (no question for a hub alone); hints at the sources its files name</span>
 lox add TYPE      <span class="c"># locksql, lockmq, lockfile, lockhttp, locklog, lockssh: its questions, profile,</span>
-                  <span class="c"># declaration, a short review, the console's questions; nothing kept on a failure</span>
+                  <span class="c"># declaration, a short review, the console's questions; a failure before the console</span>
+                  <span class="c"># starts restores the profile and lockfamily.yaml (the agent's files stay)</span>
 lox add TYPE INSTANCE [--version vX.Y.Z | --image REF] [--profile P] [--hub-image REF]
                   <span class="c"># the older form: only declares the lock, pinned by digest, cosign-verified</span>
+                  <span class="c"># (an --image or --hub-image is taken as is, verified at the next lox run)</span>
 lox add slack --team T… --channel C… --user U…    <span class="c"># tokens asked at the terminal</span>
 lox add telegram --chat ID --from ID               <span class="c"># bot token asked at the terminal</span>
 lox remove NAME [--purge] <span class="c"># take a lock out after one review; its profile stays unless --purge</span>
 lox import [SUB…]        <span class="c"># merge sub-projects' lockfamily.yaml, strictest routing kept</span>
-lox attach INSTANCE      <span class="c"># a console's start-up questions; detach: Ctrl-P Ctrl-Q</span>
+lox down                 <span class="c"># stop the stack; volumes, keys and tickets kept</span>
+lox attach INSTANCE      <span class="c"># a console's terminal, for debugging (lox run asks its questions in cards)</span>
 lox approve [--once]     <span class="c"># y, n reason, s, q; o (Ctrl-O + Enter, not macOS): clear values;</span>
                   <span class="c"># r on an expired ticket: approve again</span>
 lox mobile pair --name phone    <span class="c"># one-time code, confirmed at this terminal</span>
@@ -318,6 +321,7 @@ lox tickets [--lock NAME] [--error] [--json]
                   <span class="c"># the tickets pending at the hub, without lox run</span>
 lox withdraw INSTANCE/ID… | --lock NAME --all-pending|--error
                   <span class="c"># withdraw them; each lock gets the hub's signed denial</span>
+                  <span class="c"># (an unverifiable ticket's lock is not told: its TTL ends it)</span>
 lox audit [show ID]      <span class="c"># every exchange: masked request, rule or human, outcome</span>
 lox audit verify --data DIR --hub-key-file FILE [--lock INSTANCE=PATH] [--anchors FILE]
                   <span class="c"># the hub's audit chain and every decision's signature</span></code></pre>
@@ -405,7 +409,7 @@ lox run
 <span class="c"># 4. Your agent, in another terminal: claude, codex, gemini, … or lea</span></code></pre>
         <ul class="panel-notes">
           <li><code>lox add TYPE</code> sets one source up and creates <code>.lockfamily/lockfamily.yaml</code> if needed: its questions, the launcher's <code>profile add</code>, <code>init claude</code> and <code>doctor</code>, a short review, then the console's own questions. A failure, an <kbd>n</kbd> or Ctrl-C before the console starts restores the profile and <code>lockfamily.yaml</code> (the agent's files and the doctor's repairs stay).</li>
-          <li><code>lox init</code> starts the hub alone first, if you prefer. It asks nothing and lists the data sources the project's files name (<code>.env*</code>, <code>compose*.yaml</code>, <code>config/</code>: hints only, never a secret).</li>
+          <li><code>lox init</code> starts the hub alone first, if you prefer. For a hub alone it asks nothing, and it lists the data sources the project's files name (<code>.env*</code>, <code>compose*.yaml</code>, <code>config/</code>: hints only, never a secret).</li>
           <li>Where to run them: for lea, in its projects directory, the only place lea reads <code>.lockfamily/up.json</code>. For an agent on the host, in the project or any parent: each Lock's launcher looks up from the working directory.</li>
           <li>A Lock added while lea runs reaches it at lea's next start: <code>lea stop</code>, then <code>lea</code>. lockfile is Linux only.</li>
         </ul>
@@ -447,12 +451,13 @@ lox run                                       <span class="c"># in a terminal of
         <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
 brew install davidgodefroid/tap/lockfamily   <span class="c"># or: brew install davidgodefroid/tap/lockhttp</span>
 cd ~/projects                                 <span class="c"># lea's projects directory</span>
-export LEA_LOCKHTTP=1                        <span class="c"># opt-in: lea's gate asks the hub</span>
+echo LEA_LOCKHTTP=1 &gt;&gt; ~/.config/lea/lea.conf  <span class="c"># opt-in: lea's gate asks the hub</span>
+lea stop --all                                <span class="c"># if lea runs: the gate starts with lea</span>
 lox add lockhttp                              <span class="c"># its policy</span>
 lox run                                       <span class="c"># in a terminal of its own, outside lea</span>
 lea                                           <span class="c"># in another terminal</span></code></pre>
         <p>Reads of trusted hosts go through; a post, an upload or an unknown host waits for your <kbd>y</kbd> in <code>lox run</code> (or a paired phone). A new endpoint is asked once per session.</p>
-        <p>A policy <code>inject</code> entry has the gate add an API's header for one exact host from its own secrets file, so the agent never holds the credential. <a href="https://github.com/DavidGodefroid/lockhttp">lockhttp on GitHub</a></p>
+        <p>With TLS decryption (<code>LEA_LOCKHTTP_MITM=1</code>), or plain HTTP to an internal host, a policy <code>inject</code> entry has the gate add an API's header for one exact host from its own secrets file, so the agent never holds the credential. <a href="https://github.com/DavidGodefroid/lockhttp">lockhttp on GitHub</a></p>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="qs-log" aria-labelledby="qs-tab-log">
@@ -466,14 +471,14 @@ lox run                                       <span class="c"># in a terminal of
       </div>
 
       <div class="qs-panel" role="tabpanel" id="qs-ssh" aria-labelledby="qs-tab-ssh">
-        <p class="qs-meta">Linux and macOS · Docker · lockhub v0.11.0 or later · pre-release</p>
+        <p class="qs-meta">Linux and macOS · Docker · lockhub v0.12.0 or later · pre-release</p>
         <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
 brew install davidgodefroid/tap/lockfamily   <span class="c"># or only this tool: brew install davidgodefroid/tap/lockssh</span>
 cd ~/projects                                 <span class="c"># your project (with lea: lea's projects directory)</span>
 lox add lockssh                               <span class="c"># host, login, key file, allow rules; lea stop, then lea, if lea runs</span>
 lox run                                       <span class="c"># in a terminal of its own, outside the agent</span></code></pre>
         <p>A command an allow rule matches (<code>systemctl status *</code>, <code>df -h</code>) runs at once. Anything else is refused or, with <code>exec = true</code>, becomes a ticket you decide. Output comes back masked; the key stays in the console's account.</p>
-        <p>Its console runs hub-attached only: lockhub v0.11.0 is the first <code>lox</code> that knows lockssh. <a href="https://github.com/DavidGodefroid/lockssh#quick-start">lockssh on GitHub</a></p>
+        <p>Its console runs hub-attached only: current lockssh releases need <code>lox</code> v0.12.0 or later (v0.11.0 was the first that knew lockssh). <a href="https://github.com/DavidGodefroid/lockssh#quick-start">lockssh on GitHub</a></p>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="qs-lea" aria-labelledby="qs-tab-lea">
