@@ -131,7 +131,7 @@ brew install davidgodefroid/tap/lockfamily</code></pre>
         <img src="assets/lea.svg" alt="" width="48" height="48">
         <p class="kind">Runs the agents</p>
         <h3><a href="https://github.com/DavidGodefroid/lea">lea</a></h3>
-        <p class="benefit">Many Claude Code agents in a container that never sees your SSH keys or your private network. Their Lock requests wait for <code>lox run</code>.</p>
+        <p class="benefit">Many coding agents (Claude Code, Codex, …) in a container that never sees your SSH keys or your private network. Their Lock requests wait for <code>lox run</code>.</p>
         <p class="go" aria-hidden="true">on GitHub</p>
       </li>
     </ul>
@@ -176,7 +176,7 @@ brew install davidgodefroid/tap/lockfamily</code></pre>
         <p class="label">Where agents run</p>
         <div class="layer-body">
           <img src="assets/lea.svg" alt="" width="40" height="40">
-          <div><h3>Your agent, or lea</h3><p>Any MCP client on your machine. Or lea: Claude Code agents in a container that sees one projects directory and reaches the internet only through a proxy that refuses your private network.</p></div>
+          <div><h3>Your agent, or lea</h3><p>Any MCP client on your machine. Or lea: coding agents (Claude Code, Codex, …) in a container that sees one projects directory and reaches the internet only through a proxy that refuses your private network.</p></div>
         </div>
       </div>
       <div class="layer">
@@ -218,7 +218,7 @@ brew install davidgodefroid/tap/lockfamily</code></pre>
       </ul>
       <figure class="lea-demo">
         <img src="assets/lea-demo.svg" alt="Three agents (here Claude Code) work in the lea container. One pushes to github.com through the proxy; its attempts to read ~/.ssh and to reach 192.168.1.10 are blocked. Another asks for a permission, answered from the deck." width="1200" height="640" loading="lazy">
-        <figcaption>lea, running Claude Code agents: one pushes to GitHub through the proxy; reading <code>~/.ssh</code> and reaching <code>192.168.1.10</code> are blocked.</figcaption>
+        <figcaption>lea, running coding agents (here Claude Code): one pushes to GitHub through the proxy; reading <code>~/.ssh</code> and reaching <code>192.168.1.10</code> are blocked.</figcaption>
       </figure>
     </div>
   </section>
@@ -484,7 +484,7 @@ cd ~/projects                                 <span class="c"># lea's projects d
 lea                                           <span class="c"># the first run sets lea up</span>
 lox add locksql                               <span class="c"># per source; lea stop, then lea, brings it in</span>
 lox run                                       <span class="c"># in another terminal, outside lea: approvals live here</span></code></pre>
-        <p>lea runs Claude Code agents. Or use lea's own installer: <code>curl -fsSL https://leadeck.dev/install.sh | sh</code>. In the first agent, run <code>/login</code> once; press <kbd>n</kbd> for another agent.</p>
+        <p>lea runs coding agents: Claude Code by default, Codex and other providers too. Or use lea's own installer: <code>curl -fsSL https://leadeck.dev/install.sh | sh</code>. In the first agent, sign in to its provider once (<code>/login</code> in Claude Code); press <kbd>n</kbd> for another agent.</p>
         <p>lea shows no approval: when the projects directory declares Locks and no <code>lox run</code> serves them, lea says to run it, and the agents' requests wait. <a href="https://github.com/DavidGodefroid/lea">lea on GitHub</a></p>
       </div>
     </div>
