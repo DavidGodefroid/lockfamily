@@ -97,7 +97,7 @@ title = "lea deck"
   [[tab.group]]
   title = "lea deck"
   pages = [
-    { slug = "", src = "lea:README.md", sections = ["The deck"], bullets = ["The deck"], title = "lea deck", nav = "The deck" },
+    { slug = "", src = "lea:README.md", sections = ["lea deck"], bullets = ["lea deck"], title = "lea deck", nav = "lea deck" },
     { slug = "without", src = "lea:README.md", sections = ["Without the deck"], bullets = ["Without the deck"], nav = "Without the deck" },
   ]
 

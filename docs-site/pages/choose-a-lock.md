@@ -2,8 +2,10 @@
 
 One Lock per kind of data source. Add each one to a project with
 `lox add <lock>`, then keep `lox run` open. The Locks run in Docker. Every
-Lock but lockhttp protects an agent on the host as well as one inside lea;
-lockhttp needs the agent to run inside lea.
+Lock but lockhttp serves an agent on the host as well as one inside lea;
+lockhttp needs the agent to run inside lea. Against a compromised agent,
+the guarantees hold only for one that runs confined, as in lea
+([Security](/docs/security/#confined-and-host-agents)).
 
 | Your agent needs… | Lock | What it does |
 |---|---|---|
@@ -15,9 +17,8 @@ lockhttp needs the agent to run inside lea.
 | Commands on a server | [lockssh](/docs/locks/lockssh/) | Allow-listed commands run at once, the rest waits for you; the SSH key never leaves the console. |
 
 > [!NOTE]
-> lockhttp and lockssh are pre-releases, locklog an early release. lockssh
-> is not in the Homebrew tap yet. The overview page of each Lock says what
-> its current release supports.
+> lockhttp and lockssh are pre-releases, locklog an early release. The
+> overview page of each Lock says what its current release supports.
 
 ## Every Lock works the same way
 

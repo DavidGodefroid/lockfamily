@@ -20,8 +20,9 @@ agent, with or without lea.
    the request only on a signed approval, and returns masked results to
    the agent.
 
-The agent never talks to the hub, and the hub never sees a query or a
-result in clear.
+A confined agent (in lea) never talks to the hub, and the hub never sees
+a query or a result in clear. An agent on the host runs as you: see
+[Confined and host agents](/docs/security/#confined-and-host-agents).
 
 ## Words used in these docs
 
@@ -74,7 +75,7 @@ result in clear.
 
 | Request | Decided by | Where |
 |---|---|---|
-| A Lock's read, write, connection | `lox run` (a rule or you) | Your terminal, outside the harness |
+| A Lock's read, write, connection | `lox run` (a rule or you), or a facade the hub routes it to | Your terminal, `lox approve`, lea's deck, a paired phone, a chat (never production) |
 | A permission of a lea agent (a tool call) | You | The lea deck, or `lea approve` |
 | A push, a merge, an issue closed by a lea agent | An allowance, or you | lea checks it on every call |
 | A host the lea container may reach | You | `lea egress allow HOST`, on the host |
