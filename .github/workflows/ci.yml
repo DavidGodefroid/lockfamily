@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: shellcheck
-        run: shellcheck -s sh install.sh tests/install_test.sh tests/readme_test.sh tests/flow_svg_test.sh tests/site_test.sh tests/managed_e2e.sh examples/managed/macos/build.sh examples/managed/macos/scripts/postinstall
+        run: shellcheck -s sh install.sh tests/install_test.sh tests/readme_test.sh tests/flow_svg_test.sh tests/site_test.sh tests/docs_test.sh tests/managed_e2e.sh examples/managed/macos/build.sh examples/managed/macos/scripts/postinstall
 
   # The README and its docs: the first screen, every relative link and
   # anchor, the quick start against install.sh, the lox run flags.
@@ -50,6 +50,27 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: tests
         run: SITE_E2E=required sh tests/site_test.sh
+
+  # The docs (#34): the generator's unit tests, then every page built from
+  # the live sources of every repository, every local href, src and
+  # #fragment resolving, no third-party resource, install.sh served as it
+  # is, and the docs pages in a headless Chrome at 360, 768 and 1280 px,
+  # light and dark. Nightly too: a doc renamed in another repository shows
+  # here before the Pages workflow keeps the last good site.
+  docs:
+    name: docs site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: dependencies
+        run: python -m pip install --require-hashes -r docs-site/requirements.txt
+      - name: tests
+        env:
+          PYTHON: python
+        run: SITE_E2E=required sh tests/docs_test.sh
 
   # install.sh in clean containers, as a non-root user with no cosign and no
   # docker: busybox sh (alpine) and dash (debian), against a fake release.

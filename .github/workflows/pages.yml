@@ -1,0 +1,60 @@
+name: pages
+
+# lockfamily.dev: the home page, install.sh and the docs, built by
+# docs-site/build.py from every repository's default branch, then deployed
+# to GitHub Pages (build_type=workflow). The docs stay current by
+# construction: every push to main, every night, by hand, and whenever
+# another repository of the family sends a repository_dispatch of type
+# "docs" (on a release, or a change to its README or docs/).
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+  repository_dispatch:
+    types: [docs]
+
+permissions:
+  contents: read
+
+# One deployment at a time; a newer run replaces a queued one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: dependencies
+        run: python -m pip install --require-hashes -r docs-site/requirements.txt
+      - name: build
+        run: python docs-site/build.py --out _site
+      - name: check
+        run: |
+          python docs-site/build.py --check _site
+          cmp install.sh _site/install.sh
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  deploy:
+    name: deploy
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
