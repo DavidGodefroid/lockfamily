@@ -85,3 +85,13 @@ auto_max = { ddl = "deny", write = "ask", policy = "ask" }
 production_auto_max = { read = "ask" }
 allow_no_upgrade = false
 image_min = { locksql = "v0.18.0", lockmq = "v0.9.0", lockfile = "v0.9.0", lockhttp = "v0.9.0", lockssh = "v0.2.0", locklog = "v0.3.0" }
+
+[lea]                                # applied from lea's next release
+approvals = "deck"
+autoupdate = true
+grant_ttl_max = "7d"
+standing_grants = false
+egress_allow = ["default", "example.com"]
+
+[lea.claude_enforced]
+defaultMode = "default"
