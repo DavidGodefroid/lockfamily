@@ -57,7 +57,8 @@ the Docker bridge, not only on 127.0.0.1 (`host.docker.internal` is the host's
 gateway). For lea's agents, the lock names your uid (`allowed_uids: [1000]`
 in `lockfamily.yaml`; `lox add` adds it when lea is installed). Any agent
 on the host (an MCP client such as Claude Code, Codex, Cursor or Gemini CLI)
-reaches the lock through its launcher (`locksql mcp`), which
+reaches every lock but lockhttp, whose gate runs beside lea's proxy and guards
+only lea's agents, through its launcher (`locksql mcp`), which
 finds the nearest `.lockfamily/up.json` up from the working directory. lea
 reads `.lockfamily/up.json` only at the root of its projects directory, so
 with lea run `lox add` and `lox run` there.
@@ -198,8 +199,8 @@ the projects directory declares locks and no `lox run` serves them, lea says
 so as it starts, and the agents' requests wait at the hub. lea gives its
 agents the locks' sockets named in `.lockfamily/up.json`, never the hub, and
 mounts them when its container starts: a lock added while lea runs needs
-`lea stop`, then `lea`. Host agents (any MCP client) reach the same locks
-through each lock's launcher, which reads `up.json` too. The contract is
+`lea stop`, then `lea`. Host agents (any MCP client) reach the same locks, lockhttp
+excepted, through each lock's launcher, which reads `up.json` too. The contract is
 lockhub's
 [docs/lox-run.md](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-run.md).
 

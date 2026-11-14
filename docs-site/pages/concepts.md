@@ -31,8 +31,9 @@ result in clear.
   harness.
 - **Lock**: a program that holds the credentials of one kind of data
   source and answers the agent's requests, masked: locksql (SQL databases),
-  lockmq (RabbitMQ), lockfile (files), lockhttp (outbound HTTP), locklog
-  (logs), lockssh (commands over SSH).
+  lockmq (RabbitMQ), lockfile (files), lockhttp (outbound HTTP, for agents
+  inside lea only), locklog (logs), lockssh (commands over SSH). Every
+  Lock runs in a Docker container started by `lox run`.
 - **Console**: a Lock's process that holds the credentials and enforces its
   policy, in an account and a container the agent cannot reach. The console
   is the enforcement point; skills and tool descriptions only guide the
