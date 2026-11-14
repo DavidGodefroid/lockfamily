@@ -66,7 +66,7 @@ title = "lea"
   pages = [
     { slug = "git", src = "lea:README.md", sections = ["Git and forges"], nav = "Git and forges" },
     { slug = "go", src = "lea:README.md", sections = ["Go"], title = "Go in the container", nav = "Go" },
-    { slug = "locks", src = "lea:README.md", sections = ["Databases, with locksql", "Queues and files, with lockmq and lockfile", "Logs, with locklog", "Web requests, with LockHTTP"], title = "The Locks in lea", nav = "The Locks in lea" },
+    { slug = "locks", src = "lea:README.md", sections = ["Databases, with locksql", "Queues and files, with lockmq and lockfile", "Logs, with locklog", "SSH hosts, with lockssh", "Web requests, with LockHTTP"], title = "The Locks in lea", nav = "The Locks in lea" },
     { slug = "resources", src = "lea:README.md", sections = ["CPUs", "Heavy jobs", "Host pressure"], title = "CPUs, heavy jobs and host pressure", nav = "CPUs and heavy jobs" },
   ]
 
