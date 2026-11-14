@@ -407,12 +407,14 @@ def build_pages(pages, src):
             h2, _, h3 = [x.strip() for x in sel.partition('>')]
             hit = [b for b in h2s if b[1].lower() == h2.lower() or b[0] == h2]
             if not hit:
-                raise SystemExit('%s:%s has no section "%s" (page %s)' % (p.repo, p.path, h2, p.url))
+                raise SystemExit('%s:%s has no section "%s" (page %s); its sections: %s'
+                                 % (p.repo, p.path, h2, p.url, ', '.join('"%s"' % b[1] for b in h2s)))
             hid, htitle, head, subs = hit[0]
             if h3:
                 sub = [s for s in subs if s[1].lower() == h3.lower() or s[0] == h3]
                 if not sub:
-                    raise SystemExit('%s:%s has no section "%s" (page %s)' % (p.repo, p.path, sel, p.url))
+                    raise SystemExit('%s:%s has no section "%s" (page %s); "%s" has: %s'
+                                     % (p.repo, p.path, sel, p.url, htitle, ', '.join('"%s"' % t for _, t, _ in subs)))
                 picked.append((sub[0][0], sub[0][1], 3, sub[0][2]))
             else:
                 skip = claimed.get((p.repo, p.path, htitle.lower()), set())
