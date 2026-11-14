@@ -103,7 +103,7 @@ for w in '| `lox approve [--once]` |' '| `lox audit verify' '| `lox mobile pair'
 	keeps docs/lox.md "$w"
 done
 # shellcheck disable=SC2088
-for w in '~/.local/share/lea-install/vX.Y.Z' 'checksums.txt' 'cosign v3.0.6' '--sha256 <hash>' \
+for w in '~/.local/share/lea-install/vX.Y.Z' 'checksums.txt' 'the cosign release pinned' '--sha256 <hash>' \
 	'Formula/lockfamily.rb' 'locklog' 'sh tests/install_test.sh' 'COSIGN_REAL' \
 	'The installer itself never uses sudo' 'bridge lea_egress' 'lea-egress-log.service'; do
 	keeps docs/install.md "$w"
@@ -139,7 +139,7 @@ for w in '/etc/lockfamily/managed.toml' '/Library/Application Support/lockfamily
 	'`<tool> managed show`' '`<tool> managed check [--profile NAME]`' '`lox managed show`' \
 	'## Signing' '## Deploying' '### Ansible' '### Debian and rpm packages' '### macOS' '## Troubleshooting' \
 	'### `[locksql]`' '### `[lockmq]`' '### `[lockssh]`' '### `[lockfile]`' '### `[lockhttp]`' '### `[locklog]`' \
-	'### `[lox]`' '### `[lea]`' 'lea#399'; do
+	'### `[lox]`' '### `[lea]`' 'lea v0.17.0'; do
 	keeps docs/managed.md "$w"
 done
 # Key-pair signing is not supported in v1 (lockkit#15); [locklog] is

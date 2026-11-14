@@ -31,7 +31,11 @@ sets one source up, guided and applied at once: its questions, the
 launcher's `profile add`, `init claude` and `doctor`, the declaration in
 `lockfamily.yaml` (created when it does not exist yet), a short review of
 that lock, and the console's own questions at your terminal. A failure, an
-`n` or Ctrl-C keeps nothing. Run it again for the next source.
+`n` or Ctrl-C before the console starts puts the profile file and
+`lockfamily.yaml` back as they were and keeps your answers as a draft;
+the agent's files `init claude` wrote and the doctor's repairs stay. Once
+the console has started, nothing is rolled back. Run it again for the next
+source.
 [`lox init`](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-init.md)
 starts a project's hub alone first, if you prefer: it asks nothing, checks
 Docker, cosign and the launchers, and lists the data sources the project's
@@ -68,7 +72,7 @@ with lea run `lox add` and `lox run` there.
 | Command | What it does |
 |---|---|
 | `lox run [--manual] [--theme light\|dark] [--no-start] [--no-upgrade] [--review] [-v] [--pin sha256:DIGEST] [--rotate hub\|INSTANCE\|all]` | start (or reuse) the hub and the locks after a review, then show every ticket and decision live, masked, and serve decisions: auto mode by default, Shift+Tab for manual; `a` opens the audit; `0`…`9` and `Tab` a lock's own tab, `w` the pending tickets to withdraw ([below](#lox-runs-screen)); quitting fails closed. `--manual` starts in manual mode; `--no-start` only serves decisions (another `lox run` started the hub and the locks); `--no-upgrade` keeps the pinned images instead of upgrading those older than this `lox`'s releases (verified with cosign); `--review` shows everything, the profiles line by line, and asks; `-v` shows cosign's and docker's own output; `--pin` sets the hub image by digest (going back to a previous hub); `--rotate` replaces a key before starting: the hub's, a lock's, or all (repeatable, or comma-separated) |
-| `lox add TYPE` | set one source up (locksql, lockmq, lockfile, lockhttp, locklog, lockssh): its questions, the lock's profile, the declaration pinned by digest to the latest signed release, a short review, the console's questions; nothing is kept on a failure |
+| `lox add TYPE` | set one source up (locksql, lockmq, lockfile, lockhttp, locklog, lockssh): its questions, the lock's profile, the declaration pinned by digest to the latest signed release, a short review, the console's questions; a failure before the console starts restores the profile and `lockfamily.yaml` (not `init claude`'s files) |
 | `lox add TYPE INSTANCE [--version vX.Y.Z \| --image REF] [--profile P] [--hub-image REF]` | the older form: only declare a lock in `lockfamily.yaml`, pinned by digest |
 | `lox init [--review] [--hub-image REF]` | start the project's hub alone: prerequisites, the data sources its files name as hints (read only, no secret), a `lockfamily.yaml` with the hub alone; it asks nothing |
 | `lox remove NAME [--purge]` | take a lock out of `lockfamily.yaml` and stop its console after one review; its profile stays unless `--purge`; a `n`, a failure or Ctrl-C keeps the lock |
@@ -131,14 +135,14 @@ and [lox-run.md](https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-ru
 ## Facades and routing
 
 `lox run` is the facade you keep open. The hub also takes decisions from
-`lox approve`, Slack, Telegram and a paired phone (an installable web app the
+`lox approve`, lea's deck, Slack, Telegram and a paired phone (an installable web app the
 hub serves; optional Web Push with no payload), and routes each risk class:
 
-| Risk class | Terminal | Phone | Slack, Telegram |
+| Risk class | Terminal, lea's deck | Phone | Slack, Telegram |
 |---|---|---|---|
 | read, read-pii, write | yes | yes | yes, never a production ticket |
 | prod-write, policy-loosen | yes | yes | no |
-| unlock | yes | no | no |
+| unlock, grant | yes | no | no |
 | clear values | on demand, `o` (or Ctrl-O) in `lox approve` (`reveal: true`) | sealed to it (`seal_clear`) | never |
 
 A chat facade never answers a production ticket, whatever its risk class. A
