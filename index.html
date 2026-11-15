@@ -419,7 +419,7 @@ lox run
       <div class="qs-panel" role="tabpanel" id="qs-sql" aria-labelledby="qs-tab-sql">
         <p class="qs-meta">Linux and macOS (Windows through WSL2) · Docker · MariaDB, MySQL, PostgreSQL, SQLite</p>
         <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
-brew install davidgodefroid/tap/lockfamily   <span class="c"># or only this tool: brew install davidgodefroid/tap/locksql</span>
+brew install davidgodefroid/tap/lockfamily   <span class="c"># or locksql alone, with lox and cosign: brew install davidgodefroid/tap/locksql davidgodefroid/tap/lox cosign</span>
 cd ~/projects                                 <span class="c"># your project (with lea: lea's projects directory)</span>
 lox add locksql                             <span class="c"># its questions, then the review; lea stop, then lea, if lea runs</span>
 lox run                                       <span class="c"># in a terminal of its own, outside the agent</span></code></pre>
@@ -429,7 +429,7 @@ lox run                                       <span class="c"># in a terminal of
       <div class="qs-panel" role="tabpanel" id="qs-mq" aria-labelledby="qs-tab-mq">
         <p class="qs-meta">Linux and macOS · Docker · RabbitMQ 3.13 and 4.x</p>
         <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
-brew install davidgodefroid/tap/lockfamily   <span class="c"># or only this tool: brew install davidgodefroid/tap/lockmq</span>
+brew install davidgodefroid/tap/lockfamily   <span class="c"># or lockmq alone, with lox and cosign: brew install davidgodefroid/tap/lockmq davidgodefroid/tap/lox cosign</span>
 cd ~/projects                                 <span class="c"># your project (with lea: lea's projects directory)</span>
 lox add lockmq                              <span class="c"># its questions, then the review; lea stop, then lea, if lea runs</span>
 lox run                                       <span class="c"># in a terminal of its own, outside the agent</span></code></pre>
@@ -439,7 +439,7 @@ lox run                                       <span class="c"># in a terminal of
       <div class="qs-panel" role="tabpanel" id="qs-file" aria-labelledby="qs-tab-file">
         <p class="qs-meta">Linux only (Docker, a kernel with Landlock; seccomp sandboxes the plugins)</p>
         <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
-brew install davidgodefroid/tap/lockfamily   <span class="c"># or only this tool: brew install davidgodefroid/tap/lockfile</span>
+brew install davidgodefroid/tap/lockfamily   <span class="c"># or lockfile alone, with lox and cosign: brew install davidgodefroid/tap/lockfile davidgodefroid/tap/lox cosign</span>
 cd ~/projects                                 <span class="c"># your project (with lea: lea's projects directory)</span>
 lox add lockfile                            <span class="c"># its questions, then the review; lea stop, then lea, if lea runs</span>
 lox run                                       <span class="c"># in a terminal of its own, outside the agent</span></code></pre>
@@ -449,7 +449,7 @@ lox run                                       <span class="c"># in a terminal of
       <div class="qs-panel" role="tabpanel" id="qs-http" aria-labelledby="qs-tab-http">
         <p class="qs-meta">With lea · Docker · pre-release</p>
         <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
-brew install davidgodefroid/tap/lockfamily   <span class="c"># or: brew install davidgodefroid/tap/lockhttp</span>
+brew install davidgodefroid/tap/lockfamily   <span class="c"># or lockhttp alone, with lea, lox and cosign: brew install davidgodefroid/tap/lockhttp davidgodefroid/tap/lea davidgodefroid/tap/lox cosign</span>
 cd ~/projects                                 <span class="c"># lea's projects directory</span>
 echo LEA_LOCKHTTP=1 &gt;&gt; ~/.config/lea/lea.conf  <span class="c"># opt-in: lea's gate asks the hub</span>
 lea stop --all                                <span class="c"># if lea runs: the gate starts with lea</span>
@@ -461,9 +461,9 @@ lea                                           <span class="c"># in another termi
       </div>
 
       <div class="qs-panel" role="tabpanel" id="qs-log" aria-labelledby="qs-tab-log">
-        <p class="qs-meta">Linux and macOS · Docker · lockhub v0.10.0 or later · local log sources Linux only; on macOS, remote sources: Loki, Elasticsearch/OpenSearch (preview) · early release</p>
+        <p class="qs-meta">A Linux host with the logs · Docker 19.03 or later · lockhub v0.10.0 or later · early release</p>
         <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
-brew install davidgodefroid/tap/lockfamily   <span class="c"># or locklog alone, with lox: brew install davidgodefroid/tap/locklog davidgodefroid/tap/lox</span>
+brew install davidgodefroid/tap/lockfamily   <span class="c"># or locklog alone, with lox and cosign: brew install davidgodefroid/tap/locklog davidgodefroid/tap/lox cosign</span>
 cd ~/projects/shop                            <span class="c"># the project whose logs the agent investigates</span>
 lox add locklog                               <span class="c"># its questions, then the review; lea stop, then lea, if lea runs</span>
 lox run                                       <span class="c"># in a terminal of its own, outside the agent</span></code></pre>
@@ -473,7 +473,7 @@ lox run                                       <span class="c"># in a terminal of
       <div class="qs-panel" role="tabpanel" id="qs-ssh" aria-labelledby="qs-tab-ssh">
         <p class="qs-meta">Linux and macOS · Docker · lockhub v0.12.0 or later · pre-release</p>
         <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
-brew install davidgodefroid/tap/lockfamily   <span class="c"># or only this tool: brew install davidgodefroid/tap/lockssh</span>
+brew install davidgodefroid/tap/lockfamily   <span class="c"># or lockssh alone, with lox and cosign: brew install davidgodefroid/tap/lockssh davidgodefroid/tap/lox cosign</span>
 cd ~/projects                                 <span class="c"># your project (with lea: lea's projects directory)</span>
 lox add lockssh                               <span class="c"># host, login, key file, allow rules; lea stop, then lea, if lea runs</span>
 lox run                                       <span class="c"># in a terminal of its own, outside the agent</span></code></pre>
