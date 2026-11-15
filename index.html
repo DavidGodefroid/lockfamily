@@ -484,12 +484,12 @@ lox run                                       <span class="c"># in a terminal of
       <div class="qs-panel" role="tabpanel" id="qs-lea" aria-labelledby="qs-tab-lea">
         <p class="qs-meta">Linux, macOS, or Windows with WSL2 · Docker · an account or API key for your agents' provider (Claude Code, Codex, …)</p>
         <pre class="term" tabindex="0"><code>brew trust davidgodefroid/tap                 <span class="c"># once: Homebrew asks you to trust a third-party tap</span>
-brew install davidgodefroid/tap/lockfamily   <span class="c"># or lea alone: brew install davidgodefroid/tap/lea</span>
+brew install davidgodefroid/tap/lockfamily   <span class="c"># or lea alone, with lox and cosign: brew install davidgodefroid/tap/lea davidgodefroid/tap/lox cosign</span>
 cd ~/projects                                 <span class="c"># lea's projects directory</span>
 lea                                           <span class="c"># the first run sets lea up</span>
 lox add locksql                               <span class="c"># per source; lea stop, then lea, brings it in</span>
 lox run                                       <span class="c"># in another terminal, outside lea: approvals live here</span></code></pre>
-        <p>lea runs coding agents: Claude Code by default, Codex and other providers too. Or use lea's own installer: <code>curl -fsSL https://leadeck.dev/install.sh | sh</code>. In the first agent, sign in to its provider once (<code>/login</code> in Claude Code); press <kbd>n</kbd> for another agent.</p>
+        <p>lea runs coding agents: Claude Code by default, Codex and other providers too. Or use lea's own installer: <code>curl -fsSL https://leadeck.dev/install.sh | sh</code> installs lea only; <code>lox add</code> and <code>lox run</code> also need lox and cosign (v2.5.0 or later). In the first agent, sign in to its provider once (<code>/login</code> in Claude Code); press <kbd>n</kbd> for another agent.</p>
         <p>lea shows no approval: when the projects directory declares Locks and no <code>lox run</code> serves them, lea says to run it, and the agents' requests wait. <a href="https://github.com/DavidGodefroid/lea">lea on GitHub</a></p>
       </div>
     </div>
