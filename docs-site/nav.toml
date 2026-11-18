@@ -21,6 +21,9 @@ skip = [
   # Internal to lockfamily: the identity's design notes, not user docs.
   "lockfamily:docs/identity.md",
   "lockfamily:docs/design-note.md",
+  # Unreleased: lox live is on lockhub main, in no release yet. Add its page
+  # (lox group, after lox run) when lockhub ships it.
+  "lockhub:docs/lox-live.md",
 ]
 
 # ------------------------------------------------------------ Get started
