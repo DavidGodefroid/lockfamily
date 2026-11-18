@@ -70,20 +70,21 @@ RUN_W = RUN_COLS * CW + 2 * PAD
 AGENT_W = W - 3 * M - RUN_W
 AGENT_COLS = int((AGENT_W - 2 * PAD) // CW)
 
-# The identity's palette (assets/tokens.css, docs/identity.md). The windows
-# follow the theme: paper in light, carbon in dark.
+# The identity's palette (assets/tokens.css, docs/identity.md), in the
+# colours of lockfamily#72. The windows follow the theme: paper in light,
+# the terminal's dark in dark.
 THEMES = {
     'light': {
-        'bg': '#f4efe4', 'win': '#fffcf5', 'bar': '#e9e2d2', 'border': '#b9af98',
+        'bg': '#fbf7ee', 'win': '#fffcf5', 'bar': '#f3ecdd', 'border': '#b9af98',
         'text': '#1d1b17', 'dim': '#575146', 'title': '#1d1b17', 'muted': '#575146',
         'green': '#2d6a35', 'yellow': '#8a5300', 'cyan': '#0e6158', 'red': '#a8201a',
-        'blue': '#2a55a8', 'step_on': '#1f4a9c', 'step_bg': '#fffcf5', 'key': '#2d6a35',
+        'blue': '#2a55a8', 'step_on': '#2346d2', 'step_bg': '#fffcf5', 'key': '#2d6a35',
     },
     'dark': {
-        'bg': '#16140f', 'win': '#0e0d0a', 'bar': '#24211b', 'border': '#4a4438',
-        'text': '#ede6d6', 'dim': '#b2a994', 'title': '#ede6d6', 'muted': '#b2a994',
+        'bg': '#1f1d26', 'win': '#121017', 'bar': '#282531', 'border': '#5a546c',
+        'text': '#ede6d6', 'dim': '#bdb5a3', 'title': '#ede6d6', 'muted': '#bdb5a3',
         'green': '#7fcf8a', 'yellow': '#e8b860', 'cyan': '#6fd9c8', 'red': '#ff9384',
-        'blue': '#89b4fa', 'step_on': '#89b4fa', 'step_bg': '#25221b', 'key': '#7fcf8a',
+        'blue': '#89b4fa', 'step_on': '#889cf0', 'step_bg': '#2f2c3a', 'key': '#7fcf8a',
     },
 }
 ANSI_FG = {30: 'win', 31: 'red', 32: 'green', 33: 'yellow', 34: 'blue', 35: 'blue', 36: 'cyan',
