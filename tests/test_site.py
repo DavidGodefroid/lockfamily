@@ -400,6 +400,16 @@ class Page(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(ROOT, 'docs/mockups/directions.svg')))
         ET.fromstring(read('docs/mockups/directions.svg'))
 
+    def test_proxy_command_unsupported_under_lox_run(self):
+        # The by-hand locksql notes list how a database is reached: they say
+        # proxy_command is not one of the ways under lox run, and name the
+        # built-in ssh bastion (#38, lockhub#193).
+        hub = self.html[self.html.index('id="hub-hand"'):self.html.index('id="hub-cli"')]
+        self.assertIn('<code>proxy_command</code> is not supported under <code>lox run</code>', hub)
+        self.assertIn('built-in ssh bastion (<code>[profiles.NAME.ssh]</code>)', hub)
+        self.assertIn('href="https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-run.md#egress-each-lock-reaches-its-reviewed-endpoints-only"', hub)
+        self.assertEqual(self.html.count('proxy_command'), 1)
+
     def test_managed_link(self):
         # The page links the managed configuration reference (#32), as it
         # links the full lox reference, and the target exists.
