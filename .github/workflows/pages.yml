@@ -37,6 +37,9 @@ jobs:
         run: python -m pip install --require-hashes -r docs-site/requirements.txt
       - name: build
         run: python docs-site/build.py --out _site
+        env:
+          # Read-only: the star count of the home page's GitHub button.
+          GITHUB_TOKEN: ${{ github.token }}
       - name: check
         run: |
           python docs-site/build.py --check _site

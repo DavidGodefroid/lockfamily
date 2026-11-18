@@ -654,6 +654,30 @@ def copy_home(out):
         shutil.copytree(os.path.join(ROOT, d), os.path.join(out, d))
 
 
+def write_stars(out, offline, repo='lockfamily'):
+    """assets/stars.json for the home page's GitHub button (#66): the star
+    count is read here, at build time, so a visitor's browser never asks
+    github.com. Any failure leaves no file, and the button a plain link."""
+    if offline:
+        return None
+    req = urllib.request.Request('https://api.github.com/repos/%s/%s' % (OWNER, repo),
+                                 headers={'Accept': 'application/vnd.github+json', 'User-Agent': 'lockfamily-site-build'})
+    token = os.environ.get('GITHUB_TOKEN')
+    if token:
+        req.add_header('Authorization', 'Bearer ' + token)
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            stars = json.load(resp)['stargazers_count']
+        if not isinstance(stars, int) or stars < 0:
+            raise ValueError(stars)
+    except Exception as e:  # noqa: BLE001 (the build must not fail on this)
+        print('stars: not written (%s)' % e, file=sys.stderr)
+        return None
+    with open(os.path.join(out, 'assets', 'stars.json'), 'w', encoding='utf-8') as fh:
+        json.dump({'repo': '%s/%s' % (OWNER, repo), 'stars': stars}, fh)
+    return stars
+
+
 def sitemap(pages):
     urls = [SITE + '/'] + [SITE + p.url for p in pages]
     return ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -671,6 +695,7 @@ def build(out, cache, offline, nav_path):
     shutil.rmtree(out, ignore_errors=True)
     os.makedirs(out)
     copy_home(out)
+    write_stars(out, offline)
     links = Links(pages, src, out)
     for p in pages:
         links.rewrite(p)
