@@ -117,6 +117,20 @@ main { outline: none; }
 .copy-status:empty { display: none; }
 .install-actions { display: flex; align-items: center; gap: var(--s-2); }
 
+/* the GitHub button, next to the install box; main.js adds the star count
+   when the site was built with one (assets/stars.json), else a plain link */
+.hero-actions { display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-4) 0 0; }
+.button {
+  display: inline-flex; align-items: center; gap: var(--s-3); min-height: 44px; padding: 0 var(--s-4);
+  border: 1px solid var(--ink); border-radius: var(--radius); box-shadow: 3px 3px 0 var(--accent);
+  background: var(--card); color: var(--ink); text-decoration: none; font: 600 0.85rem/1.2 var(--font-mono);
+}
+.button:hover { text-decoration: underline; box-shadow: 1px 1px 0 var(--accent); transform: translate(2px, 2px); }
+.button:focus-visible { outline-color: var(--ink); }
+.button .stars { padding: 3px 8px; border-radius: var(--radius); background: var(--accent); color: var(--on-accent); }
+.button .stars[hidden] { display: none; }
+.button .stars::before { content: "\2605\00a0"; }
+
 /* the ticket: face, perforation, stub */
 .ticket { margin: 0; position: relative; }
 /* the offset block: a second print pass, out of register */
