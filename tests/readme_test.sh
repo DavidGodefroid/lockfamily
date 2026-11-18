@@ -31,8 +31,8 @@ anchors() {
 	awk '/^```/ { code = !code; next } !code && /^#+ / { print }' "$1" | while IFS= read -r h; do slug "$h"; done
 }
 
-# 1. The first screen: what the Lock Family is, a link to the site, and no
-#    implementation detail of the site.
+# 1. The first screen: what the user gains, the category, a link to the
+#    site, and no implementation detail of the site.
 head -n 30 README.md >"${TMPDIR:-/tmp}/readme_head.$$"
 first="${TMPDIR:-/tmp}/readme_head.$$"
 check "first screen names the Lock Family" "has '$first' 'Lock Family'"
@@ -44,6 +44,60 @@ for w in 'Static HTML' 'static HTML' 'GitHub Pages' 'http.server' 'CNAME' 'vanil
 	check "first screen has no site detail: $w" "! has '$first' '$w'"
 done
 rm -f "$first"
+
+# 1b. The opening (#56 to #59): a user gain first, the four start commands
+#     before line 40, one example before the family's vocabulary, the
+#     table of what holds where before Install, the limits in one section.
+check "opening: the first sentence after the badges is a user gain" "sed -n '/<\/p>/,\$p' README.md | grep -m1 '<b>' | grep -q '<b>Your AI agent works on your production database without holding the password.</b>'"
+n=0
+for c in 'brew trust davidgodefroid/tap' 'brew install davidgodefroid/tap/lockfamily' 'lox add locksql' 'lox run'; do
+	l=$(grep -n -m1 "^$c" README.md | cut -d: -f1)
+	check "opening: '$c' before line 40, in order" "[ -n '$l' ] && [ '${l:-0}' -lt 40 ] && [ '${l:-0}' -gt '$n' ]"
+	n=${l:-0}
+done
+check "opening: the first screen links to what holds where" "head -n 40 README.md | grep -q '#what-holds-where'"
+check "opening: the first screen names the confined-agent rule" "head -n 42 README.md | tr '\n' ' ' | grep -q 'hold against a compromised or prompt-injected agent only when it runs confined, in lea: \[what holds where\](#what-holds-where)'"
+check "opening: no absolute on the password" "! grep -q 'without ever holding' README.md"
+check "not presented as the family site and install.sh" "! grep -q 'The family site' README.md"
+# line TEXT: the first line of README.md that has TEXT, outside the header's HTML.
+line() { awk -v w="$1" '/^```sh$/ { body = 1 } body && index($0, w) { print NR; exit }' README.md; }
+ex=$(grep -n -m1 '^## One request, start to finish$' README.md | cut -d: -f1)
+ex_end=$(grep -n -m1 '^## What it is$' README.md | cut -d: -f1)
+check "example: present, before What it is" "[ -n '$ex' ] && [ -n '$ex_end' ] && [ '${ex:-0}' -lt '${ex_end:-0}' ]"
+# lea is named once before the example, by the rule the first screen must
+# state (#56); the family's other words come after it.
+for w in ' Lock ' 'Locks' ' hub' 'facade'; do
+	l=$(line "$w")
+	check "example: before the first use of '$w'" "[ -n '$l' ] && [ '${l:-0}' -gt '${ex_end:-0}' ]"
+done
+body=$(sed -n "${ex:-1},${ex_end:-1}p" README.md)
+# shellcheck disable=SC2016
+for w in 'SELECT o.id, c.name, c.email' '4812  <redacted>  <redacted>  89.90  pending' 'Pending human approval: ticket' \
+	'QUESTION write on shop/shop' 'y approve   n deny' '(1 rows affected)' '✔ human ✓'; do
+	case $body in *"$w"*) pass "example: $w" ;; *) fail "example: $w" ;; esac
+done
+# The example is the run the demo was drawn from.
+check "example: the masked row is the captured one" "grep -q '^4812	<redacted>	<redacted>	89.90	pending$' tools/demo_capture/agent-a2-run.txt"
+check "example: the pending answer is the captured one" "grep -qxF \"\$(cat tools/demo_capture/agent-a4-pending.txt)\" README.md"
+tb=$(grep -n -m1 '^## What holds where$' README.md | cut -d: -f1)
+ins=$(grep -n -m1 '^## Install$' README.md | cut -d: -f1)
+check "guarantees table: before Install" "[ -n '$tb' ] && [ '${tb:-0}' -lt '${ins:-0}' ]"
+check "guarantees table: its two columns" "grep -qF '| | Agent on the host | Agent in lea |' README.md"
+for r in 'Credentials' 'Clear values' 'Approvals' 'lockhttp' 'A compromised or prompt-injected agent' 'Docker and the local facade'; do
+	check "guarantees table: row $r" "grep -q '^| \*\*$r\*\* |' README.md"
+done
+check "guarantees table: the host column does not hold against a compromised agent" "grep '^| \*\*A compromised or prompt-injected agent\*\* |' README.md | cut -d'|' -f3 | grep -q '^ Not held\.'"
+check "limits: the section exists, after Safety model" "[ \"\$(grep -n -m1 '^## What it does not protect against$' README.md | cut -d: -f1)\" -gt \"\$(grep -n -m1 '^## Safety model$' README.md | cut -d: -f1)\" ]"
+check "limits: linked from the guarantees table" "sed -n '/^## What holds where$/,/^## Why/p' README.md | grep -q '#what-it-does-not-protect-against'"
+limits=$(sed -n '/^## What it does not protect against$/,/^## Documentation$/p' README.md | tr '\n' ' ' | tr -s ' ')
+for w in 'only when the agent itself runs confined, as in lea' 'runs as you and can still drive Docker' \
+	'they do not hold against an agent that is compromised or turned against you' \
+	'can reach the hub'"'"'s local facade' 'lockhub/issues/221' 'it guards only agents running inside lea' \
+	'Masking is best effort.' 'Skills and tool descriptions only guide the agent' \
+	'never answer production tickets' 'docs/security-model.md' 'lockfamily.dev/docs/security/'; do
+	case $limits in *"$w"*) pass "limits: $w" ;; *) fail "limits: $w" ;; esac
+done
+check "docs site: the safety page takes the table and the limits" "grep -q 'sections = \[\"What holds where\", \"Safety model\", \"What it does not protect against\"\]' docs-site/nav.toml"
 
 # 2. Site source details appear only in "About this repo".
 before=$(sed -n '1,/^## About this repo$/p' README.md)

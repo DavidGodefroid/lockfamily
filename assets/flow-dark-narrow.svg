@@ -162,69 +162,69 @@
 .k78{animation:k78 41.5s linear infinite}
 @keyframes k79{0.000%{opacity:0}100.000%{opacity:0}}
 .k79{animation:k79 41.5s linear infinite}</style>
-<rect x="0" y="0" width="480" height="1468" rx="18" fill="#16140f" stroke="none" stroke-width="1"/>
-<rect x="16" y="14" width="448" height="34" rx="17" fill="#1f1c16" stroke="#4a4438" stroke-width="1"/>
+<rect x="0" y="0" width="480" height="1468" rx="18" fill="#1f1d26" stroke="none" stroke-width="1"/>
+<rect x="16" y="14" width="448" height="34" rx="17" fill="#282531" stroke="#5a546c" stroke-width="1"/>
 <text x="34" y="36.5" font-size="14" fill="#ff9384" font-weight="700">✕</text>
 <text x="52" y="35.5" font-size="12.5" fill="#ede6d6" font-weight="600">The agent never talks to the hub</text>
-<rect x="16" y="54" width="448" height="34" rx="17" fill="#1f1c16" stroke="#4a4438" stroke-width="1"/>
+<rect x="16" y="54" width="448" height="34" rx="17" fill="#282531" stroke="#5a546c" stroke-width="1"/>
 <text x="34" y="76.5" font-size="14" fill="#6fd9c8" font-weight="700">◆</text>
 <text x="52" y="75.5" font-size="12.5" fill="#ede6d6" font-weight="600">The hub sees masked queries only</text>
-<rect x="16" y="94" width="448" height="34" rx="17" fill="#1f1c16" stroke="#4a4438" stroke-width="1"/>
+<rect x="16" y="94" width="448" height="34" rx="17" fill="#282531" stroke="#5a546c" stroke-width="1"/>
 <text x="34" y="116.5" font-size="14" fill="#89b4fa" font-weight="700">▣</text>
 <text x="52" y="115.5" font-size="12.5" fill="#ede6d6" font-weight="600">You approve outside the harness</text>
-<rect x="16" y="134" width="448" height="34" rx="17" fill="#1f1c16" stroke="#4a4438" stroke-width="1"/>
+<rect x="16" y="134" width="448" height="34" rx="17" fill="#282531" stroke="#5a546c" stroke-width="1"/>
 <text x="34" y="156.5" font-size="14" fill="#7fcf8a" font-weight="700">✓</text>
 <text x="52" y="155.5" font-size="12.5" fill="#ede6d6" font-weight="600">Reads auto · writes asked</text>
 <rect x="16" y="192" width="448" height="168" rx="16" fill="none" stroke="#89b4fa" stroke-width="1.6" stroke-dasharray="6 5"/>
 <text x="32" y="216" font-size="13" fill="#89b4fa" font-weight="700">agent harness</text>
-<text x="138" y="216" font-size="12" fill="#b2a994">your agent’s tools</text>
+<text x="138" y="216" font-size="12" fill="#bdb5a3">your agent’s tools</text>
 <path d="M278 290 L290 290" fill="none" stroke="#6b6352" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M371 352 L371 386 L176 386 L176 432" fill="none" stroke="#6b6352" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M176 572 L176 682" fill="none" stroke="#6b6352" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M176 808 L176 880" fill="none" stroke="#6b6352" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M306 506 L366 506" fill="none" stroke="#6b6352" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-<text x="260" y="414" font-size="11.5" fill="#b2a994" font-weight="600">socket</text>
-<text x="260" y="620" font-size="11.5" fill="#b2a994" font-weight="600">↑ masked ticket</text>
-<text x="260" y="635" font-size="11.5" fill="#b2a994" font-weight="600">↓ signed decision</text>
-<text x="260" y="848" font-size="11.5" fill="#b2a994" font-weight="600">queue</text>
+<text x="260" y="414" font-size="11.5" fill="#bdb5a3" font-weight="600">socket</text>
+<text x="260" y="620" font-size="11.5" fill="#bdb5a3" font-weight="600">↑ masked ticket</text>
+<text x="260" y="635" font-size="11.5" fill="#bdb5a3" font-weight="600">↓ signed decision</text>
+<text x="260" y="848" font-size="11.5" fill="#bdb5a3" font-weight="600">queue</text>
 <path d="M30 360 L30 745 L46 745" fill="none" stroke="#ff9384" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 5"/>
-<circle cx="30" cy="627" r="11" fill="#16140f" stroke="#ff9384" stroke-width="1.6"/>
+<circle cx="30" cy="627" r="11" fill="#1f1d26" stroke="#ff9384" stroke-width="1.6"/>
 <text x="30" y="631.5" font-size="13" fill="#ff9384" font-weight="700" text-anchor="middle">✕</text>
 <text x="48" y="631" font-size="11.5" fill="#ff9384" font-weight="600">no route</text>
-<rect x="28" y="228" width="250" height="124" rx="12" fill="#25221b" stroke="#4a4438" stroke-width="1.2"/>
+<rect x="28" y="228" width="250" height="124" rx="12" fill="#2f2c3a" stroke="#5a546c" stroke-width="1.2"/>
 <rect x="28" y="228" width="5" height="124" rx="2.5" fill="#89b4fa" stroke="none" stroke-width="1"/>
 <text x="46" y="254" font-size="16" fill="#ede6d6" font-weight="700">agent</text>
-<text x="46" y="274" font-size="12" fill="#b2a994">Claude Code · Codex · Cursor · lea</text>
-<rect x="290" y="228" width="162" height="124" rx="12" fill="#25221b" stroke="#4a4438" stroke-width="1.2"/>
+<text x="46" y="274" font-size="12" fill="#bdb5a3">Claude Code · Codex · Cursor · lea</text>
+<rect x="290" y="228" width="162" height="124" rx="12" fill="#2f2c3a" stroke="#5a546c" stroke-width="1.2"/>
 <rect x="290" y="228" width="5" height="124" rx="2.5" fill="#89b4fa" stroke="none" stroke-width="1"/>
 <text x="308" y="254" font-size="16" fill="#ede6d6" font-weight="700">Lock client</text>
-<text x="308" y="274" font-size="12" fill="#b2a994">MCP server</text>
-<text x="308" y="291" font-size="12" fill="#b2a994">no credential</text>
-<text x="308" y="308" font-size="12" fill="#b2a994">no connection</text>
-<rect x="46" y="432" width="260" height="140" rx="12" fill="#25221b" stroke="#4a4438" stroke-width="1.2"/>
+<text x="308" y="274" font-size="12" fill="#bdb5a3">MCP server</text>
+<text x="308" y="291" font-size="12" fill="#bdb5a3">no credential</text>
+<text x="308" y="308" font-size="12" fill="#bdb5a3">no connection</text>
+<rect x="46" y="432" width="260" height="140" rx="12" fill="#2f2c3a" stroke="#5a546c" stroke-width="1.2"/>
 <rect x="46" y="432" width="5" height="140" rx="2.5" fill="#ede6d6" stroke="none" stroke-width="1"/>
 <text x="64" y="458" font-size="16" fill="#ede6d6" font-weight="700">lock</text>
-<text x="64" y="478" font-size="12" fill="#b2a994">locksql · lockmq · lockfile</text>
-<text x="64" y="495" font-size="12" fill="#b2a994">lockhttp · locklog · lockssh</text>
-<text x="64" y="512" font-size="12" fill="#b2a994">holds the credentials</text>
-<text x="64" y="529" font-size="12" fill="#b2a994">masks every value it returns</text>
-<rect x="46" y="682" width="260" height="126" rx="12" fill="#25221b" stroke="#4a4438" stroke-width="1.2"/>
+<text x="64" y="478" font-size="12" fill="#bdb5a3">locksql · lockmq · lockfile</text>
+<text x="64" y="495" font-size="12" fill="#bdb5a3">lockhttp · locklog · lockssh</text>
+<text x="64" y="512" font-size="12" fill="#bdb5a3">holds the credentials</text>
+<text x="64" y="529" font-size="12" fill="#bdb5a3">masks every value it returns</text>
+<rect x="46" y="682" width="260" height="126" rx="12" fill="#2f2c3a" stroke="#5a546c" stroke-width="1.2"/>
 <rect x="46" y="682" width="5" height="126" rx="2.5" fill="#6fd9c8" stroke="none" stroke-width="1"/>
 <text x="64" y="708" font-size="16" fill="#ede6d6" font-weight="700">hub</text>
-<text x="64" y="728" font-size="12" fill="#b2a994">queues tickets, signs decisions</text>
-<text x="64" y="745" font-size="12" fill="#b2a994">masked queries only, no clear values</text>
-<text x="64" y="762" font-size="12" fill="#b2a994">never runs one, never sees a result</text>
-<rect x="366" y="424" width="86" height="28" rx="8" fill="#1f1c16" stroke="#4a4438" stroke-width="1"/>
-<text x="409" y="442.5" font-size="12" fill="#b2a994" text-anchor="middle">RabbitMQ</text>
-<rect x="366" y="458" width="86" height="28" rx="8" fill="#1f1c16" stroke="#4a4438" stroke-width="1"/>
-<text x="409" y="476.5" font-size="12" fill="#b2a994" text-anchor="middle">files</text>
-<rect x="366" y="492" width="86" height="28" rx="8" fill="#25221b" stroke="#ede6d6" stroke-width="1.6"/>
+<text x="64" y="728" font-size="12" fill="#bdb5a3">queues tickets, signs decisions</text>
+<text x="64" y="745" font-size="12" fill="#bdb5a3">masked queries only, no clear values</text>
+<text x="64" y="762" font-size="12" fill="#bdb5a3">never runs one, never sees a result</text>
+<rect x="366" y="424" width="86" height="28" rx="8" fill="#282531" stroke="#5a546c" stroke-width="1"/>
+<text x="409" y="442.5" font-size="12" fill="#bdb5a3" text-anchor="middle">RabbitMQ</text>
+<rect x="366" y="458" width="86" height="28" rx="8" fill="#282531" stroke="#5a546c" stroke-width="1"/>
+<text x="409" y="476.5" font-size="12" fill="#bdb5a3" text-anchor="middle">files</text>
+<rect x="366" y="492" width="86" height="28" rx="8" fill="#2f2c3a" stroke="#ede6d6" stroke-width="1.6"/>
 <text x="409" y="510.5" font-size="12" fill="#ede6d6" font-weight="700" text-anchor="middle">Database</text>
-<rect x="366" y="526" width="86" height="28" rx="8" fill="#1f1c16" stroke="#4a4438" stroke-width="1"/>
-<text x="409" y="544.5" font-size="12" fill="#b2a994" text-anchor="middle">HTTP</text>
-<rect x="366" y="560" width="86" height="28" rx="8" fill="#1f1c16" stroke="#4a4438" stroke-width="1"/>
-<text x="409" y="578.5" font-size="12" fill="#b2a994" text-anchor="middle">logs</text>
-<rect x="16" y="880" width="448" height="452" rx="12" fill="#0e0d0a" stroke="#4a4438" stroke-width="1.2"/>
+<rect x="366" y="526" width="86" height="28" rx="8" fill="#282531" stroke="#5a546c" stroke-width="1"/>
+<text x="409" y="544.5" font-size="12" fill="#bdb5a3" text-anchor="middle">HTTP</text>
+<rect x="366" y="560" width="86" height="28" rx="8" fill="#282531" stroke="#5a546c" stroke-width="1"/>
+<text x="409" y="578.5" font-size="12" fill="#bdb5a3" text-anchor="middle">logs</text>
+<rect x="16" y="880" width="448" height="452" rx="12" fill="#121017" stroke="#5a546c" stroke-width="1.2"/>
 <rect x="16" y="880" width="448" height="34" rx="12" fill="#24211b" stroke="none" stroke-width="1"/>
 <rect x="16" y="902" width="448" height="12" rx="0" fill="#24211b" stroke="none" stroke-width="1"/>
 <circle cx="34" cy="897" r="5" fill="#f87171"/>
@@ -243,85 +243,85 @@
 <text x="30" y="1319" font-size="11.5" fill="#ede6d6" class="m"><tspan fill="#e2e8f0" font-weight="700">Shift+Tab</tspan><tspan fill="#94a3b8"> mode</tspan><tspan fill="#e2e8f0" font-weight="700">  a</tspan><tspan fill="#94a3b8"> audit</tspan><tspan fill="#e2e8f0" font-weight="700">  ?</tspan><tspan fill="#94a3b8"> help</tspan><tspan fill="#e2e8f0" font-weight="700">  q</tspan><tspan fill="#94a3b8"> quit</tspan></text>
 <g class="a k1" opacity="1"><text x="46" y="306" font-size="11.5" fill="#89b4fa" class="m" font-weight="600">› SELECT email FROM customers</text></g>
 <g class="a k2" opacity="1"><text x="46" y="330" font-size="11.5" fill="#6fd9c8" class="m" font-weight="600">‹ j***@example.com ×20</text></g>
-<g class="a k3" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
-<g class="a k4" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
-<g class="a k5" opacity="0"><rect x="-62.61" y="-11" width="125.22" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket · masked</text></g>
-<g class="a k6" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket</text></g>
-<g class="a k7" opacity="0"><rect x="-24.03" y="-11" width="48.06" height="22" rx="11" fill="#16140f" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">auto</text></g>
-<g class="a k8" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#16140f" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">signed ✓</text></g>
-<g class="a k9" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
-<g class="a k10" opacity="0"><rect x="-24.03" y="-11" width="48.06" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">rows</text></g>
-<g class="a k11" opacity="0"><rect x="-48.58" y="-11" width="97.16" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">masked rows</text></g>
-<g class="a k12" opacity="0"><rect x="-48.58" y="-11" width="97.16" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">masked rows</text></g>
+<g class="a k3" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
+<g class="a k4" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
+<g class="a k5" opacity="0"><rect x="-62.61" y="-11" width="125.22" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket · masked</text></g>
+<g class="a k6" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket</text></g>
+<g class="a k7" opacity="0"><rect x="-24.03" y="-11" width="48.06" height="22" rx="11" fill="#1f1d26" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">auto</text></g>
+<g class="a k8" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#1f1d26" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">signed ✓</text></g>
+<g class="a k9" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
+<g class="a k10" opacity="0"><rect x="-24.03" y="-11" width="48.06" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">rows</text></g>
+<g class="a k11" opacity="0"><rect x="-48.58" y="-11" width="97.16" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">masked rows</text></g>
+<g class="a k12" opacity="0"><rect x="-48.58" y="-11" width="97.16" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">masked rows</text></g>
 <g class="a k13" opacity="1"><text x="30" y="1180" font-size="11.5" fill="#ede6d6" class="m"><tspan fill="#94a3b8">14:01 </tspan><tspan fill="#89b4fa">agent  </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">replica </tspan><tspan fill="#94a3b8">read  </tspan><tspan fill="#e2e8f0">SELECT email…  </tspan><tspan fill="#4ade80" font-weight="700">auto ✓</tspan></text></g>
-<g class="a k14" opacity="0"><text x="64" y="556" font-size="11.5" fill="#b2a994" class="m">● replica   ○ primary</text></g>
+<g class="a k14" opacity="0"><text x="64" y="556" font-size="11.5" fill="#bdb5a3" class="m">● replica   ○ primary</text></g>
 <g class="a k15" opacity="1"><text x="64" y="556" font-size="11.5" fill="#7fcf8a" class="m" font-weight="600">● replica   ● primary</text></g>
 <g class="a k16" opacity="0"><text x="46" y="306" font-size="11.5" fill="#89b4fa" class="m" font-weight="600">› SELECT count(*) FROM orders</text></g>
 <g class="a k17" opacity="0"><text x="46" y="330" font-size="11.5" fill="#6fd9c8" class="m" font-weight="600">‹ 1 row</text></g>
-<g class="a k18" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
-<g class="a k19" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
-<g class="a k20" opacity="0"><rect x="-69.63" y="-11" width="139.25" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">connect · primary</text></g>
-<g class="a k21" opacity="0"><rect x="-34.55" y="-11" width="69.1" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">connect</text></g>
+<g class="a k18" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
+<g class="a k19" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
+<g class="a k20" opacity="0"><rect x="-69.63" y="-11" width="139.25" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">connect · primary</text></g>
+<g class="a k21" opacity="0"><rect x="-34.55" y="-11" width="69.1" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">connect</text></g>
 <g class="a k22" opacity="0"><rect x="26" y="980" width="428" height="150" rx="8" fill="#1c1917" stroke="#fbbf24" stroke-width="1.6"/><text x="40" y="1002" font-size="12" fill="#fbbf24" class="m" font-weight="700">◆ QUESTION connect on shop/primary</text><text x="40" y="1022" font-size="11.5" fill="#94a3b8" class="m">agent asks · ◆ locksql</text><text x="40" y="1042" font-size="11.5" fill="#e2e8f0" class="m">shop / primary · connect db:5432/shop</text><text x="40" y="1060" font-size="11.5" fill="#94a3b8" class="m">why asked: first connection to this</text><text x="40" y="1078" font-size="11.5" fill="#94a3b8" class="m">profile in this session</text><text x="40" y="1116" font-size="11.5" fill="#94a3b8" class="m">y approve   n deny   d details</text><path d="M422 1000 c0-5 2.5-8 6-8 s6 3 6 8 v4 l2 2 h-16 l2-2 z M425.6 1006.5 a2.4 2.4 0 0 0 4.8 0" fill="#fbbf24"/></g>
 <g class="a k23" opacity="0"><rect x="408" y="1104" width="32" height="20" rx="5" fill="#4ade80" stroke="none" stroke-width="1"/><text x="424" y="1119" font-size="13" fill="#1a1814" class="m" font-weight="700" text-anchor="middle">y</text></g>
 <g class="a k24" opacity="0"><text x="30" y="1202" font-size="11.5" fill="#ede6d6" class="m"><tspan fill="#94a3b8">14:02 </tspan><tspan fill="#89b4fa">agent  </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#fbbf24">conn  </tspan><tspan fill="#e2e8f0">connect        </tspan><tspan fill="#fbbf24" font-weight="700">◆ asked</tspan></text></g>
 <g class="a k25" opacity="1"><text x="30" y="1202" font-size="11.5" fill="#ede6d6" class="m"><tspan fill="#94a3b8">14:02 </tspan><tspan fill="#89b4fa">agent  </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#fbbf24">conn  </tspan><tspan fill="#e2e8f0">connect        </tspan><tspan fill="#4ade80" font-weight="700">✔ you ✓</tspan></text></g>
-<g class="a k26" opacity="0"><rect x="-13.51" y="-11" width="27.02" height="22" rx="11" fill="#16140f" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">y</text></g>
-<g class="a k27" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#16140f" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">signed ✓</text></g>
-<g class="a k28" opacity="0"><rect x="-34.55" y="-11" width="69.1" height="22" rx="11" fill="#16140f" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">connect</text></g>
+<g class="a k26" opacity="0"><rect x="-13.51" y="-11" width="27.02" height="22" rx="11" fill="#1f1d26" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">y</text></g>
+<g class="a k27" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#1f1d26" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">signed ✓</text></g>
+<g class="a k28" opacity="0"><rect x="-34.55" y="-11" width="69.1" height="22" rx="11" fill="#1f1d26" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">connect</text></g>
 <g class="a k29" opacity="0"><text x="30" y="958" font-size="11.5" fill="#94a3b8" class="m">connected shop/replica 6m</text></g>
 <g class="a k30" opacity="1"><text x="30" y="958" font-size="11.5" fill="#94a3b8" class="m">connected shop/replica 6m · shop/primary 0s</text></g>
-<g class="a k31" opacity="0"><rect x="-62.61" y="-11" width="125.22" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket · masked</text></g>
-<g class="a k32" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket</text></g>
+<g class="a k31" opacity="0"><rect x="-62.61" y="-11" width="125.22" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket · masked</text></g>
+<g class="a k32" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket</text></g>
 <g class="a k33" opacity="1"><text x="30" y="1224" font-size="11.5" fill="#ede6d6" class="m"><tspan fill="#94a3b8">14:02 </tspan><tspan fill="#89b4fa">agent  </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#94a3b8">read  </tspan><tspan fill="#e2e8f0">SELECT count(… </tspan><tspan fill="#4ade80" font-weight="700">auto ✓</tspan></text></g>
-<g class="a k34" opacity="0"><rect x="-24.03" y="-11" width="48.06" height="22" rx="11" fill="#16140f" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">auto</text></g>
-<g class="a k35" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#16140f" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">signed ✓</text></g>
-<g class="a k36" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
-<g class="a k37" opacity="0"><rect x="-27.54" y="-11" width="55.07" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">1 row</text></g>
-<g class="a k38" opacity="0"><rect x="-27.54" y="-11" width="55.07" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">1 row</text></g>
-<g class="a k39" opacity="0"><rect x="-27.54" y="-11" width="55.07" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">1 row</text></g>
+<g class="a k34" opacity="0"><rect x="-24.03" y="-11" width="48.06" height="22" rx="11" fill="#1f1d26" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">auto</text></g>
+<g class="a k35" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#1f1d26" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">signed ✓</text></g>
+<g class="a k36" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">SELECT</text></g>
+<g class="a k37" opacity="0"><rect x="-27.54" y="-11" width="55.07" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">1 row</text></g>
+<g class="a k38" opacity="0"><rect x="-27.54" y="-11" width="55.07" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">1 row</text></g>
+<g class="a k39" opacity="0"><rect x="-27.54" y="-11" width="55.07" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">1 row</text></g>
 <g class="a k40" opacity="0"><text x="46" y="306" font-size="11.5" fill="#89b4fa" class="m" font-weight="600">› UPDATE orders SET status=…</text></g>
 <g class="a k41" opacity="0"><text x="46" y="330" font-size="11.5" fill="#7fcf8a" class="m" font-weight="600">‹ 1 row updated</text></g>
-<g class="a k42" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">UPDATE</text></g>
-<g class="a k43" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">UPDATE</text></g>
-<g class="a k44" opacity="0"><rect x="-59.1" y="-11" width="118.21" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket · write</text></g>
-<g class="a k45" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket</text></g>
+<g class="a k42" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">UPDATE</text></g>
+<g class="a k43" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">UPDATE</text></g>
+<g class="a k44" opacity="0"><rect x="-59.1" y="-11" width="118.21" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket · write</text></g>
+<g class="a k45" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket</text></g>
 <g class="a k46" opacity="0"><rect x="26" y="980" width="428" height="150" rx="8" fill="#1c1917" stroke="#fbbf24" stroke-width="1.6"/><text x="40" y="1002" font-size="12" fill="#fbbf24" class="m" font-weight="700">◆ QUESTION write on shop/primary</text><text x="40" y="1022" font-size="11.5" fill="#94a3b8" class="m">agent asks · ◆ locksql</text><text x="40" y="1042" font-size="11.5" fill="#e2e8f0" class="m">UPDATE orders SET status = ‹p***(4)›</text><text x="40" y="1060" font-size="11.5" fill="#e2e8f0" class="m">  WHERE id = ‹4***(5)›  -- 1 row</text><text x="40" y="1078" font-size="11.5" fill="#94a3b8" class="m">why asked: write is always asked</text><text x="40" y="1116" font-size="11.5" fill="#94a3b8" class="m">y approve   n deny   d details</text><path d="M422 1000 c0-5 2.5-8 6-8 s6 3 6 8 v4 l2 2 h-16 l2-2 z M425.6 1006.5 a2.4 2.4 0 0 0 4.8 0" fill="#fbbf24"/></g>
 <g class="a k47" opacity="0"><rect x="408" y="1104" width="32" height="20" rx="5" fill="#4ade80" stroke="none" stroke-width="1"/><text x="424" y="1119" font-size="13" fill="#1a1814" class="m" font-weight="700" text-anchor="middle">y</text></g>
 <g class="a k48" opacity="0"><text x="30" y="1246" font-size="11.5" fill="#ede6d6" class="m"><tspan fill="#94a3b8">14:03 </tspan><tspan fill="#89b4fa">agent  </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#fbbf24" font-weight="700">write </tspan><tspan fill="#e2e8f0">UPDATE orders… </tspan><tspan fill="#fbbf24" font-weight="700">◆ asked</tspan></text></g>
 <g class="a k49" opacity="1"><text x="30" y="1246" font-size="11.5" fill="#ede6d6" class="m"><tspan fill="#94a3b8">14:03 </tspan><tspan fill="#89b4fa">agent  </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#fbbf24" font-weight="700">write </tspan><tspan fill="#e2e8f0">UPDATE orders… </tspan><tspan fill="#4ade80" font-weight="700">✔ you ✓</tspan></text></g>
-<g class="a k50" opacity="0"><rect x="-13.51" y="-11" width="27.02" height="22" rx="11" fill="#16140f" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">y</text></g>
-<g class="a k51" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#16140f" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">signed ✓</text></g>
-<g class="a k52" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">UPDATE</text></g>
-<g class="a k53" opacity="0"><rect x="-27.54" y="-11" width="55.07" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">1 row</text></g>
-<g class="a k54" opacity="0"><rect x="-55.6" y="-11" width="111.19" height="22" rx="11" fill="#16140f" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">1 row updated</text></g>
-<g class="a k55" opacity="0"><rect x="-55.6" y="-11" width="111.19" height="22" rx="11" fill="#16140f" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">1 row updated</text></g>
+<g class="a k50" opacity="0"><rect x="-13.51" y="-11" width="27.02" height="22" rx="11" fill="#1f1d26" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">y</text></g>
+<g class="a k51" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#1f1d26" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">signed ✓</text></g>
+<g class="a k52" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">UPDATE</text></g>
+<g class="a k53" opacity="0"><rect x="-27.54" y="-11" width="55.07" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">1 row</text></g>
+<g class="a k54" opacity="0"><rect x="-55.6" y="-11" width="111.19" height="22" rx="11" fill="#1f1d26" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">1 row updated</text></g>
+<g class="a k55" opacity="0"><rect x="-55.6" y="-11" width="111.19" height="22" rx="11" fill="#1f1d26" stroke="#7fcf8a" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#7fcf8a" class="m" text-anchor="middle" font-weight="600">1 row updated</text></g>
 <g class="a k56" opacity="0"><text x="46" y="306" font-size="11.5" fill="#89b4fa" class="m" font-weight="600">› DELETE FROM customers …</text></g>
 <g class="a k57" opacity="0"><text x="46" y="330" font-size="11.5" fill="#ff9384" class="m" font-weight="600">‹ denied in lox run</text></g>
-<g class="a k58" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">DELETE</text></g>
-<g class="a k59" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">DELETE</text></g>
-<g class="a k60" opacity="0"><rect x="-59.1" y="-11" width="118.21" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket · write</text></g>
-<g class="a k61" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket</text></g>
+<g class="a k58" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">DELETE</text></g>
+<g class="a k59" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#89b4fa" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#89b4fa" class="m" text-anchor="middle" font-weight="600">DELETE</text></g>
+<g class="a k60" opacity="0"><rect x="-59.1" y="-11" width="118.21" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket · write</text></g>
+<g class="a k61" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#6fd9c8" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#6fd9c8" class="m" text-anchor="middle" font-weight="600">ticket</text></g>
 <g class="a k62" opacity="0"><rect x="26" y="980" width="428" height="150" rx="8" fill="#1c1917" stroke="#fbbf24" stroke-width="1.6"/><text x="40" y="1002" font-size="12" fill="#fbbf24" class="m" font-weight="700">◆ QUESTION write on shop/primary</text><text x="40" y="1022" font-size="11.5" fill="#94a3b8" class="m">agent asks · ◆ locksql</text><text x="40" y="1042" font-size="11.5" fill="#e2e8f0" class="m">DELETE FROM customers</text><text x="40" y="1060" font-size="11.5" fill="#e2e8f0" class="m">  WHERE created &lt; ‹2***(10)›  -- 3812 rows</text><text x="40" y="1078" font-size="11.5" fill="#94a3b8" class="m">why asked: write is always asked</text><text x="40" y="1116" font-size="11.5" fill="#94a3b8" class="m">y approve   n deny   d details</text><path d="M422 1000 c0-5 2.5-8 6-8 s6 3 6 8 v4 l2 2 h-16 l2-2 z M425.6 1006.5 a2.4 2.4 0 0 0 4.8 0" fill="#fbbf24"/></g>
 <g class="a k63" opacity="0"><rect x="408" y="1104" width="32" height="20" rx="5" fill="#f87171" stroke="none" stroke-width="1"/><text x="424" y="1119" font-size="13" fill="#1a1814" class="m" font-weight="700" text-anchor="middle">n</text></g>
 <g class="a k64" opacity="0"><text x="30" y="1268" font-size="11.5" fill="#ede6d6" class="m"><tspan fill="#94a3b8">14:04 </tspan><tspan fill="#89b4fa">agent  </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#fbbf24" font-weight="700">write </tspan><tspan fill="#e2e8f0">DELETE FROM c… </tspan><tspan fill="#fbbf24" font-weight="700">◆ asked</tspan></text></g>
 <g class="a k65" opacity="1"><text x="30" y="1268" font-size="11.5" fill="#ede6d6" class="m"><tspan fill="#94a3b8">14:04 </tspan><tspan fill="#89b4fa">agent  </tspan><tspan fill="#e2e8f0">◆ shop </tspan><tspan fill="#94a3b8">primary </tspan><tspan fill="#fbbf24" font-weight="700">write </tspan><tspan fill="#e2e8f0">DELETE FROM c… </tspan><tspan fill="#f87171" font-weight="700">✘ denied</tspan></text></g>
-<g class="a k66" opacity="0"><rect x="-13.51" y="-11" width="27.02" height="22" rx="11" fill="#16140f" stroke="#ff9384" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#ff9384" class="m" text-anchor="middle" font-weight="600">n</text></g>
-<g class="a k67" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#16140f" stroke="#ff9384" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#ff9384" class="m" text-anchor="middle" font-weight="600">signed ✘</text></g>
-<g class="a k68" opacity="0"><circle cx="336" cy="506" r="11" fill="#16140f" stroke="#ff9384" stroke-width="1.6"/><text x="336" y="510.5" font-size="13" fill="#ff9384" font-weight="700" text-anchor="middle">✕</text><text x="354" y="510.5" font-size="11.5" fill="#ff9384" font-weight="700">not run</text></g>
-<g class="a k69" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#ff9384" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#ff9384" class="m" text-anchor="middle" font-weight="600">denied</text></g>
-<g class="a k70" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#16140f" stroke="#ff9384" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#ff9384" class="m" text-anchor="middle" font-weight="600">denied</text></g>
-<rect x="304" y="1344" width="34" height="5" rx="2.5" fill="#4a4438" stroke="none" stroke-width="1"/>
+<g class="a k66" opacity="0"><rect x="-13.51" y="-11" width="27.02" height="22" rx="11" fill="#1f1d26" stroke="#ff9384" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#ff9384" class="m" text-anchor="middle" font-weight="600">n</text></g>
+<g class="a k67" opacity="0"><rect x="-38.06" y="-11" width="76.12" height="22" rx="11" fill="#1f1d26" stroke="#ff9384" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#ff9384" class="m" text-anchor="middle" font-weight="600">signed ✘</text></g>
+<g class="a k68" opacity="0"><circle cx="336" cy="506" r="11" fill="#1f1d26" stroke="#ff9384" stroke-width="1.6"/><text x="336" y="510.5" font-size="13" fill="#ff9384" font-weight="700" text-anchor="middle">✕</text><text x="354" y="510.5" font-size="11.5" fill="#ff9384" font-weight="700">not run</text></g>
+<g class="a k69" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#ff9384" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#ff9384" class="m" text-anchor="middle" font-weight="600">denied</text></g>
+<g class="a k70" opacity="0"><rect x="-31.04" y="-11" width="62.09" height="22" rx="11" fill="#1f1d26" stroke="#ff9384" stroke-width="1.6"/><text x="0" y="4" font-size="11.5" fill="#ff9384" class="m" text-anchor="middle" font-weight="600">denied</text></g>
+<rect x="304" y="1344" width="34" height="5" rx="2.5" fill="#5a546c" stroke="none" stroke-width="1"/>
 <g class="a k71" opacity="0"><rect x="304" y="1344" width="34" height="5" rx="2.5" fill="#89b4fa" stroke="none" stroke-width="1"/></g>
-<g class="a k72" opacity="0"><text x="16" y="1376" font-size="17" fill="#ede6d6" font-weight="700">1 · A read: no question</text><text x="16" y="1398" font-size="13" fill="#b2a994">SELECT on replica: the lock sends a masked ticket, an auto rule</text><text x="16" y="1416" font-size="13" fill="#b2a994">in lox run approves it, the hub signs, masked rows come back to</text><text x="16" y="1434" font-size="13" fill="#b2a994">the agent.</text></g>
-<rect x="344" y="1344" width="34" height="5" rx="2.5" fill="#4a4438" stroke="none" stroke-width="1"/>
+<g class="a k72" opacity="0"><text x="16" y="1376" font-size="17" fill="#ede6d6" font-weight="700">1 · A read: no question</text><text x="16" y="1398" font-size="13" fill="#bdb5a3">SELECT on replica: the lock sends a masked ticket, an auto rule</text><text x="16" y="1416" font-size="13" fill="#bdb5a3">in lox run approves it, the hub signs, masked rows come back to</text><text x="16" y="1434" font-size="13" fill="#bdb5a3">the agent.</text></g>
+<rect x="344" y="1344" width="34" height="5" rx="2.5" fill="#5a546c" stroke="none" stroke-width="1"/>
 <g class="a k73" opacity="0"><rect x="344" y="1344" width="34" height="5" rx="2.5" fill="#89b4fa" stroke="none" stroke-width="1"/></g>
-<g class="a k74" opacity="0"><text x="16" y="1376" font-size="17" fill="#ede6d6" font-weight="700">2 · First use of a profile: asked once</text><text x="16" y="1398" font-size="13" fill="#b2a994">primary is not connected: the lock sends a connect ticket, lox</text><text x="16" y="1416" font-size="13" fill="#b2a994">run asks you y/n once this session, the lock connects on the</text><text x="16" y="1434" font-size="13" fill="#b2a994">signed decision.</text></g>
-<rect x="384" y="1344" width="34" height="5" rx="2.5" fill="#4a4438" stroke="none" stroke-width="1"/>
+<g class="a k74" opacity="0"><text x="16" y="1376" font-size="17" fill="#ede6d6" font-weight="700">2 · First use of a profile: asked once</text><text x="16" y="1398" font-size="13" fill="#bdb5a3">primary is not connected: the lock sends a connect ticket, lox</text><text x="16" y="1416" font-size="13" fill="#bdb5a3">run asks you y/n once this session, the lock connects on the</text><text x="16" y="1434" font-size="13" fill="#bdb5a3">signed decision.</text></g>
+<rect x="384" y="1344" width="34" height="5" rx="2.5" fill="#5a546c" stroke="none" stroke-width="1"/>
 <g class="a k75" opacity="0"><rect x="384" y="1344" width="34" height="5" rx="2.5" fill="#89b4fa" stroke="none" stroke-width="1"/></g>
-<g class="a k76" opacity="0"><text x="16" y="1376" font-size="17" fill="#ede6d6" font-weight="700">3 · A write: always asked</text><text x="16" y="1398" font-size="13" fill="#b2a994">UPDATE on primary is asked even in auto mode; the lock runs it</text><text x="16" y="1416" font-size="13" fill="#b2a994">only on the signed approval, bound to that exact plan.</text></g>
-<rect x="424" y="1344" width="34" height="5" rx="2.5" fill="#4a4438" stroke="none" stroke-width="1"/>
+<g class="a k76" opacity="0"><text x="16" y="1376" font-size="17" fill="#ede6d6" font-weight="700">3 · A write: always asked</text><text x="16" y="1398" font-size="13" fill="#bdb5a3">UPDATE on primary is asked even in auto mode; the lock runs it</text><text x="16" y="1416" font-size="13" fill="#bdb5a3">only on the signed approval, bound to that exact plan.</text></g>
+<rect x="424" y="1344" width="34" height="5" rx="2.5" fill="#5a546c" stroke="none" stroke-width="1"/>
 <g class="a k77" opacity="0"><rect x="424" y="1344" width="34" height="5" rx="2.5" fill="#89b4fa" stroke="none" stroke-width="1"/></g>
-<g class="a k78" opacity="0"><text x="16" y="1376" font-size="17" fill="#ede6d6" font-weight="700">4 · A denied write</text><text x="16" y="1398" font-size="13" fill="#b2a994">DELETE on primary: you answer n, the signed denial reaches the</text><text x="16" y="1416" font-size="13" fill="#b2a994">lock, which never runs it. The agent only learns it was denied.</text></g>
-<g class="a k79" opacity="1"><text x="16" y="1376" font-size="15" fill="#ede6d6" font-weight="700">agent → Lock client → socket → lock</text><text x="16" y="1396" font-size="15" fill="#ede6d6" font-weight="700">→ masked ticket → hub → lox run</text><text x="16" y="1416" font-size="15" fill="#ede6d6" font-weight="700">→ signed decision → lock → agent</text><text x="16" y="1440" font-size="13" fill="#b2a994">Reads pass by an auto rule; a connection,</text><text x="16" y="1458" font-size="13" fill="#b2a994">a write and DDL wait for you in lox run.</text></g>
+<g class="a k78" opacity="0"><text x="16" y="1376" font-size="17" fill="#ede6d6" font-weight="700">4 · A denied write</text><text x="16" y="1398" font-size="13" fill="#bdb5a3">DELETE on primary: you answer n, the signed denial reaches the</text><text x="16" y="1416" font-size="13" fill="#bdb5a3">lock, which never runs it. The agent only learns it was denied.</text></g>
+<g class="a k79" opacity="1"><text x="16" y="1376" font-size="15" fill="#ede6d6" font-weight="700">agent → Lock client → socket → lock</text><text x="16" y="1396" font-size="15" fill="#ede6d6" font-weight="700">→ masked ticket → hub → lox run</text><text x="16" y="1416" font-size="15" fill="#ede6d6" font-weight="700">→ signed decision → lock → agent</text><text x="16" y="1440" font-size="13" fill="#bdb5a3">Reads pass by an auto rule; a connection,</text><text x="16" y="1458" font-size="13" fill="#bdb5a3">a write and DDL wait for you in lox run.</text></g>
 </svg>
