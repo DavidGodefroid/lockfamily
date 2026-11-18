@@ -21,8 +21,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # (light, dark): --ink, --card, --ink-2 of assets/tokens.css.
 INK = ('#1d1b17', '#ede6d6')
-CARD = ('#fffcf5', '#25221b')
-INK2 = ('#575146', '#b2a994')
+CARD = ('#fffcf5', '#2f2c3a')
+INK2 = ('#575146', '#bdb5a3')
 
 STYLE = ('<style>.i{stroke:%s}.f{fill:%s}.p{fill:%s}.d{stroke:%s}'
          '@media (prefers-color-scheme:dark){.i{stroke:%s}.f{fill:%s}.p{fill:%s}.d{stroke:%s}}</style>'

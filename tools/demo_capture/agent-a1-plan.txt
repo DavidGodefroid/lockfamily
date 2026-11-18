@@ -1,0 +1,10 @@
+plan_id  39e55d8ada5060a9
+profile  shop
+host     host.docker.internal
+db       shop
+class    READ
+verdict  OK
+explain  customers full ~510 · orders full ~5 · est. 515 rows examined · cost 38.62
+sql      SELECT o.id, c.name, c.email, o.total, o.status FROM orders o JOIN customers c ON c.id = o.customer_id WHERE o.status = 'pending' LIMIT 10
+next: show this plan to the user, then call locksql_run with plan_id 39e55d8ada5060a9 (one-shot, valid 10 min; it answers pending with a ticket the human decides in lockhub)
+
