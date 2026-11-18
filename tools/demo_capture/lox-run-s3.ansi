@@ -1,0 +1,24 @@
+[1m lox run [30m[42m AUTO [0;2m  ~/projects/shop[0m                     [32m● hub up[2m[39m · 1 lock · 🔔[0m
+[2m connected none yet: a lock connects on its agent's first request[0m
+[2m locks [0m◆ shop [32mserving[39m
+[2m tabs [0;1;7m 0 feed [0m [2m 1 shop [0m
+[2m────────────────────────────────────────────────────────────────────────────
+
+
+
+
+
+
+
+
+
+
+
+
+[0m [2m12:07:04[0m [36m-[39m        [2m◆ [0mshop     [2m-[0m        prompt Apply these ch… [32m✔ you[39m
+ [2m12:07:08[0m [36m-[39m        [2m◆ [0mshop     [2m-[0m        prompt Password for a… [32m✔ you[39m
+ [2m12:07:12[0m [36m-[39m        [2m◆ [0mshop     [2m-[0m        prompt Accept all [a]… [32m✔ you[39m
+ [2m12:07:23[0m [33muid 100…[39m [2m◆ [0mshop     [2mshop[0m     read   [1m[36mSELECT[0m o.id, c… [2m[32mauto:read[0m[32m ✓[39m
+ [2m12:07:28[0m [33muid 100…[39m [2m◆ [0mshop     [2mshop[0m     [1m[33mwrite[0m  [1m[33mUPDATE[0m orders [1m[36m…[0m [32m✔ you[39m
+[2m────────────────────────────────────────────────────────────────────────────
+[0m [1m1-9[0;2m lock tabs[0m  [1mShift+Tab[0;2m mode[0m  [1ma[0;2m audit[0m  [1m?[0;2m help[0m  [1mq[0;2m quit[0m

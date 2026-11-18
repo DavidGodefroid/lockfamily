@@ -3,6 +3,22 @@
   "use strict";
   document.documentElement.classList.add("js");
 
+  // The GitHub button's star count: a file of this site, written when the
+  // site is built (docs-site/build.py). No request leaves the site; without
+  // the file, or with no star yet, the button stays a plain link.
+  Array.prototype.forEach.call(document.querySelectorAll("a[data-stars]"), function (a) {
+    if (!window.fetch) return;
+    fetch(a.getAttribute("data-stars")).then(function (r) {
+      return r.ok ? r.json() : null;
+    }).then(function (d) {
+      var n = d && d.stars, out = a.querySelector(".stars");
+      if (typeof n !== "number" || !isFinite(n) || n < 1 || !out) return;
+      out.textContent = n < 1000 ? String(n) : (n / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+      out.hidden = false;
+      a.setAttribute("aria-label", "Source on GitHub, " + n + (n === 1 ? " star" : " stars"));
+    }).catch(function () {});
+  });
+
   // Tab sets: the quick start, the hub (without JS, every panel shows).
   Array.prototype.forEach.call(document.querySelectorAll("[data-tabs]"), function (qs) {
     var qtabs = Array.prototype.slice.call(qs.querySelectorAll("[role=tab]"));

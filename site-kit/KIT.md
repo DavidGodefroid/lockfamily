@@ -6,12 +6,14 @@ Lock repos.
 
 One look for every Lock site (locksql, lockmq, lockfile, lockhttp, locklog)
 and every Lock README, in the Lock Family identity: "a printed ticket that a
-human signs" (lockfamily `docs/identity.md`). Reference implementation:
-locksql (its `site/` and `README.md`).
+human signs", on coloured stock (lockfamily `docs/identity.md`; the colour
+rules and each product's accent: [COLOUR.md](COLOUR.md)). Reference
+implementation: locksql (its `site/` and `README.md`).
 
 ```
 site-kit/
   KIT.md                   this guide
+  COLOUR.md                the colour rules: accents, tints, contrast, do and do not
   assets/lock-site.css     the shared stylesheet (identical bytes in every Lock repo)
   assets/copy.js           Copy button of the install box
   snippets/head.html       <head>: meta, SEO, fonts preload, the two stylesheets, scripts
@@ -20,13 +22,15 @@ site-kit/
   snippets/install-box.html     the Homebrew copy-paste box (two variants)
   snippets/family-strip.html    the family list of the footer
   snippets/footer.html     footer: about, the Lock's links, family strip, licence
+  tools/accents.py         the product accents of tokens.css, derived and contrast-checked
   tools/banner_svg.py      README banners (docs/assets/banner-light.svg, banner-dark.svg)
   tools/og.html            template of the 1200x630 og.png and the 180px touch icon
 ```
 
 Not duplicated here, taken from the family's own files at the repo root:
 
-- `assets/tokens.css`: fonts, colours, space (the identity's source of truth).
+- `assets/tokens.css`: fonts, colours, space, the accent of every product
+  (the identity's source of truth).
 - `assets/fonts/`: the woff2 files and their OFL licences.
 - `assets/<lock>.svg`: the logos (`mark.svg`, `locksql.svg`, `lockmq.svg`,
   `lockfile.svg`, `lockhttp.svg`, `locklog.svg`, `lockssh.svg`, `lea.svg`),
@@ -49,7 +53,9 @@ and dark) are in its pull request, not here.
 4. **Delete** the old `site/assets/style.css` and any unused old assets
    (locksql had `site/assets/banner-*.svg` nobody referenced). Grep first.
 5. **Every page** (`index.html`, `install/`, `how-it-works/`, `security/`,
-   `faq/`, `404.html`): replace `<head>` with `head.html`, the header with
+   `faq/`, `404.html`): replace `<head>` with `head.html` (its
+   `<html data-accent="{{LOCK}}">` is where the site takes its colour: the
+   only place), the header with
    `header.html`, the footer with `footer.html` (which takes
    `family-strip.html` at `{{FAMILY_STRIP}}`). Content markup stays: the
    stylesheet keeps the old class names (`.cards`, `.facts`, `.steps`,
@@ -66,7 +72,7 @@ and dark) are in its pull request, not here.
    family on every page.
 9. **og.png / apple-touch-icon.png**: copy `tools/og.html` into `site/`,
    fill its placeholders, render it at 1200x630 with headless Chrome (and the
-   logo alone on `--card` at 180x180), save as `site/assets/og.png` and
+   logo alone on `--accent-stock` at 180x180, light scheme), save as `site/assets/og.png` and
    `apple-touch-icon.png`, then delete the HTML.
 10. **Check** (below), then commit, push, PR.
 
@@ -78,6 +84,22 @@ Placeholders: `{{LOCK}}`, `{{TITLE}}`, `{{DESCRIPTION}}`, `{{URL}}`
 current page's link and drop the `data-nav` attributes. In the family strip,
 put `aria-current="true"` on the current Lock's `<li>` (CSS adds "this site").
 
+## Resync for the colour direction (#72)
+
+A site already on the kit re-copies or re-renders exactly this, in this
+order (details in [COLOUR.md](COLOUR.md), "Apply it to a product site"):
+
+| # | File in the Lock repo | From |
+|---|---|---|
+| 1 | `site/assets/tokens.css` | copy of lockfamily `assets/tokens.css` |
+| 2 | `site/assets/lock-site.css` | copy of lockfamily `site-kit/assets/lock-site.css` |
+| 3 | `site/assets/logo.svg` | copy of lockfamily `assets/<lock>.svg` |
+| 4 | every page's `<html>` and `theme-color` metas | `data-accent="<lock>"`; `#fbf7ee` and `#1f1d26` |
+| 5 | `site/assets/og.png`, `apple-touch-icon.png` | rendered from `site-kit/tools/og.html` |
+| 6 | `docs/assets/banner-light.svg`, `banner-dark.svg` | rendered by `site-kit/tools/banner_svg.py` |
+
+Fonts, `copy.js`, `anchors.js` and the snippets' markup do not change.
+
 ## Classes you will want
 
 - `.status.auto` / `.asked` / `.denied` / `.you`: a decision word in its
@@ -87,11 +109,15 @@ put `aria-current="true"` on the current Lock's `<li>` (CSS adds "this site").
 - `.install` + `.install-head` + `<span class="cmd">`: the copy box.
 - `.hub-line`: the dashed line under the hero (the family and `lox run`).
 - `.label` / `.eyebrow`: a printed form's label (mono, small capitals).
+- `.button` / `.button.primary`: one primary per group, filled with the accent.
 - `<pre class="diagram">`: an ASCII drawing on paper; `<pre class="term">`
   or a plain `<pre>`: a dark terminal, in both themes.
 - Every `<section>` `<h2>` in `main` is numbered `01`, `02`… automatically,
-  under a 2px ink rule (FAQ questions: `Q01`…; `.limits`: "fine print").
-  A `.visually-hidden` h2 is not counted.
+  in a tab under a 3px accent rule (FAQ questions: `Q01`…; `.limits`: "fine
+  print"). A `.visually-hidden` h2 is not counted.
+- Every second `<section>` directly in `main > .wrap` (not the hero, the
+  demo or `.limits`) is a full-width band of `--accent-tint`; the hero is a
+  band of `--accent-stock`. Keep sections as direct children for this.
 
 ## Install box rules
 
@@ -137,6 +163,10 @@ python3 path/to/lockfamily/site-kit/tools/banner_svg.py --name <lock> \
   --tagline "<one short sentence>" \
   --logo site/assets/logo.svg --fonts site/assets/fonts --out docs/assets
 ```
+
+The banner is in the product's accent (the stub on its stock, the label in
+its ink), taken from `--name`; `--accent <product>` names it when `--name`
+is not a product of [COLOUR.md](COLOUR.md).
 
 It draws the text as outlines from the family fonts, so GitHub (which shows
 README SVGs through `<img>`, without web fonts) renders it exactly; ~35 KB per
@@ -199,6 +229,9 @@ Long reference material leaves the README for `docs/*.md`, whole (locksql:
   you someone else's site), then fetch every page and check every local
   `href`/`src`/`#fragment`, and the `github.com/.../<repo>/blob/main/...`
   links against the files and Markdown headings of your worktree.
+- Colour: [COLOUR.md](COLOUR.md)'s do and do not; no accent hex in a site's
+  own CSS, text on a tint or stock ground only in `--ink`, `--ink-2` or
+  `--accent-ink`.
 - Screenshots, light and dark, 1440 and 390 px, through the DevTools
   protocol (`Emulation.setEmulatedMedia` with `prefers-color-scheme`;
   `--force-dark-mode` is not needed). Look at them. Check no horizontal

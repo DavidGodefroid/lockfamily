@@ -42,7 +42,7 @@ MONO_EM = 0.61
 # site.
 THEMES = {
     'light': {
-        'bg': '#f4efe4', 'surface': '#fffcf5', 'surface2': '#e9e2d2',
+        'bg': '#fbf7ee', 'surface': '#fffcf5', 'surface2': '#f3ecdd',
         'text': '#1d1b17', 'muted': '#575146', 'border': '#b9af98',
         'wire': '#8f8670',
         'req': '#2a55a8', 'ticket': '#0e6158', 'ok': '#2d6a35',
@@ -51,13 +51,13 @@ THEMES = {
         'term_bg': '#1a1814', 'term_border': '#1a1814', 'term_bar': '#2a2620',
     },
     'dark': {
-        'bg': '#16140f', 'surface': '#25221b', 'surface2': '#1f1c16',
-        'text': '#ede6d6', 'muted': '#b2a994', 'border': '#4a4438',
+        'bg': '#1f1d26', 'surface': '#2f2c3a', 'surface2': '#282531',
+        'text': '#ede6d6', 'muted': '#bdb5a3', 'border': '#5a546c',
         'wire': '#6b6352',
         'req': '#89b4fa', 'ticket': '#6fd9c8', 'ok': '#7fcf8a',
         'deny': '#ff9384', 'ask': '#e8b860', 'result': '#6fd9c8',
         'harness': '#89b4fa', 'hub': '#6fd9c8', 'lock': '#ede6d6',
-        'term_bg': '#0e0d0a', 'term_border': '#4a4438', 'term_bar': '#24211b',
+        'term_bg': '#121017', 'term_border': '#5a546c', 'term_bar': '#24211b',
     },
 }
 

@@ -21,6 +21,9 @@ skip = [
   # Internal to lockfamily: the identity's design notes, not user docs.
   "lockfamily:docs/identity.md",
   "lockfamily:docs/design-note.md",
+  # Unreleased: lox live is on lockhub main, in no release yet. Add its page
+  # (lox group, after lox run) when lockhub ships it.
+  "lockhub:docs/lox-live.md",
 ]
 
 # ------------------------------------------------------------ Get started
@@ -238,7 +241,7 @@ fold = true
   title = "The family"
   pages = [
     { slug = "", src = "lockfamily:docs-site/pages/security.md", nav = "Security model" },
-    { slug = "safety-model", src = "lockfamily:README.md", sections = ["Safety model"], title = "Safety model, in short", nav = "Safety model, in short" },
+    { slug = "safety-model", src = "lockfamily:README.md", sections = ["What holds where", "Safety model", "What it does not protect against"], title = "Safety model, in short", nav = "Safety model, in short" },
     { slug = "lea", src = "lea:README.md", sections = ["How lea keeps your machine safe"], nav = "How lea keeps your machine safe" },
     { slug = "lockhub", src = "lockhub:README.md", sections = ["Safety model"], title = "lockhub safety model", nav = "lockhub" },
   ]

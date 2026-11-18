@@ -11,7 +11,9 @@ and checks:
   - the page background is the theme's --paper token;
   - every visible text passes WCAG AA against its effective background
     (4.5:1, 3:1 for large text);
-  - with reduced motion, nothing animates.
+  - with reduced motion, nothing animates;
+  - the hero's GitHub button is visible, a plain link without a star count
+    file; at 390 px, with one, it shows the count (#66).
 
 Without Chrome it says so and exits 0, unless SITE_E2E=required (CI).
 """
@@ -49,6 +51,13 @@ document.getElementById('f').addEventListener('load', async () => {
   r.bg = w.getComputedStyle(d.body).backgroundColor;
   r.foreign = w.performance.getEntriesByType('resource').map(e => e.name).filter(n => !n.startsWith(location.origin));
   r.running = d.getAnimations().filter(a => a.playState === 'running').length;
+  // The GitHub button of the hero: wait for its star count, if any.
+  await new Promise(ok => setTimeout(ok, 400));
+  const gh = d.querySelector('.hero a[data-stars]'), box = gh.getBoundingClientRect(), stars = gh.querySelector('.stars');
+  r.gh = {href: gh.href, text: gh.textContent.trim(), label: gh.getAttribute('aria-label'),
+          shown: w.getComputedStyle(gh).display !== 'none' && box.width > 0 && box.height >= 44 && box.left >= 0 && box.right <= d.documentElement.clientWidth,
+          stars: w.getComputedStyle(stars).display === 'none' ? null : stars.textContent,
+          afterInstall: !!(d.querySelector('.hero .install').compareDocumentPosition(gh) & 4)};
   const bad = [];
   let checked = 0;
   for (const el of d.body.querySelectorAll('*')) {
@@ -94,7 +103,7 @@ def main():
         return 0
 
     widths = (360, 768, 1280)
-    for w in widths:
+    for w in widths + (390,):
         Handler.pages['/__site%d.html' % w] = PAGE % {'w': w}
     srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Handler, directory=ROOT))
     threading.Thread(target=srv.serve_forever, daemon=True).start()
@@ -123,6 +132,21 @@ def main():
                 check(tag + ': WCAG AA contrast (%s texts)' % r.get('checked'),
                       r.get('checked', 0) > 100 and r.get('contrast') == [], r.get('contrast'))
                 check(tag + ': reduced motion, nothing runs', r.get('running') == 0, r.get('running'))
+                gh = r.get('gh', {})
+                check(tag + ': GitHub button visible, a plain link',
+                      gh.get('shown') and gh.get('stars') is None and gh.get('text') == 'Source on GitHub'
+                      and gh.get('href') == 'https://github.com/DavidGodefroid/lockfamily' and gh.get('afterInstall'), gh)
+            # At 390 px, with the file the build writes: the count shows.
+            for stars, want in (('{"stars": 1234}', '1.2k'), ('{"stars": 7}', '7'), ('{"stars": 0}', None), ('not json', None)):
+                Handler.pages['/assets/stars.json'] = stars
+                r = run(browser, base + '/__site390.html', flags + ['--force-prefers-reduced-motion'])
+                del Handler.pages['/assets/stars.json']
+                gh = r.get('gh', {})
+                tag = '%s, 390px, stars.json %s' % (scheme, stars)
+                check(tag + ': GitHub button visible, shows %s' % (want or 'no count'),
+                      gh.get('shown') and gh.get('stars') == want and gh.get('text', '').startswith('Source on GitHub'), gh)
+                check(tag + ': no horizontal scroll, WCAG AA contrast, no third-party request',
+                      r.get('overflow', 1) <= 0 and r.get('contrast') == [] and r.get('foreign') == [], r)
     finally:
         srv.shutdown()
 

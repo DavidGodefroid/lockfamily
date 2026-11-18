@@ -41,7 +41,7 @@ For a confined agent:
 
 | Piece | What its model covers |
 |---|---|
-| [The family, in short](/docs/security/safety-model/) | Networks, the hub, the console as the enforcement point, chat facades |
+| [The family, in short](/docs/security/safety-model/) | What holds for an agent on the host and in lea, networks, the hub, the console as the enforcement point, what the family does not protect against |
 | [lockhub](/docs/security/lockhub/) | What the hub holds, signs and refuses |
 | [lea](/docs/security/lea/) | The container's confinement: what an agent can read and reach, the egress proxy, a second kernel |
 | [locksql](/docs/security/locksql/) | What the agent sees of a database, the PII analysis, refused constructs |
@@ -59,5 +59,7 @@ one of the Lock you add.
 
 ## Reporting a vulnerability
 
-Please do not open a public issue. Follow the `SECURITY.md` of the affected
-repository, or contact the maintainer privately through GitHub.
+Please do not publish the details of a vulnerability. Report it privately
+on the repository it affects, with GitHub's "Report a vulnerability"
+(`https://github.com/DavidGodefroid/<repo>/security/advisories/new`), and
+follow that repository's `SECURITY.md` where it has one.

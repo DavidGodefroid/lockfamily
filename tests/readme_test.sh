@@ -31,8 +31,8 @@ anchors() {
 	awk '/^```/ { code = !code; next } !code && /^#+ / { print }' "$1" | while IFS= read -r h; do slug "$h"; done
 }
 
-# 1. The first screen: what the Lock Family is, a link to the site, and no
-#    implementation detail of the site.
+# 1. The first screen: what the user gains, the category, a link to the
+#    site, and no implementation detail of the site.
 head -n 30 README.md >"${TMPDIR:-/tmp}/readme_head.$$"
 first="${TMPDIR:-/tmp}/readme_head.$$"
 check "first screen names the Lock Family" "has '$first' 'Lock Family'"
@@ -45,6 +45,60 @@ for w in 'Static HTML' 'static HTML' 'GitHub Pages' 'http.server' 'CNAME' 'vanil
 done
 rm -f "$first"
 
+# 1b. The opening (#56 to #59): a user gain first, the four start commands
+#     before line 40, one example before the family's vocabulary, the
+#     table of what holds where before Install, the limits in one section.
+check "opening: the first sentence after the badges is a user gain" "sed -n '/<\/p>/,\$p' README.md | grep -m1 '<b>' | grep -q '<b>Your AI agent works on your production database without holding the password.</b>'"
+n=0
+for c in 'brew trust davidgodefroid/tap' 'brew install davidgodefroid/tap/lockfamily' 'lox add locksql' 'lox run'; do
+	l=$(grep -n -m1 "^$c" README.md | cut -d: -f1)
+	check "opening: '$c' before line 40, in order" "[ -n '$l' ] && [ '${l:-0}' -lt 40 ] && [ '${l:-0}' -gt '$n' ]"
+	n=${l:-0}
+done
+check "opening: the first screen links to what holds where" "head -n 40 README.md | grep -q '#what-holds-where'"
+check "opening: the first screen names the confined-agent rule" "head -n 42 README.md | tr '\n' ' ' | grep -q 'hold against a compromised or prompt-injected agent only when it runs confined, in lea: \[what holds where\](#what-holds-where)'"
+check "opening: no absolute on the password" "! grep -q 'without ever holding' README.md"
+check "not presented as the family site and install.sh" "! grep -q 'The family site' README.md"
+# line TEXT: the first line of README.md that has TEXT, outside the header's HTML.
+line() { awk -v w="$1" '/^```sh$/ { body = 1 } body && index($0, w) { print NR; exit }' README.md; }
+ex=$(grep -n -m1 '^## One request, start to finish$' README.md | cut -d: -f1)
+ex_end=$(grep -n -m1 '^## What it is$' README.md | cut -d: -f1)
+check "example: present, before What it is" "[ -n '$ex' ] && [ -n '$ex_end' ] && [ '${ex:-0}' -lt '${ex_end:-0}' ]"
+# lea is named once before the example, by the rule the first screen must
+# state (#56); the family's other words come after it.
+for w in ' Lock ' 'Locks' ' hub' 'facade'; do
+	l=$(line "$w")
+	check "example: before the first use of '$w'" "[ -n '$l' ] && [ '${l:-0}' -gt '${ex_end:-0}' ]"
+done
+body=$(sed -n "${ex:-1},${ex_end:-1}p" README.md)
+# shellcheck disable=SC2016
+for w in 'SELECT o.id, c.name, c.email' '4812  <redacted>  <redacted>  89.90  pending' 'Pending human approval: ticket' \
+	'QUESTION write on shop/shop' 'y approve   n deny' '(1 rows affected)' '✔ human ✓'; do
+	case $body in *"$w"*) pass "example: $w" ;; *) fail "example: $w" ;; esac
+done
+# The example is the run the demo was drawn from.
+check "example: the masked row is the captured one" "grep -q '^4812	<redacted>	<redacted>	89.90	pending$' tools/demo_capture/agent-a2-run.txt"
+check "example: the pending answer is the captured one" "grep -qxF \"\$(cat tools/demo_capture/agent-a4-pending.txt)\" README.md"
+tb=$(grep -n -m1 '^## What holds where$' README.md | cut -d: -f1)
+ins=$(grep -n -m1 '^## Install$' README.md | cut -d: -f1)
+check "guarantees table: before Install" "[ -n '$tb' ] && [ '${tb:-0}' -lt '${ins:-0}' ]"
+check "guarantees table: its two columns" "grep -qF '| | Agent on the host | Agent in lea |' README.md"
+for r in 'Credentials' 'Clear values' 'Approvals' 'lockhttp' 'A compromised or prompt-injected agent' 'Docker and the local facade'; do
+	check "guarantees table: row $r" "grep -q '^| \*\*$r\*\* |' README.md"
+done
+check "guarantees table: the host column does not hold against a compromised agent" "grep '^| \*\*A compromised or prompt-injected agent\*\* |' README.md | cut -d'|' -f3 | grep -q '^ Not held\.'"
+check "limits: the section exists, after Safety model" "[ \"\$(grep -n -m1 '^## What it does not protect against$' README.md | cut -d: -f1)\" -gt \"\$(grep -n -m1 '^## Safety model$' README.md | cut -d: -f1)\" ]"
+check "limits: linked from the guarantees table" "sed -n '/^## What holds where$/,/^## Why/p' README.md | grep -q '#what-it-does-not-protect-against'"
+limits=$(sed -n '/^## What it does not protect against$/,/^## Documentation$/p' README.md | tr '\n' ' ' | tr -s ' ')
+for w in 'only when the agent itself runs confined, as in lea' 'runs as you and can still drive Docker' \
+	'they do not hold against an agent that is compromised or turned against you' \
+	'can reach the hub'"'"'s local facade' 'lockhub/issues/221' 'it guards only agents running inside lea' \
+	'Masking is best effort.' 'Skills and tool descriptions only guide the agent' \
+	'never answer production tickets' 'docs/security-model.md' 'lockfamily.dev/docs/security/'; do
+	case $limits in *"$w"*) pass "limits: $w" ;; *) fail "limits: $w" ;; esac
+done
+check "docs site: the safety page takes the table and the limits" "grep -q 'sections = \[\"What holds where\", \"Safety model\", \"What it does not protect against\"\]' docs-site/nav.toml"
+
 # 2. Site source details appear only in "About this repo".
 before=$(sed -n '1,/^## About this repo$/p' README.md)
 check "README has an About this repo section" "grep -q '^## About this repo$' README.md"
@@ -56,8 +110,26 @@ check "About this repo is the last section" "[ \"\$(grep '^## ' README.md | tail
 # 3. No hard-coded release version in the README.
 check "README names no release version" "! grep -En 'v[0-9]+\\.[0-9]+\\.[0-9]+' README.md"
 
-# 4. Every relative link and anchor of README.md and docs/*.md resolves.
-for f in README.md docs/*.md; do
+# 3b. Contributing (#63): the guide exists, the README links to it and to
+#     Discussions, and the guide names every repository and every test.
+check "CONTRIBUTING.md exists" "[ -f CONTRIBUTING.md ]"
+check "README links to CONTRIBUTING.md" "has README.md '](CONTRIBUTING.md)'"
+check "README links to Discussions" "has README.md 'https://github.com/DavidGodefroid/lockfamily/discussions'"
+for r in lockfamily lockhub locksql lockmq lockfile lockhttp locklog lockssh lockkit lea homebrew-tap; do
+	check "CONTRIBUTING.md names $r" "has CONTRIBUTING.md '(https://github.com/DavidGodefroid/$r)'"
+done
+for t in tests/install_test.sh tests/readme_test.sh tests/site_test.sh tests/flow_svg_test.sh tests/docs_test.sh; do
+	check "CONTRIBUTING.md: sh $t, which exists" "has CONTRIBUTING.md 'sh $t' && [ -f '$t' ]"
+done
+for f in CONTRIBUTING.md README.md docs-site/pages/security.md; do
+	check "$f: the security route is GitHub's private report" "has '$f' 'Please do not publish the details of a vulnerability' && has '$f' 'Report a vulnerability' && has '$f' 'https://github.com/DavidGodefroid/<repo>/security/advisories/new' && ! has '$f' 'contact the maintainer' && ! has '$f' 'private contact'"
+done
+check "README: links to the guide's security section" "has README.md '](CONTRIBUTING.md#security)'"
+check "CONTRIBUTING.md: site details stay out of the README's body" "has CONTRIBUTING.md 'static HTML'"
+
+# 4. Every relative link and anchor of README.md, CONTRIBUTING.md and
+#    docs/*.md resolves.
+for f in README.md CONTRIBUTING.md docs/*.md; do
 	dir=$(dirname "$f")
 	links=$( (grep -oE '\]\([^)]+\)' "$f" | sed 's/^](//; s/)$//'
 		grep -oE '(href|src)="[^"]+"' "$f" | sed 's/^[a-z]*="//; s/"$//') | sort -u)
@@ -90,6 +162,42 @@ check "quick start: the installer's URL" "has README.md 'curl -fsSL https://lock
 check "quick start: any agent, lea included" "has README.md '\`codex\`' && has README.md 'lea stop'"
 check "quick start: lox add, as install.sh's next step" "grep -q '^ *lox add locksql' README.md && has install.sh 'next step: lox add <lock> in your project, then lox run'"
 check "quick start: lox run" "grep -q '^ *lox run$' README.md"
+
+# 5b. The installer's own signature (#60): the Pages workflow signs
+#     install.sh and verifies it; the README and docs/install.md give the
+#     command with that workflow's identity, and name the Homebrew route.
+id='https://github.com/DavidGodefroid/lockfamily/.github/workflows/pages.yml@refs/heads/main'
+check "pages.yml signs the repository's install.sh" "has .github/workflows/pages.yml 'cosign sign-blob --yes --bundle install.sh.sigstore.json install.sh'"
+check "pages.yml serves the bundle beside the script" "has .github/workflows/pages.yml 'cp _signature/install.sh.sigstore.json _site/install.sh.sigstore.json'"
+# job NAME: the lines of that job of pages.yml.
+job() { awk -v j="  $1:" '$0 == j { on = 1; next } on && /^  [a-z]+:$/ { on = 0 } on' .github/workflows/pages.yml; }
+check "pages.yml: the sign job may ask for the signing token" "job sign | grep -q 'id-token: write # the OIDC token cosign signs install.sh with'"
+check "pages.yml: the sign job installs and builds nothing" "! job sign | grep -Eq 'pip|python|build.py|setup-python'"
+check "pages.yml: the build job holds no signing token" "job build | grep -q 'pip install' && ! job build | grep -q 'id-token'"
+check "pages.yml: no workflow-level id-token" "! sed -n '1,/^jobs:/p' .github/workflows/pages.yml | grep -q 'id-token'"
+check "pages.yml: id-token only for sign and deploy" "[ \"\$(grep -c 'id-token: write' .github/workflows/pages.yml)\" = 2 ] && job deploy | grep -q 'id-token: write'"
+check "pages.yml: never runs on a pull request" "! grep -q 'pull_request' .github/workflows/pages.yml"
+check "pages.yml: the published check retries a failed download" "has .github/workflows/pages.yml 'if curl -fsSL -o /tmp/install.sh ' && ! grep -q '^            curl -fsSL -o /tmp/install.sh' .github/workflows/pages.yml"
+for f in README.md docs/install.md .github/workflows/pages.yml; do
+	check "$f: verify-blob with the Pages workflow's identity" "has '$f' 'cosign verify-blob --bundle' && has '$f' '--certificate-identity $id' && has '$f' '--certificate-oidc-issuer https://token.actions.githubusercontent.com'"
+done
+for f in README.md docs/install.md; do
+	check "$f: the bundle's URL" "has '$f' 'curl -fsSLO https://lockfamily.dev/install.sh.sigstore.json'"
+done
+under=$(sed -n '/^curl -fsSL https:\/\/lockfamily.dev\/install.sh | sh$/,/^## /p' README.md)
+case $under in *'brew install davidgodefroid/tap/lockfamily'*'cosign verify-blob'*) pass "README: Homebrew, then the check, under the curl line" ;; *) fail "README: Homebrew, then the check, under the curl line" ;; esac
+case $under in *'nothing about where your agent runs'*) pass "README: what the check does not prove" ;; *) fail "README: what the check does not prove" ;; esac
+check "pages.yml verifies the published script after the deployment" "job published | grep -q 'cmp -s install.sh /tmp/install.sh &&' && job published | grep -q 'cosign verify-blob --bundle /tmp/install.sh.sigstore.json'"
+for f in README.md docs/install.md; do
+	check "$f: the check proves no freshness" "tr '\n' ' ' <'$f' | grep -Eq 'older (\`install.sh\`|script)[^.]* still verifies'"
+done
+
+# 5c. Releases (#62): every row of the family table links to its
+#     repository's releases page, and this repository says it has none.
+for r in lockfamily locksql lockmq lockfile lockhttp locklog lockssh lockhub lockkit lea; do
+	check "family table: $r links to its releases" "grep '^| \[$r\](https://github.com/DavidGodefroid/$r) |' README.md | grep -q '(https://github.com/DavidGodefroid/$r/releases) |\$'"
+done
+check "README: this repository has no releases of its own" "has README.md 'This repository has no releases of its own' && has README.md '(docs/install.md#versions)'"
 
 # 6. Nothing lost: what left the README is in docs/. The strings are
 #    literal text of the docs, not expansions.
