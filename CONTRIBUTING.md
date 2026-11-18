@@ -17,7 +17,7 @@ concern.
 
 | The change is about | Repository |
 |---|---|
-| This README, the home page of lockfamily.dev, `install.sh`, the docs generator (`docs-site/`), the `lox` and managed-configuration references (`docs/`) | [lockfamily](https://github.com/DavidGodefroid/lockfamily) (here) |
+| The README, the home page of lockfamily.dev, `install.sh`, the docs generator (`docs-site/`), the `lox` and managed-configuration references (`docs/`) | [lockfamily](https://github.com/DavidGodefroid/lockfamily) (here) |
 | A page of lockfamily.dev/docs about one tool | That tool's repository: the page is built from its README or its `docs/` (`docs-site/nav.toml` says which file) |
 | `lox` (`lox add`, `lox run`, `lox audit`…), the hub, approvals, facades | [lockhub](https://github.com/DavidGodefroid/lockhub) |
 | SQL databases | [locksql](https://github.com/DavidGodefroid/locksql) |
@@ -35,10 +35,16 @@ Not sure which one? Open the issue here.
 ## Working on this repository
 
 There is nothing to build for the home page: it is static HTML, CSS and
-vanilla JavaScript. Preview it, or build the whole site with the docs:
+vanilla JavaScript. Preview it alone:
 
 ```sh
 python3 -m http.server -d . 8080
+```
+
+Or build the whole site, with the docs, and serve that instead (the same
+port: stop the first server before):
+
+```sh
 python3 -m venv /tmp/docs && /tmp/docs/bin/pip install --require-hashes -r docs-site/requirements.txt
 /tmp/docs/bin/python docs-site/build.py --out _site && python3 -m http.server -d _site 8080
 ```
@@ -74,9 +80,25 @@ Generated files are not edited by hand: the logos come from
 
 ## Security
 
-Please do not open a public issue for a vulnerability: follow the affected
-repository's `SECURITY.md`, or contact the maintainer privately through
-GitHub.
+Please do not publish the details of a vulnerability in an issue, a pull
+request or a discussion. What exists today, in this order:
+
+1. **The repository's `SECURITY.md`, where it has one:**
+   [locksql](https://github.com/DavidGodefroid/locksql/blob/main/SECURITY.md),
+   [lockmq](https://github.com/DavidGodefroid/lockmq/blob/main/SECURITY.md),
+   [lockhttp](https://github.com/DavidGodefroid/lockhttp/blob/main/SECURITY.md),
+   [locklog](https://github.com/DavidGodefroid/locklog/blob/main/SECURITY.md)
+   and
+   [lockssh](https://github.com/DavidGodefroid/lockssh/blob/main/SECURITY.md).
+   Follow it.
+2. **GitHub's private report, where the repository enables it:** the
+   "Report a vulnerability" button of the Security tab, today on
+   [locksql](https://github.com/DavidGodefroid/locksql/security/advisories/new)
+   and
+   [locklog](https://github.com/DavidGodefroid/locklog/security/advisories/new).
+3. **Anywhere else** (lockfamily, lockfile, lockhub, lockkit and lea have
+   neither today): open an issue on the repository that only asks for a
+   private contact. Give no detail of the vulnerability in it.
 
 ## License
 

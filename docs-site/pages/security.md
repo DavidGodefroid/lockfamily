@@ -59,5 +59,8 @@ one of the Lock you add.
 
 ## Reporting a vulnerability
 
-Please do not open a public issue. Follow the `SECURITY.md` of the affected
-repository, or contact the maintainer privately through GitHub.
+Please do not publish the details of a vulnerability. Follow the affected
+repository's `SECURITY.md` where it has one, or GitHub's private "Report a
+vulnerability" where the repository enables it; otherwise open an issue
+that only asks for a private contact, with no detail.
+[Which repository has what](https://github.com/DavidGodefroid/lockfamily/blob/main/CONTRIBUTING.md#security).

@@ -67,7 +67,8 @@ done
 for t in tests/install_test.sh tests/readme_test.sh tests/site_test.sh tests/flow_svg_test.sh tests/docs_test.sh; do
 	check "CONTRIBUTING.md: sh $t, which exists" "has CONTRIBUTING.md 'sh $t' && [ -f '$t' ]"
 done
-check "CONTRIBUTING.md: the security route" "has CONTRIBUTING.md 'Please do not open a public issue for a vulnerability'"
+check "CONTRIBUTING.md: the security route" "has CONTRIBUTING.md 'Please do not publish the details of a vulnerability' && has CONTRIBUTING.md 'only asks for a' && has CONTRIBUTING.md 'Report a vulnerability'"
+check "README: the security route, as CONTRIBUTING.md has it" "has README.md '](CONTRIBUTING.md#security)' && ! has README.md 'contact the maintainer'"
 check "CONTRIBUTING.md: site details stay out of the README's body" "has CONTRIBUTING.md 'static HTML'"
 
 # 4. Every relative link and anchor of README.md, CONTRIBUTING.md and
