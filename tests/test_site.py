@@ -298,10 +298,11 @@ class Page(unittest.TestCase):
         # README's opening in its words, claiming no more (no list of
         # sources: lockhttp guards only agents inside lea).
         self.assertLessEqual(len(meta), 160, len(meta))
-        for w in ('Harness security for AI agents', 'never holds the password',
+        for w in ('Harness security for AI agents', 'works without the password',
                   'personal data comes back masked', 'a write waits for your approval, outside the agent'):
             self.assertIn(w, meta)
-        for w in ('HTTP', 'web', 'any agent', 'every'):
+        # No absolute: it does not hold for a compromised agent on the host.
+        for w in ('HTTP', 'web', 'any agent', 'every', 'never', 'without ever'):
             self.assertNotIn(w, meta)
         for other in ('property="og:description"', 'name="twitter:description"'):
             self.assertIn('<meta %s content="%s">' % (other, meta), self.html)
