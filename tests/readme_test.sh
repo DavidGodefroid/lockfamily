@@ -163,6 +163,42 @@ check "quick start: any agent, lea included" "has README.md '\`codex\`' && has R
 check "quick start: lox add, as install.sh's next step" "grep -q '^ *lox add locksql' README.md && has install.sh 'next step: lox add <lock> in your project, then lox run'"
 check "quick start: lox run" "grep -q '^ *lox run$' README.md"
 
+# 5b. The installer's own signature (#60): the Pages workflow signs
+#     install.sh and verifies it; the README and docs/install.md give the
+#     command with that workflow's identity, and name the Homebrew route.
+id='https://github.com/DavidGodefroid/lockfamily/.github/workflows/pages.yml@refs/heads/main'
+check "pages.yml signs the repository's install.sh" "has .github/workflows/pages.yml 'cosign sign-blob --yes --bundle install.sh.sigstore.json install.sh'"
+check "pages.yml serves the bundle beside the script" "has .github/workflows/pages.yml 'cp _signature/install.sh.sigstore.json _site/install.sh.sigstore.json'"
+# job NAME: the lines of that job of pages.yml.
+job() { awk -v j="  $1:" '$0 == j { on = 1; next } on && /^  [a-z]+:$/ { on = 0 } on' .github/workflows/pages.yml; }
+check "pages.yml: the sign job may ask for the signing token" "job sign | grep -q 'id-token: write # the OIDC token cosign signs install.sh with'"
+check "pages.yml: the sign job installs and builds nothing" "! job sign | grep -Eq 'pip|python|build.py|setup-python'"
+check "pages.yml: the build job holds no signing token" "job build | grep -q 'pip install' && ! job build | grep -q 'id-token'"
+check "pages.yml: no workflow-level id-token" "! sed -n '1,/^jobs:/p' .github/workflows/pages.yml | grep -q 'id-token'"
+check "pages.yml: id-token only for sign and deploy" "[ \"\$(grep -c 'id-token: write' .github/workflows/pages.yml)\" = 2 ] && job deploy | grep -q 'id-token: write'"
+check "pages.yml: never runs on a pull request" "! grep -q 'pull_request' .github/workflows/pages.yml"
+check "pages.yml: the published check retries a failed download" "has .github/workflows/pages.yml 'if curl -fsSL -o /tmp/install.sh ' && ! grep -q '^            curl -fsSL -o /tmp/install.sh' .github/workflows/pages.yml"
+for f in README.md docs/install.md .github/workflows/pages.yml; do
+	check "$f: verify-blob with the Pages workflow's identity" "has '$f' 'cosign verify-blob --bundle' && has '$f' '--certificate-identity $id' && has '$f' '--certificate-oidc-issuer https://token.actions.githubusercontent.com'"
+done
+for f in README.md docs/install.md; do
+	check "$f: the bundle's URL" "has '$f' 'curl -fsSLO https://lockfamily.dev/install.sh.sigstore.json'"
+done
+under=$(sed -n '/^curl -fsSL https:\/\/lockfamily.dev\/install.sh | sh$/,/^## /p' README.md)
+case $under in *'brew install davidgodefroid/tap/lockfamily'*'cosign verify-blob'*) pass "README: Homebrew, then the check, under the curl line" ;; *) fail "README: Homebrew, then the check, under the curl line" ;; esac
+case $under in *'nothing about where your agent runs'*) pass "README: what the check does not prove" ;; *) fail "README: what the check does not prove" ;; esac
+check "pages.yml verifies the published script after the deployment" "job published | grep -q 'cmp -s install.sh /tmp/install.sh &&' && job published | grep -q 'cosign verify-blob --bundle /tmp/install.sh.sigstore.json'"
+for f in README.md docs/install.md; do
+	check "$f: the check proves no freshness" "tr '\n' ' ' <'$f' | grep -Eq 'older (\`install.sh\`|script)[^.]* still verifies'"
+done
+
+# 5c. Releases (#62): every row of the family table links to its
+#     repository's releases page, and this repository says it has none.
+for r in lockfamily locksql lockmq lockfile lockhttp locklog lockssh lockhub lockkit lea; do
+	check "family table: $r links to its releases" "grep '^| \[$r\](https://github.com/DavidGodefroid/$r) |' README.md | grep -q '(https://github.com/DavidGodefroid/$r/releases) |\$'"
+done
+check "README: this repository has no releases of its own" "has README.md 'This repository has no releases of its own' && has README.md '(docs/install.md#versions)'"
+
 # 6. Nothing lost: what left the README is in docs/. The strings are
 #    literal text of the docs, not expansions.
 # keeps FILE STRING
