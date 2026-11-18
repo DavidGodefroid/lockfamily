@@ -95,8 +95,17 @@ check "quick start: lox run" "grep -q '^ *lox run$' README.md"
 #     install.sh and verifies it; the README and docs/install.md give the
 #     command with that workflow's identity, and name the Homebrew route.
 id='https://github.com/DavidGodefroid/lockfamily/.github/workflows/pages.yml@refs/heads/main'
-check "pages.yml signs the served install.sh" "has .github/workflows/pages.yml 'cosign sign-blob --yes --bundle _site/install.sh.sigstore.json _site/install.sh'"
-check "pages.yml may ask for the signing token" "has .github/workflows/pages.yml 'id-token: write # the OIDC token cosign signs install.sh with'"
+check "pages.yml signs the repository's install.sh" "has .github/workflows/pages.yml 'cosign sign-blob --yes --bundle install.sh.sigstore.json install.sh'"
+check "pages.yml serves the bundle beside the script" "has .github/workflows/pages.yml 'cp _signature/install.sh.sigstore.json _site/install.sh.sigstore.json'"
+# job NAME: the lines of that job of pages.yml.
+job() { awk -v j="  $1:" '$0 == j { on = 1; next } on && /^  [a-z]+:$/ { on = 0 } on' .github/workflows/pages.yml; }
+check "pages.yml: the sign job may ask for the signing token" "job sign | grep -q 'id-token: write # the OIDC token cosign signs install.sh with'"
+check "pages.yml: the sign job installs and builds nothing" "! job sign | grep -Eq 'pip|python|build.py|setup-python'"
+check "pages.yml: the build job holds no signing token" "job build | grep -q 'pip install' && ! job build | grep -q 'id-token'"
+check "pages.yml: no workflow-level id-token" "! sed -n '1,/^jobs:/p' .github/workflows/pages.yml | grep -q 'id-token'"
+check "pages.yml: id-token only for sign and deploy" "[ \"\$(grep -c 'id-token: write' .github/workflows/pages.yml)\" = 2 ] && job deploy | grep -q 'id-token: write'"
+check "pages.yml: never runs on a pull request" "! grep -q 'pull_request' .github/workflows/pages.yml"
+check "pages.yml: the published check retries a failed download" "has .github/workflows/pages.yml 'if curl -fsSL -o /tmp/install.sh ' && ! grep -q '^            curl -fsSL -o /tmp/install.sh' .github/workflows/pages.yml"
 for f in README.md docs/install.md .github/workflows/pages.yml; do
 	check "$f: verify-blob with the Pages workflow's identity" "has '$f' 'cosign verify-blob --bundle' && has '$f' '--certificate-identity $id' && has '$f' '--certificate-oidc-issuer https://token.actions.githubusercontent.com'"
 done
@@ -105,8 +114,11 @@ for f in README.md docs/install.md; do
 done
 under=$(sed -n '/^curl -fsSL https:\/\/lockfamily.dev\/install.sh | sh$/,/^## /p' README.md)
 case $under in *'brew install davidgodefroid/tap/lockfamily'*'cosign verify-blob'*) pass "README: Homebrew, then the check, under the curl line" ;; *) fail "README: Homebrew, then the check, under the curl line" ;; esac
-case $under in *'It says nothing about where your agent'*) pass "README: what the check does not prove" ;; *) fail "README: what the check does not prove" ;; esac
-check "pages.yml verifies the published script after the deployment" "has .github/workflows/pages.yml 'cmp -s install.sh /tmp/install.sh && cosign verify-blob'"
+case $under in *'nothing about where your agent runs'*) pass "README: what the check does not prove" ;; *) fail "README: what the check does not prove" ;; esac
+check "pages.yml verifies the published script after the deployment" "job published | grep -q 'cmp -s install.sh /tmp/install.sh &&' && job published | grep -q 'cosign verify-blob --bundle /tmp/install.sh.sigstore.json'"
+for f in README.md docs/install.md; do
+	check "$f: the check proves no freshness" "tr '\n' ' ' <'$f' | grep -Eq 'older (\`install.sh\`|script)[^.]* still verifies'"
+done
 
 # 6. Nothing lost: what left the README is in docs/. The strings are
 #    literal text of the docs, not expansions.

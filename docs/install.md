@@ -60,7 +60,8 @@ cosign is on your PATH at all is the downloaded one installed as
 
 `install.sh` verifies what it installs; the script itself is signed too.
 The Pages workflow of this repository (`.github/workflows/pages.yml`) signs
-it keyless with cosign on every deployment and serves the bundle beside it,
+it keyless with cosign on every deployment, in a job that runs nothing but
+the checkout and cosign, and serves the bundle beside it,
 at <https://lockfamily.dev/install.sh.sigstore.json>. To check the script
 before you run it, with cosign v3 or later:
 
@@ -73,9 +74,12 @@ cosign verify-blob --bundle install.sh.sigstore.json \
   install.sh && sh install.sh
 ```
 
-What the check proves: the script you downloaded is the one that workflow
+What the check proves: the script you downloaded is one that workflow
 published from the `main` branch of this repository. Its limits:
 
+- no freshness: an older `install.sh` with its old bundle still verifies
+  under the same identity, so the check does not prove that the script is
+  the current one;
 - the command above and the script come from the same GitHub account, so
   the check does not protect against that account being taken over;
 - it says nothing about where your agent runs: the guarantees of the Locks

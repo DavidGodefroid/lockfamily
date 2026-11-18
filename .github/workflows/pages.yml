@@ -25,12 +25,46 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
-    name: build
+  # install.sh is served with a keyless signature, so that it can be checked
+  # before it is run (README, docs/install.md#verifying-the-installer). The
+  # identity is this workflow on main. This job alone may ask for the OIDC
+  # token cosign signs with, and it runs nothing but the checkout and cosign:
+  # no dependency is installed and no other repository's content is read
+  # here. The script it signs is the repository's own file.
+  sign:
+    name: sign install.sh
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write # the OIDC token cosign signs install.sh with
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+        with:
+          cosign-release: v3.0.6
+      - name: sign
+        run: cosign sign-blob --yes --bundle install.sh.sigstore.json install.sh
+      - name: verify, as a user will
+        run: |
+          cosign verify-blob --bundle install.sh.sigstore.json \
+            --certificate-identity https://github.com/DavidGodefroid/lockfamily/.github/workflows/pages.yml@refs/heads/main \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            install.sh
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: install-signature
+          path: install.sh.sigstore.json
+          if-no-files-found: error
+
+  # The site. It reads the other repositories and installs the generator's
+  # dependencies, so it holds no token to sign with: it only takes the
+  # bundle the sign job made and checks it against the script it serves.
+  build:
+    name: build
+    needs: sign
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
@@ -44,17 +78,18 @@ jobs:
         run: |
           python docs-site/build.py --check _site
           cmp install.sh _site/install.sh
-      # install.sh is served with a keyless signature, so that it can be
-      # checked before it is run (README, docs/install.md#verifying-the-installer).
-      # The identity is this workflow on main; the step fails the deployment
-      # rather than publish a script without its bundle.
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: install-signature
+          path: _signature
       - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
         with:
           cosign-release: v3.0.6
-      - name: sign install.sh
-        run: cosign sign-blob --yes --bundle _site/install.sh.sigstore.json _site/install.sh
-      - name: verify, as a user will
+      # The deployment fails rather than publish a script without a bundle
+      # that verifies it.
+      - name: serve the signature beside install.sh
         run: |
+          cp _signature/install.sh.sigstore.json _site/install.sh.sigstore.json
           cosign verify-blob --bundle _site/install.sh.sigstore.json \
             --certificate-identity https://github.com/DavidGodefroid/lockfamily/.github/workflows/pages.yml@refs/heads/main \
             --certificate-oidc-issuer https://token.actions.githubusercontent.com \
@@ -83,6 +118,8 @@ jobs:
     name: verify the published install.sh
     needs: deploy
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
@@ -90,14 +127,15 @@ jobs:
           cosign-release: v3.0.6
       - name: verify
         run: |
-          # The CDN may serve the previous deployment for a while: retry.
+          # The CDN may serve the previous deployment for a while (a 404 on
+          # the bundle the first time): every failure is retried, none exits.
+          id=https://github.com/DavidGodefroid/lockfamily/.github/workflows/pages.yml@refs/heads/main
           for i in 1 2 3 4 5 6 7 8 9 10; do
-            curl -fsSL -o /tmp/install.sh "https://lockfamily.dev/install.sh?run=${GITHUB_RUN_ID}-$i"
-            curl -fsSL -o /tmp/install.sh.sigstore.json "https://lockfamily.dev/install.sh.sigstore.json?run=${GITHUB_RUN_ID}-$i"
-            if cmp -s install.sh /tmp/install.sh && cosign verify-blob --bundle /tmp/install.sh.sigstore.json \
-              --certificate-identity https://github.com/DavidGodefroid/lockfamily/.github/workflows/pages.yml@refs/heads/main \
-              --certificate-oidc-issuer https://token.actions.githubusercontent.com \
-              /tmp/install.sh; then
+            if curl -fsSL -o /tmp/install.sh "https://lockfamily.dev/install.sh?run=${GITHUB_RUN_ID}-$i" &&
+              curl -fsSL -o /tmp/install.sh.sigstore.json "https://lockfamily.dev/install.sh.sigstore.json?run=${GITHUB_RUN_ID}-$i" &&
+              cmp -s install.sh /tmp/install.sh &&
+              cosign verify-blob --bundle /tmp/install.sh.sigstore.json --certificate-identity "$id" \
+                --certificate-oidc-issuer https://token.actions.githubusercontent.com /tmp/install.sh; then
               exit 0
             fi
             sleep 30

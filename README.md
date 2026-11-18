@@ -92,9 +92,10 @@ cosign verify-blob --bundle install.sh.sigstore.json \
   install.sh && sh install.sh
 ```
 
-The check proves one thing: the script is the one this repository's Pages
-workflow published from `main`. It says nothing about where your agent
-runs or how it is confined
+The check proves one thing: the script is one this repository's Pages
+workflow published from `main`. It does not prove that it is the current
+one (an older script still verifies with its old bundle), and it says
+nothing about where your agent runs or how it is confined
 ([verifying the installer](docs/install.md#verifying-the-installer)).
 
 ## Quick start
