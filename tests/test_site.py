@@ -344,6 +344,31 @@ class Page(unittest.TestCase):
         self.assertEqual(struct.unpack('>II', head[16:24]), (1200, 630))
         self.assertLess(os.path.getsize(os.path.join(ROOT, 'assets/og.png')), 300 * 1024)
 
+    def test_demo_under_the_hero(self):
+        # The demo is the section between the hero and the Locks (#67),
+        # lazy, with its size reserved and the README's alt text; the hero's
+        # ticket figure is as it was.
+        import hashlib
+        a, b = self.html.index('class="hero'), self.html.index('class="locks-section')
+        demo = self.html.index('<section class="demo-section')
+        self.assertTrue(a < demo < b)
+        self.assertEqual(self.html.count('<section', a, b), 2)
+        block = self.html[demo:b]
+        img = re.search(r'<img src="assets/demo-light.svg"[^>]*>', block).group(0)
+        for w in ('width="1200"', 'height="884"', 'loading="lazy"', 'decoding="async"'):
+            self.assertIn(w, img)
+        alt = re.search(r'alt="([^"]+)"', img).group(1)
+        self.assertGreater(len(alt), 200)
+        for w in ('redacted', 'UPDATE', 'press y', 'lox audit'):
+            self.assertIn(w, alt)
+        self.assertIn('<source media="(prefers-color-scheme: dark)" srcset="assets/demo-dark.svg">', block)
+        for f in ('assets/demo-light.svg', 'assets/demo-dark.svg'):
+            self.assertLess(os.path.getsize(os.path.join(ROOT, f)), 200 * 1024, f)
+        t = self.html.index('<figure class="ticket"')
+        ticket = self.html[t:self.html.index('</figure>', t) + 9]
+        self.assertEqual(hashlib.sha256(ticket.encode()).hexdigest(),
+                         '84018dd92e0cc3c66aa925c56a5747c7928fd14ab6aae1a6ad996eefc99e955b')
+
     def test_github_button(self):
         # A link to the source in the hero, next to the install box (#66).
         # Its star count comes from a file of the site, written at build

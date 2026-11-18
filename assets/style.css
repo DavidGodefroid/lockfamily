@@ -177,6 +177,22 @@ main { outline: none; }
 @keyframes stamp { from { opacity: 0; transform: rotate(-3deg) scale(1.6); } to { opacity: 1; transform: rotate(-3deg) scale(1); } }
 .ticket figcaption { margin-top: var(--s-3); font-size: 0.9rem; color: var(--ink-2); }
 
+/* the demo, right under the hero: one request end to end (an animated
+   SVG, lazy: it is below the first screen). Its box is reserved by the
+   image's width and height, on the window's own colour. */
+.demo-section { padding-top: var(--s-6); }
+.demo { margin: var(--s-3) 7px 0 0; }
+.demo-frame { border: 1px solid var(--ink); border-radius: var(--radius); background: var(--paper); box-shadow: 7px 7px 0 var(--accent); overflow: hidden; }
+.demo-frame img { display: block; width: 100%; height: auto; }
+.demo figcaption { margin-top: var(--s-4); max-width: 52rem; font-size: 0.9rem; color: var(--ink-2); }
+.demo-hint { display: none; }
+@media (max-width: 640px) {
+  /* a phone: the demo keeps a readable size and scrolls in its own box */
+  .demo-frame { overflow-x: auto; overscroll-behavior-x: contain; }
+  .demo-frame img { width: 46rem; max-width: none; }
+  .demo-hint { display: inline; }
+}
+
 /* the Locks: a ledger of rows, each a stub in that Lock's own stock
    (data-accent on the row) */
 .locks-section { padding-top: var(--s-6); }
