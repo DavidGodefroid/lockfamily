@@ -115,7 +115,7 @@ class RealText(unittest.TestCase):
 class Readme(unittest.TestCase):
     def test_under_the_tagline(self):
         readme = read('README.md')
-        tagline = readme.index('<b>Harness security for AI agents.</b>')
+        tagline = readme.index('<p align="center"><b>')
         demo = readme.index('src="assets/demo-light.svg"')
         nav = readme.index('<a href="#quick-start">Quick start</a>')
         self.assertTrue(tagline < demo < nav)
