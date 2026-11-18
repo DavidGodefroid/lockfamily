@@ -238,7 +238,7 @@ fold = true
   title = "The family"
   pages = [
     { slug = "", src = "lockfamily:docs-site/pages/security.md", nav = "Security model" },
-    { slug = "safety-model", src = "lockfamily:README.md", sections = ["Safety model"], title = "Safety model, in short", nav = "Safety model, in short" },
+    { slug = "safety-model", src = "lockfamily:README.md", sections = ["What holds where", "Safety model", "What it does not protect against"], title = "Safety model, in short", nav = "Safety model, in short" },
     { slug = "lea", src = "lea:README.md", sections = ["How lea keeps your machine safe"], nav = "How lea keeps your machine safe" },
     { slug = "lockhub", src = "lockhub:README.md", sections = ["Safety model"], title = "lockhub safety model", nav = "lockhub" },
   ]
