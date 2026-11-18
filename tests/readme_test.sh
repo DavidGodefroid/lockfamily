@@ -56,8 +56,23 @@ check "About this repo is the last section" "[ \"\$(grep '^## ' README.md | tail
 # 3. No hard-coded release version in the README.
 check "README names no release version" "! grep -En 'v[0-9]+\\.[0-9]+\\.[0-9]+' README.md"
 
-# 4. Every relative link and anchor of README.md and docs/*.md resolves.
-for f in README.md docs/*.md; do
+# 3b. Contributing (#63): the guide exists, the README links to it and to
+#     Discussions, and the guide names every repository and every test.
+check "CONTRIBUTING.md exists" "[ -f CONTRIBUTING.md ]"
+check "README links to CONTRIBUTING.md" "has README.md '](CONTRIBUTING.md)'"
+check "README links to Discussions" "has README.md 'https://github.com/DavidGodefroid/lockfamily/discussions'"
+for r in lockfamily lockhub locksql lockmq lockfile lockhttp locklog lockssh lockkit lea homebrew-tap; do
+	check "CONTRIBUTING.md names $r" "has CONTRIBUTING.md '(https://github.com/DavidGodefroid/$r)'"
+done
+for t in tests/install_test.sh tests/readme_test.sh tests/site_test.sh tests/flow_svg_test.sh tests/docs_test.sh; do
+	check "CONTRIBUTING.md: sh $t, which exists" "has CONTRIBUTING.md 'sh $t' && [ -f '$t' ]"
+done
+check "CONTRIBUTING.md: the security route" "has CONTRIBUTING.md 'Please do not open a public issue for a vulnerability'"
+check "CONTRIBUTING.md: site details stay out of the README's body" "has CONTRIBUTING.md 'static HTML'"
+
+# 4. Every relative link and anchor of README.md, CONTRIBUTING.md and
+#    docs/*.md resolves.
+for f in README.md CONTRIBUTING.md docs/*.md; do
 	dir=$(dirname "$f")
 	links=$( (grep -oE '\]\([^)]+\)' "$f" | sed 's/^](//; s/)$//'
 		grep -oE '(href|src)="[^"]+"' "$f" | sed 's/^[a-z]*="//; s/"$//') | sort -u)

@@ -225,7 +225,10 @@ repository's own README and `docs/`; the docs of this repository are:
 ## Contributing, security, license
 
 - **Contributing.** Issues and pull requests are welcome, in English, on the
-  repository they concern.
+  repository they concern: [CONTRIBUTING.md](CONTRIBUTING.md) says which
+  repository takes which change and how to run the tests. Questions and
+  ideas go to
+  [Discussions](https://github.com/DavidGodefroid/lockfamily/discussions).
 - **Security.** Please do not open a public issue for a vulnerability: follow
   the affected repository's `SECURITY.md`, or contact the maintainer
   privately through GitHub.
