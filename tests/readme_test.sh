@@ -141,6 +141,13 @@ check "quick start: any agent, lea included" "has README.md '\`codex\`' && has R
 check "quick start: lox add, as install.sh's next step" "grep -q '^ *lox add locksql' README.md && has install.sh 'next step: lox add <lock> in your project, then lox run'"
 check "quick start: lox run" "grep -q '^ *lox run$' README.md"
 
+# 5c. Releases (#62): every row of the family table links to its
+#     repository's releases page, and this repository says it has none.
+for r in lockfamily locksql lockmq lockfile lockhttp locklog lockssh lockhub lockkit lea; do
+	check "family table: $r links to its releases" "grep '^| \[$r\](https://github.com/DavidGodefroid/$r) |' README.md | grep -q '(https://github.com/DavidGodefroid/$r/releases) |\$'"
+done
+check "README: this repository has no releases of its own" "has README.md 'This repository has no releases of its own' && has README.md '(docs/install.md#versions)'"
+
 # 6. Nothing lost: what left the README is in docs/. The strings are
 #    literal text of the docs, not expansions.
 # keeps FILE STRING
