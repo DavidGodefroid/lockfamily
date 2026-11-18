@@ -6,8 +6,8 @@
 <title>lock family — harness security for AI agents</title>
 <meta name="description" content="Harness security for AI agents: any MCP client (Claude Code, Codex, Cursor, Gemini CLI, …) works on your databases, RabbitMQ, files, logs and servers (and, inside lea, HTTP) through a Lock that holds the credentials and masks the data. Reads flow; connections and writes wait for you in lox run, outside the agent's harness. Runs in Docker.">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#f4efe4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#16140f" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#fbf7ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1f1d26" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://lockfamily.dev/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="lock family">
@@ -85,49 +85,49 @@ brew install davidgodefroid/tap/lockfamily</code></pre>
   <section class="locks-section wrap" aria-labelledby="locks-title">
     <h2 id="locks-title" class="label">One Lock per data source, and lea for the agents</h2>
     <ul class="locks">
-      <li>
+      <li data-accent="locksql">
         <img src="assets/locksql.svg" alt="" width="48" height="48">
         <p class="kind">SQL databases</p>
         <h3><a href="https://github.com/DavidGodefroid/locksql">locksql</a></h3>
         <p class="benefit">The agent queries; personal data comes back masked. Connections and writes wait for you.</p>
         <p class="go" aria-hidden="true">on GitHub</p>
       </li>
-      <li>
+      <li data-accent="lockmq">
         <img src="assets/lockmq.svg" alt="" width="48" height="48">
         <p class="kind">RabbitMQ</p>
         <h3><a href="https://github.com/DavidGodefroid/lockmq">lockmq</a></h3>
         <p class="benefit">Masked queue inspection. Connections, peeks and unmasked reads wait for you.</p>
         <p class="go" aria-hidden="true">on GitHub</p>
       </li>
-      <li>
+      <li data-accent="lockfile">
         <img src="assets/lockfile.svg" alt="" width="48" height="48">
         <p class="kind">Files</p>
         <h3><a href="https://github.com/DavidGodefroid/lockfile">lockfile</a></h3>
         <p class="benefit">The agent asks yes/no questions about files it never reads, and gets 1 or 0: never a byte, a name or a size.</p>
         <p class="go" aria-hidden="true">on GitHub</p>
       </li>
-      <li>
+      <li data-accent="lockhttp">
         <img src="assets/lockhttp.svg" alt="" width="48" height="48">
         <p class="kind">Outbound HTTP(S) · agents in lea</p>
         <h3><a href="https://github.com/DavidGodefroid/lockhttp">lockhttp</a></h3>
         <p class="benefit">Reads of trusted hosts pass; anything that sends data or reaches an unknown host waits for you. The proxy injects credentials the agent never sees. Guards agents running inside lea only.</p>
         <p class="go" aria-hidden="true">on GitHub</p>
       </li>
-      <li>
+      <li data-accent="locklog">
         <img src="assets/locklog.svg" alt="" width="48" height="48">
         <p class="kind">Logs · early release</p>
         <h3><a href="https://github.com/DavidGodefroid/locklog">locklog</a></h3>
         <p class="benefit">Masked, bounded log search: the agent reads the logs, not the people in them. A clear value waits for you.</p>
         <p class="go" aria-hidden="true">on GitHub</p>
       </li>
-      <li>
+      <li data-accent="lockssh">
         <img src="assets/lockssh.svg" alt="" width="48" height="48">
         <p class="kind">SSH · pre-release</p>
         <h3><a href="https://github.com/DavidGodefroid/lockssh">lockssh</a></h3>
         <p class="benefit">Allow-listed commands run at once; the rest waits for you. The SSH key never leaves the console.</p>
         <p class="go" aria-hidden="true">on GitHub</p>
       </li>
-      <li>
+      <li data-accent="lea">
         <img src="assets/lea.svg" alt="" width="48" height="48">
         <p class="kind">Runs the agents</p>
         <h3><a href="https://github.com/DavidGodefroid/lea">lea</a></h3>
@@ -138,19 +138,19 @@ brew install davidgodefroid/tap/lockfamily</code></pre>
   </section>
 
   <section id="principle" class="section wrap" aria-labelledby="principle-title">
-    <p class="section-no">01</p>
+    <p class="section-no"><span>01</span></p>
     <h2 id="principle-title">One write, from the agent's request to your signature</h2>
     <p class="section-lead">An agent harness is the program that runs a model as an agent and hands it tools. Harness security is the layer around it: every approval is answered outside the harness. For an agent that runs confined, in lea, it holds whatever the model is talked into; an agent on the host runs as you and could still drive Docker (<a href="https://lockfamily.dev/docs/security/">security model</a>).</p>
     <p class="section-lead">Here is one <code>UPDATE</code>, line by line, as the audit log records it.</p>
 
     <ol class="ledger">
-      <li><span class="when">14:03:01</span><span class="who">agent</span><p>Asks its Lock client to run <code>UPDATE orders SET status = 'paid' WHERE id = 41277</code>. The client is an MCP server with no credential and no connection; it passes the request over a socket to the Lock.</p></li>
-      <li><span class="when">14:03:01</span><span class="who">lock</span><p>In its own container, parses the statement, classes it a write and masks every value: <code>status = <span class="masked">‹p***(4)›</span></code>. It runs nothing yet and sends the hub a ticket with that masked screen.</p></li>
-      <li><span class="when">14:03:01</span><span class="who">hub</span><p>Queues the ticket for <code>lox run</code>. A lea agent has no route to it. The hub never runs a request and never sees a result or a value in clear.</p></li>
+      <li><span class="when">14:03:01</span><span class="who agent">agent</span><p>Asks its Lock client to run <code>UPDATE orders SET status = 'paid' WHERE id = 41277</code>. The client is an MCP server with no credential and no connection; it passes the request over a socket to the Lock.</p></li>
+      <li><span class="when">14:03:01</span><span class="who lock">lock</span><p>In its own container, parses the statement, classes it a write and masks every value: <code>status = <span class="masked">‹p***(4)›</span></code>. It runs nothing yet and sends the hub a ticket with that masked screen.</p></li>
+      <li><span class="when">14:03:01</span><span class="who hub">hub</span><p>Queues the ticket for <code>lox run</code>. A lea agent has no route to it. The hub never runs a request and never sees a result or a value in clear.</p></li>
       <li><span class="when">14:03:02</span><span class="who you">you</span><p>In <code>lox run</code>, your own terminal. Auto mode passes reads by rule, but a write is always asked: the bell rings, you read the masked screen and press <kbd>y</kbd>.</p></li>
-      <li><span class="when">14:03:04</span><span class="who">hub</span><p>Signs the decision, bound to that exact plan and naming who decided: you, not a rule.</p></li>
-      <li><span class="when">14:03:04</span><span class="who">lock</span><p>Checks the signature, runs the <code>UPDATE</code> and returns <code>1 row updated</code>. On <kbd>n</kbd>, no answer or a closed <code>lox run</code>, nothing runs and the agent only learns it was denied.</p></li>
-      <li><span class="when">later</span><span class="who">audit</span><p><code>lox audit</code> lists the line: who asked, the masked request, who or which rule decided, and the outcome.</p></li>
+      <li><span class="when">14:03:04</span><span class="who hub">hub</span><p>Signs the decision, bound to that exact plan and naming who decided: you, not a rule.</p></li>
+      <li><span class="when">14:03:04</span><span class="who lock">lock</span><p>Checks the signature, runs the <code>UPDATE</code> and returns <code>1 row updated</code>. On <kbd>n</kbd>, no answer or a closed <code>lox run</code>, nothing runs and the agent only learns it was denied.</p></li>
+      <li><span class="when">later</span><span class="who audit">audit</span><p><code>lox audit</code> lists the line: who asked, the masked request, who or which rule decided, and the outcome.</p></li>
     </ol>
 
     <p class="section-note">Each Lock reaches only the endpoints of its reviewed profile. Decisions can also come from an auto rule, <code>lox approve</code>, Slack, Telegram or a paired phone (<a href="#hub">the hub</a>).</p>
@@ -167,14 +167,14 @@ brew install davidgodefroid/tap/lockfamily</code></pre>
 
   </section>
 
-  <section id="fit" class="section wrap" aria-labelledby="fit-title">
-    <p class="section-no">02</p>
+  <section id="fit" class="section band wrap" aria-labelledby="fit-title">
+    <p class="section-no"><span>02</span></p>
     <h2 id="fit-title">One boundary around the agent, one console per data source</h2>
 
     <div class="layers">
       <div class="layer">
         <p class="label">Where agents run</p>
-        <div class="layer-body">
+        <div class="layer-body" data-accent="lea">
           <img src="assets/lea.svg" alt="" width="40" height="40">
           <div><h3>Your agent, or lea</h3><p>Any MCP client on your machine. Or lea: coding agents (Claude Code, Codex, …) in a container that sees one projects directory and reaches the internet only through a proxy that refuses your private network.</p></div>
         </div>
@@ -182,17 +182,17 @@ brew install davidgodefroid/tap/lockfamily</code></pre>
       <div class="layer">
         <p class="label">What agents reach: one Lock per data source, its console started by <code>lox run</code></p>
         <div class="consoles">
-          <div class="console"><img src="assets/locksql.svg" alt="" width="36" height="36"><div><h3>locksql</h3><p>SQL databases</p></div></div>
-          <div class="console"><img src="assets/lockmq.svg" alt="" width="36" height="36"><div><h3>lockmq</h3><p>RabbitMQ brokers</p></div></div>
-          <div class="console"><img src="assets/lockfile.svg" alt="" width="36" height="36"><div><h3>lockfile</h3><p>Files on S3, SFTP or disk</p></div></div>
-          <div class="console"><img src="assets/lockhttp.svg" alt="" width="36" height="36"><div><h3>lockhttp</h3><p>Outbound HTTP(S)</p></div></div>
-          <div class="console"><img src="assets/locklog.svg" alt="" width="36" height="36"><div><h3>locklog</h3><p>Files, journald, Docker, Loki, Elasticsearch (preview)</p></div></div>
-          <div class="console"><img src="assets/lockssh.svg" alt="" width="36" height="36"><div><h3>lockssh</h3><p>Commands over SSH</p></div></div>
+          <div class="console" data-accent="locksql"><img src="assets/locksql.svg" alt="" width="36" height="36"><div><h3>locksql</h3><p>SQL databases</p></div></div>
+          <div class="console" data-accent="lockmq"><img src="assets/lockmq.svg" alt="" width="36" height="36"><div><h3>lockmq</h3><p>RabbitMQ brokers</p></div></div>
+          <div class="console" data-accent="lockfile"><img src="assets/lockfile.svg" alt="" width="36" height="36"><div><h3>lockfile</h3><p>Files on S3, SFTP or disk</p></div></div>
+          <div class="console" data-accent="lockhttp"><img src="assets/lockhttp.svg" alt="" width="36" height="36"><div><h3>lockhttp</h3><p>Outbound HTTP(S)</p></div></div>
+          <div class="console" data-accent="locklog"><img src="assets/locklog.svg" alt="" width="36" height="36"><div><h3>locklog</h3><p>Files, journald, Docker, Loki, Elasticsearch (preview)</p></div></div>
+          <div class="console" data-accent="lockssh"><img src="assets/lockssh.svg" alt="" width="36" height="36"><div><h3>lockssh</h3><p>Commands over SSH</p></div></div>
         </div>
       </div>
       <div class="layer">
         <p class="label">Shared core</p>
-        <div class="layer-body">
+        <div class="layer-body" data-accent="lockkit">
           <img src="assets/mark.svg" alt="" width="40" height="40">
           <div>
             <h3><a href="https://github.com/DavidGodefroid/lockkit">lockkit</a></h3>
@@ -224,13 +224,13 @@ brew install davidgodefroid/tap/lockfamily</code></pre>
   </section>
 
   <section id="hub" class="section wrap" aria-labelledby="hub-title">
-    <p class="section-no">03</p>
+    <p class="section-no"><span>03</span></p>
     <h2 id="hub-title">The hub: every Lock's tickets, answered from one place</h2>
     <div class="board" aria-label="The Locks send masked tickets to the hub; you answer them from lox run or another facade">
       <ul class="board-side">
-        <li>locksql</li><li>lockmq</li><li>lockfile</li><li>lockhttp</li><li>locklog</li><li>lockssh</li>
+        <li data-accent="locksql">locksql</li><li data-accent="lockmq">lockmq</li><li data-accent="lockfile">lockfile</li><li data-accent="lockhttp">lockhttp</li><li data-accent="locklog">locklog</li><li data-accent="lockssh">lockssh</li>
       </ul>
-      <div class="board-hub">
+      <div class="board-hub" data-accent="lockhub">
         <img src="assets/mark.svg" alt="" width="40" height="40">
         <p><a href="https://github.com/DavidGodefroid/lockhub"><strong>lockhub</strong></a></p>
         <p>queues masked tickets<br>signs decisions<br>runs nothing</p>
@@ -376,8 +376,8 @@ locks:
     </div>
   </section>
 
-  <section id="quick-start" class="section wrap" aria-labelledby="qs-title">
-    <p class="section-no">04</p>
+  <section id="quick-start" class="section band wrap" aria-labelledby="qs-title">
+    <p class="section-no"><span>04</span></p>
     <h2 id="qs-title">Install, add your sources, keep lox run open</h2>
 
     <div class="install install-wide" data-copy>
@@ -390,13 +390,13 @@ brew install davidgodefroid/tap/lockfamily</code></pre>
     <div class="qs" data-tabs>
       <div class="qs-tabs" role="tablist" aria-label="Product">
         <button type="button" role="tab" id="qs-tab-init" aria-controls="qs-init" aria-selected="true">Hub</button>
-        <button type="button" role="tab" id="qs-tab-sql" aria-controls="qs-sql" aria-selected="false" tabindex="-1">locksql</button>
-        <button type="button" role="tab" id="qs-tab-mq" aria-controls="qs-mq" aria-selected="false" tabindex="-1">lockmq</button>
-        <button type="button" role="tab" id="qs-tab-file" aria-controls="qs-file" aria-selected="false" tabindex="-1">lockfile</button>
-        <button type="button" role="tab" id="qs-tab-http" aria-controls="qs-http" aria-selected="false" tabindex="-1">lockhttp</button>
-        <button type="button" role="tab" id="qs-tab-log" aria-controls="qs-log" aria-selected="false" tabindex="-1">locklog</button>
-        <button type="button" role="tab" id="qs-tab-ssh" aria-controls="qs-ssh" aria-selected="false" tabindex="-1">lockssh</button>
-        <button type="button" role="tab" id="qs-tab-lea" aria-controls="qs-lea" aria-selected="false" tabindex="-1">lea</button>
+        <button type="button" role="tab" id="qs-tab-sql" aria-controls="qs-sql" aria-selected="false" tabindex="-1" data-accent="locksql">locksql</button>
+        <button type="button" role="tab" id="qs-tab-mq" aria-controls="qs-mq" aria-selected="false" tabindex="-1" data-accent="lockmq">lockmq</button>
+        <button type="button" role="tab" id="qs-tab-file" aria-controls="qs-file" aria-selected="false" tabindex="-1" data-accent="lockfile">lockfile</button>
+        <button type="button" role="tab" id="qs-tab-http" aria-controls="qs-http" aria-selected="false" tabindex="-1" data-accent="lockhttp">lockhttp</button>
+        <button type="button" role="tab" id="qs-tab-log" aria-controls="qs-log" aria-selected="false" tabindex="-1" data-accent="locklog">locklog</button>
+        <button type="button" role="tab" id="qs-tab-ssh" aria-controls="qs-ssh" aria-selected="false" tabindex="-1" data-accent="lockssh">lockssh</button>
+        <button type="button" role="tab" id="qs-tab-lea" aria-controls="qs-lea" aria-selected="false" tabindex="-1" data-accent="lea">lea</button>
       </div>
 
       <div class="qs-panel" role="tabpanel" id="qs-init" aria-labelledby="qs-tab-init">

@@ -6,9 +6,11 @@ The source of truth is [`assets/tokens.css`](../assets/tokens.css): link it
 first, then your own stylesheet, and copy `assets/fonts/` next to it. Why
 this direction: [design-note.md](design-note.md).
 
-**The idea in one line: a printed ticket that a human signs.** Paper and
-ink, ruled lines, a perforation, a stamp; the terminal stays a real dark
-terminal, because `lox run` is one.
+**The idea in one line: a printed ticket that a human signs, on coloured
+stock.** Paper and ink, ruled lines, a perforation, a stamp, and one accent
+colour per product; the terminal stays a real dark terminal, because
+`lox run` is one. The colour rules, the accent of every product and how a
+site applies them: [`site-kit/COLOUR.md`](../site-kit/COLOUR.md).
 
 ## Type
 
@@ -24,42 +26,66 @@ are mono 600, 0.75rem, uppercase, letter-spacing 0.08em, `--ink-2`.
 
 ## Colour
 
-Two themes, each designed: **paper** (light) and **carbon** (dark, a warm
-carbon copy, not navy). No gradients, no glows. Text tokens pass WCAG AA
-(4.5:1) on `--paper`, `--paper-2` and `--card`; `tests/test_site.py`
-checks it.
+Two themes, each designed: **paper** (light, a warm near-white) and **dusk**
+(dark: a lifted aubergine grey with the same cream ink, not black and not
+navy). Text tokens pass WCAG AA (4.5:1) on `--paper`, `--paper-2` and
+`--card`; `tests/test_site.py` checks it.
 
-| Token | Paper | Carbon | Meaning |
+| Token | Paper | Dusk | Meaning |
 |---|---|---|---|
-| `--paper` | `#f4efe4` | `#16140f` | page background |
-| `--paper-2` | `#e9e2d2` | `#1f1c16` | stubs, tinted bands, the footer |
-| `--card` | `#fffcf5` | `#25221b` | a ticket's face, panels |
+| `--paper` | `#fbf7ee` | `#1f1d26` | page background |
+| `--paper-2` | `#f3ecdd` | `#282531` | neutral bands, inactive tabs |
+| `--card` | `#fffcf5` | `#2f2c3a` | a ticket's face, panels |
 | `--ink` | `#1d1b17` | `#ede6d6` | text, logos, strong rules |
-| `--ink-2` | `#575146` | `#b2a994` | secondary text, control borders |
-| `--rule` | `#b9af98` | `#4a4438` | ledger lines, perforations (decorative only) |
-| `--sign` | `#1f4a9c` | `#a3bdff` | signature ink: links, focus, a human's decision |
+| `--ink-2` | `#575146` | `#bdb5a3` | secondary text, control borders |
+| `--rule` | `#b9af98` | `#5a546c` | ledger lines, perforations (decorative only) |
+| `--sign` | `#1f4a9c` | `#a3bdff` | signature ink: the stamp, a human's decision |
 | `--stamp` | `#a8201a` | `#ff9384` | a denial, "no route" |
 | `--auto` | `#2d6a35` | `#7fcf8a` | approved by a rule |
 | `--asked` | `#8a5300` | `#e8b860` | waiting for you |
 | `--mask` | `#0e6158` | `#6fd9c8` | masked values, the hub |
 | `--agent` | `#2a55a8` | `#89b4fa` | the agent's request |
-| `--term-bg` | `#1a1814` | `#0e0d0a` | a terminal, dark in both themes |
+| `--term-bg` | `#1a1814` | `#121017` | a terminal, dark in both themes |
 | `--term-text` | `#e2e8f0` | `#e2e8f0` | terminal text (lox run's own) |
 | `--term-dim` | `#94a3b8` | `#94a3b8` | terminal comments (lox run's own) |
 
 The status colours mirror `lox run`'s (lockhub `internal/loxrun/style.go`):
 inside a terminal, use lox run's exact colours; on paper, use the tokens
-above. Products have **no colour of their own**: a Lock is told apart by
-its engraved glyph and its name, not by a hue.
+above. They mark a status word or the stamp, never a surface.
+
+### Accents
+
+Since lockfamily#72 every product has **one accent**, and it carries real
+surface: the hero's coloured stock, every second section's tint, the primary
+button, the rules and number tabs, the ticket's offset shadow. A page names
+its product once, `<html data-accent="locksql">`, and gets six tokens; the
+family's own (cobalt) applies without the attribute:
+
+| Token | Paper | Dusk | Meaning (family values) |
+|---|---|---|---|
+| `--accent` | `#2346d2` | `#889cf0` | fills: buttons, tabs, thick rules, the ticket's shadow |
+| `--on-accent` | `#ffffff` | `#14120e` | text on `--accent` |
+| `--accent-ink` | `#2346d2` | `#889cf0` | the accent as text: links, focus |
+| `--accent-tint` | `#ebeffc` | `#202548` | a pale band, the footer, a notice |
+| `--accent-stock` | `#c8d1f7` | `#1d307c` | the hero's coloured stock, icon tiles |
+| `--accent-stock-2` | `#d4c8f7` | `#2b1763` | the end of the hero's wash |
+
+The ten accents (lockfamily cobalt, locksql violet, lockmq orange, lockfile
+pink, lockhttp sky, locklog green, lockssh olive, lea orchid, lockhub teal,
+lockkit brass), their values in both themes and the contrast rules are in
+[`site-kit/COLOUR.md`](../site-kit/COLOUR.md); `site-kit/tools/accents.py`
+derives and checks them. One gradient is allowed, the hero's wash between
+two neighbouring hues; no glows, no blur, no gradient text.
 
 ## Space and shape
 
 `--s-1` 4px · `--s-2` 8px · `--s-3` 12px · `--s-4` 16px · `--s-5` 24px ·
 `--s-6` 32px · `--s-7` 48px · `--s-8` 72px. `--gutter` 16px (32px from 768px).
 `--measure` 40rem for running text. `--radius` 3px: paper has corners, no
-pills. Rules are 1px (`--rule`), a section opens on a 2px `--ink` rule with
-its number (`01`, `02`…); a perforation is `--perf` (2px dashed `--rule`).
-Lists of things are ledgers (rows between rules), not grids of cards.
+pills. Rules are 1px (`--rule`), a section opens on a 3px `--accent` rule
+with its number (`01`, `02`…) in a filled tab; a perforation is `--perf`
+(2px dashed `--rule`). Lists of things are ledgers (rows between rules), not
+grids of cards.
 
 ## Logos
 
@@ -75,13 +101,17 @@ inside the file (`prefers-color-scheme`), so it works as an `<img>`.
 - `lea.svg`: a sealed container with three agents, one waiting for you.
 
 Do not recolour, outline, add a gradient or a shadow, or set a logo on a
-background of the other theme. The wordmark is `lock family`, lowercase, in
+background of the other theme. A logo may sit on a tile of its product's
+`--accent-stock`. The wordmark is `lock family`, lowercase, in
 the display face, next to the mark.
 
 ## Patterns
 
 - **Ticket**: `--card` face, 1px `--ink` border, a 2px `--ink` rule under its
-  head, fields as mono labels over text, a perforated stub with notches.
+  head, fields as mono labels over text, a perforated stub with notches, and
+  a hard offset shadow in `--accent` (a second print pass, out of register).
+- **Hero**: a band of `--accent-stock` edge to edge, washing to
+  `--accent-stock-2`, that ends on a scalloped perforation.
 - **Stamp**: 3px double border in `--sign` (approved) or `--stamp` (denied),
   mono uppercase, rotated -3°. It animates in once; never under reduced motion.
 - **Ledger**: rows with a time column and a who column, one rule between rows.
