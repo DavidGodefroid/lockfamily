@@ -293,8 +293,17 @@ class Page(unittest.TestCase):
             self.assertIn('role="tab"', qs)
             self.assertIn('>%s</button>' % name, qs, name)
             self.assertIn('https://github.com/DavidGodefroid/%s"' % name, footer, name)
-        for w in ('databases', 'RabbitMQ', 'files', 'HTTP', 'logs', 'servers'):
+        # The description is one sentence a search engine shows whole (#68):
+        # at most 160 characters, the same on the social card, and it says
+        # no more than the README's opening (no list of sources: lockhttp
+        # guards only agents inside lea, which does not fit here).
+        self.assertLessEqual(len(meta), 160, len(meta))
+        for w in ('Harness security for AI agents', 'Lock', 'credentials', 'masks', 'lox run'):
             self.assertIn(w, meta)
+        for w in ('HTTP', 'web', 'any agent', 'every'):
+            self.assertNotIn(w, meta)
+        for other in ('property="og:description"', 'name="twitter:description"'):
+            self.assertIn('<meta %s content="%s">' % (other, meta), self.html)
 
     def test_links_go_to_repos(self):
         # A Lock's product site is never a link target: its repository is.
