@@ -12,6 +12,8 @@ and checks:
   - every visible text passes WCAG AA against its effective background
     (4.5:1, 3:1 for large text);
   - with reduced motion, nothing animates;
+  - the demo is the first element after the hero, lazy, inside the page
+    (#67), and the hero keeps its ticket;
   - the hero's GitHub button is visible, a plain link without a star count
     file; at 390 px, with one, it shows the count (#66).
 
@@ -51,6 +53,14 @@ document.getElementById('f').addEventListener('load', async () => {
   r.bg = w.getComputedStyle(d.body).backgroundColor;
   r.foreign = w.performance.getEntriesByType('resource').map(e => e.name).filter(n => !n.startsWith(location.origin));
   r.running = d.getAnimations().filter(a => a.playState === 'running').length;
+  // The demo: the first element after the hero, inside the page's width.
+  const hero = d.querySelector('.hero'), demo = hero.nextElementSibling, dimg = demo.querySelector('img');
+  const frame = demo.querySelector('.demo-frame').getBoundingClientRect();
+  r.demo = {first: demo.classList.contains('demo-section'), lazy: dimg.loading, alt: dimg.alt.length,
+            src: (dimg.currentSrc || dimg.src).replace(location.origin + '/', ''),
+            fits: frame.left >= 0 && frame.right <= d.documentElement.clientWidth && frame.width > 250,
+            below: demo.getBoundingClientRect().top >= hero.getBoundingClientRect().bottom - 1,
+            ticket: !!hero.querySelector('figure.ticket .stamp')};
   // The GitHub button of the hero: wait for its star count, if any.
   await new Promise(ok => setTimeout(ok, 400));
   const gh = d.querySelector('.hero a[data-stars]'), box = gh.getBoundingClientRect(), stars = gh.querySelector('.stars');
@@ -132,6 +142,11 @@ def main():
                 check(tag + ': WCAG AA contrast (%s texts)' % r.get('checked'),
                       r.get('checked', 0) > 100 and r.get('contrast') == [], r.get('contrast'))
                 check(tag + ': reduced motion, nothing runs', r.get('running') == 0, r.get('running'))
+                dm = r.get('demo', {})
+                check(tag + ': the demo is the first element after the hero',
+                      dm.get('first') and dm.get('below') and dm.get('fits') and dm.get('lazy') == 'lazy'
+                      and dm.get('alt', 0) > 200 and dm.get('ticket')
+                      and dm.get('src') in ('', 'assets/demo-%s.svg' % scheme), dm)
                 gh = r.get('gh', {})
                 check(tag + ': GitHub button visible, a plain link',
                       gh.get('shown') and gh.get('stars') is None and gh.get('text') == 'Source on GitHub'

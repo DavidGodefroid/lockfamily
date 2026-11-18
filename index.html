@@ -97,6 +97,19 @@ brew install davidgodefroid/tap/lockfamily</code></pre>
     </figure>
   </section>
 
+  <section class="demo-section wrap" aria-labelledby="demo-title">
+    <h2 id="demo-title" class="label">One request, start to finish, in 38 seconds</h2>
+    <figure class="demo">
+      <div class="demo-frame" tabindex="0" role="group" aria-label="The demo; scroll sideways on a small screen">
+        <picture>
+          <source media="(prefers-color-scheme: dark)" srcset="assets/demo-dark.svg">
+          <img src="assets/demo-light.svg" width="1200" height="884" loading="lazy" decoding="async" alt="Demo, 38 seconds: an agent on the left, lox run on the right, your shell below. Step 1: the agent reads the pending order through locksql; the customer's name and email come back as &lt;redacted&gt;, and lox run logs the read as approved by an auto rule. Step 2: the agent asks for an UPDATE of the order's status; it gets a pending ticket, and lox run shows a question card with the statement, its values masked. Step 3: you press y in lox run, outside the agent; the agent runs the write with the decided ticket and one row changes. Step 4: lox audit lists both exchanges, the read decided by an auto rule and the write by a human.">
+        </picture>
+      </div>
+      <figcaption>A masked read, an <code>UPDATE</code> held for you, your <kbd>y</kbd> in <code>lox run</code>, then the line in <code>lox audit</code>. Drawn from the captures of one real run, with the agent on the host; with reduced motion it shows the last frame. <span class="demo-hint">On a small screen, scroll it sideways.</span></figcaption>
+    </figure>
+  </section>
+
   <section class="locks-section wrap" aria-labelledby="locks-title">
     <h2 id="locks-title" class="label">One Lock per data source, and lea for the agents</h2>
     <ul class="locks">
