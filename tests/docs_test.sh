@@ -21,4 +21,14 @@ site=${1:-_site}
 "$py" docs-site/build.py --check "$site"
 cmp install.sh "$site/install.sh"
 echo "install.sh: served as it is"
+# #38 (lockhub#193): the pages built from lockhub and locksql say that
+# proxy_command is not supported under lox run (the error lox run prints),
+# and give the [profiles.p.ssh] example that replaces it.
+for page in hub/lox-run locks/locksql/docker; do
+  grep -q 'proxy_command is not supported under lox run; reach the database through the built-in ssh bastion' "$site/docs/$page/index.html" ||
+    { echo "docs/$page: does not say proxy_command is unsupported under lox run" >&2; exit 1; }
+  grep -q 'profiles.prod.ssh' "$site/docs/$page/index.html" ||
+    { echo "docs/$page: no [profiles.p.ssh] example" >&2; exit 1; }
+done
+echo "proxy_command: unsupported under lox run, on both pages"
 python3 tests/docs_e2e.py "$site"
