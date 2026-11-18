@@ -114,6 +114,7 @@ title = "lox & hub"
     { slug = "lox-init", src = "lockhub:docs/lox-init.md", nav = "lox init" },
     { slug = "lox-add", src = "lockhub:docs/lox-add.md", nav = "lox add" },
     { slug = "lox-run", src = "lockhub:docs/lox-run.md", nav = "lox run" },
+    { slug = "lox-live", src = "lockhub:docs/lox-live.md", nav = "lox live" },
   ]
 
   [[tab.group]]
