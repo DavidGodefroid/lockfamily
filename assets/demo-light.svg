@@ -76,22 +76,22 @@
 @keyframes k37{0.00%{opacity:0} 68.42%{opacity:0} 68.82%{opacity:1} 98.16%{opacity:1} 98.55%{opacity:0} 100.00%{opacity:0}}
 .k37{animation:k37 38s linear infinite}
 @media (prefers-reduced-motion:reduce){.a{animation:none!important}}</style>
-<rect width="1200" height="884" rx="10" fill="#f4efe4"/>
+<rect width="1200" height="884" rx="10" fill="#fbf7ee"/>
 <rect x="16" y="16" width="286" height="34" rx="4" fill="#fffcf5" stroke="#b9af98"/>
-<rect class="a k1" opacity="0" x="16" y="16" width="286" height="34" rx="4" fill="none" stroke="#1f4a9c" stroke-width="2"/>
-<text x="26" y="38" font-family="-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif" font-size="13" fill="#1d1b17"><tspan font-weight="700" fill="#1f4a9c">1</tspan>  A read: personal data comes back masked</text>
+<rect class="a k1" opacity="0" x="16" y="16" width="286" height="34" rx="4" fill="none" stroke="#2346d2" stroke-width="2"/>
+<text x="26" y="38" font-family="-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif" font-size="13" fill="#1d1b17"><tspan font-weight="700" fill="#2346d2">1</tspan>  A read: personal data comes back masked</text>
 <rect x="310" y="16" width="286" height="34" rx="4" fill="#fffcf5" stroke="#b9af98"/>
-<rect class="a k2" opacity="0" x="310" y="16" width="286" height="34" rx="4" fill="none" stroke="#1f4a9c" stroke-width="2"/>
-<text x="320" y="38" font-family="-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif" font-size="13" fill="#1d1b17"><tspan font-weight="700" fill="#1f4a9c">2</tspan>  A write: held, the agent gets a ticket</text>
+<rect class="a k2" opacity="0" x="310" y="16" width="286" height="34" rx="4" fill="none" stroke="#2346d2" stroke-width="2"/>
+<text x="320" y="38" font-family="-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif" font-size="13" fill="#1d1b17"><tspan font-weight="700" fill="#2346d2">2</tspan>  A write: held, the agent gets a ticket</text>
 <rect x="604" y="16" width="286" height="34" rx="4" fill="#fffcf5" stroke="#b9af98"/>
-<rect class="a k3" opacity="0" x="604" y="16" width="286" height="34" rx="4" fill="none" stroke="#1f4a9c" stroke-width="2"/>
-<text x="614" y="38" font-family="-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif" font-size="13" fill="#1d1b17"><tspan font-weight="700" fill="#1f4a9c">3</tspan>  You approve in lox run, outside the agent</text>
+<rect class="a k3" opacity="0" x="604" y="16" width="286" height="34" rx="4" fill="none" stroke="#2346d2" stroke-width="2"/>
+<text x="614" y="38" font-family="-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif" font-size="13" fill="#1d1b17"><tspan font-weight="700" fill="#2346d2">3</tspan>  You approve in lox run, outside the agent</text>
 <rect x="898" y="16" width="286" height="34" rx="4" fill="#fffcf5" stroke="#b9af98"/>
-<rect class="a k4" opacity="1" x="898" y="16" width="286" height="34" rx="4" fill="none" stroke="#1f4a9c" stroke-width="2"/>
-<text x="908" y="38" font-family="-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif" font-size="13" fill="#1d1b17"><tspan font-weight="700" fill="#1f4a9c">4</tspan>  lox audit lists who decided</text>
+<rect class="a k4" opacity="1" x="898" y="16" width="286" height="34" rx="4" fill="none" stroke="#2346d2" stroke-width="2"/>
+<text x="908" y="38" font-family="-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif" font-size="13" fill="#1d1b17"><tspan font-weight="700" fill="#2346d2">4</tspan>  lox audit lists who decided</text>
 <rect x="16" y="66" width="531.2" height="600" rx="6" fill="#fffcf5" stroke="#b9af98"/>
 <path d="M17 94h529.2v0.5h-529.2z" fill="#b9af98"/>
-<rect x="17" y="67" width="529.2" height="27" rx="5" fill="#e9e2d2"/>
+<rect x="17" y="67" width="529.2" height="27" rx="5" fill="#f3ecdd"/>
 <text x="30" y="85" font-family="-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif" font-size="13" font-weight="600" fill="#1d1b17">agent<tspan font-weight="400" fill="#575146">  ·  an MCP client, with no password and no connection</tspan></text>
 <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, &quot;Liberation Mono&quot;, monospace" font-size="13" xml:space="preserve">
 <g class="a k5" opacity="1">
@@ -192,7 +192,7 @@
 </g>
 <rect x="563.2" y="66" width="620.8" height="600" rx="6" fill="#fffcf5" stroke="#b9af98"/>
 <path d="M564.2 94h618.8v0.5h-618.8z" fill="#b9af98"/>
-<rect x="564.2" y="67" width="618.8" height="27" rx="5" fill="#e9e2d2"/>
+<rect x="564.2" y="67" width="618.8" height="27" rx="5" fill="#f3ecdd"/>
 <text x="577.2" y="85" font-family="-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif" font-size="13" font-weight="600" fill="#1d1b17">lox run<tspan font-weight="400" fill="#575146">  ·  your terminal, outside the agent</tspan></text>
 <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, &quot;Liberation Mono&quot;, monospace" font-size="13" xml:space="preserve">
 <g class="a k30" opacity="0">
@@ -566,7 +566,7 @@
 </g>
 <rect x="16" y="682" width="1168" height="186" rx="6" fill="#fffcf5" stroke="#b9af98"/>
 <path d="M17 710h1166v0.5h-1166z" fill="#b9af98"/>
-<rect x="17" y="683" width="1166" height="27" rx="5" fill="#e9e2d2"/>
+<rect x="17" y="683" width="1166" height="27" rx="5" fill="#f3ecdd"/>
 <text x="30" y="701" font-family="-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif" font-size="13" font-weight="600" fill="#1d1b17">your shell<tspan font-weight="400" fill="#575146">  ·  the same exchange, afterwards</tspan></text>
 <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, &quot;DejaVu Sans Mono&quot;, &quot;Liberation Mono&quot;, monospace" font-size="13" xml:space="preserve">
 <g class="a k36" opacity="1">
