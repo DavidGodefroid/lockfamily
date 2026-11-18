@@ -1,0 +1,5 @@
+lox 0.11.0
+  image: ghcr.io/davidgodefroid/lockhub@sha256:e65572259fc0e645f8d0e57a2c266c6361b9647f539bec62324e3662328da924
+    image: ghcr.io/davidgodefroid/locksql@sha256:cdc33538eb7d12d52cf86e0a4019c4c35b6f1c585a5fc86c6e3cbb7a81fe4e45
+lockhub v0.12.1, locksql v0.20.0 (the releases `lox add` resolved these digests from, signatures verified)
+lox-audit.ansi: the local user name after "started by" is replaced by "alice"; everything else is as captured
