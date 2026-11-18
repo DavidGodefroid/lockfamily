@@ -344,6 +344,23 @@ class Page(unittest.TestCase):
         self.assertEqual(struct.unpack('>II', head[16:24]), (1200, 630))
         self.assertLess(os.path.getsize(os.path.join(ROOT, 'assets/og.png')), 300 * 1024)
 
+    def test_github_button(self):
+        # A link to the source in the hero, next to the install box (#66).
+        # Its star count comes from a file of the site, written at build
+        # time: the page never calls github.com.
+        hero = self.html[self.html.index('class="hero'):self.html.index('class="locks-section')]
+        self.assertLess(hero.index('class="install"'), hero.index('class="hero-actions"'))
+        self.assertIn('<a class="button" href="https://github.com/DavidGodefroid/lockfamily" data-stars="assets/stars.json">', hero)
+        self.assertIn('<span class="stars" hidden></span>', hero)
+        js = read('assets/main.js')
+        self.assertIn('a[data-stars]', js)
+        for host in ('api.github.com', 'github.com', 'shields.io', 'https://', 'http://'):
+            self.assertNotIn(host, js, host)
+        build = read('docs-site/build.py')
+        self.assertIn("'https://api.github.com/repos/%s/%s'", build)
+        self.assertIn("'stars.json'", build)
+        self.assertFalse(os.path.exists(os.path.join(ROOT, 'assets/stars.json')), 'written by the build, not committed')
+
     def test_theme_color(self):
         t = tokens()
         self.assertIn('<meta name="theme-color" content="%s" media="(prefers-color-scheme: light)">'
