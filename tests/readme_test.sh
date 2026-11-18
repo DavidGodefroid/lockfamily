@@ -174,6 +174,13 @@ for f in README.md docs/install.md; do
 	check "$f: the check proves no freshness" "tr '\n' ' ' <'$f' | grep -Eq 'older (\`install.sh\`|script)[^.]* still verifies'"
 done
 
+# 5c. Releases (#62): every row of the family table links to its
+#     repository's releases page, and this repository says it has none.
+for r in lockfamily locksql lockmq lockfile lockhttp locklog lockssh lockhub lockkit lea; do
+	check "family table: $r links to its releases" "grep '^| \[$r\](https://github.com/DavidGodefroid/$r) |' README.md | grep -q '(https://github.com/DavidGodefroid/$r/releases) |\$'"
+done
+check "README: this repository has no releases of its own" "has README.md 'This repository has no releases of its own' && has README.md '(docs/install.md#versions)'"
+
 # 6. Nothing lost: what left the README is in docs/. The strings are
 #    literal text of the docs, not expansions.
 # keeps FILE STRING

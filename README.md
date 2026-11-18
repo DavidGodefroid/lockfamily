@@ -339,18 +339,23 @@ repository's own README and `docs/`; the docs of this repository are:
 
 ## The Lock Family
 
-| Repo | What it is |
-|---|---|
-| [lockfamily](https://github.com/DavidGodefroid/lockfamily) | The entry point: start here. The overview, the quick start, the `lox` and managed-configuration references, and every tool's docs at [lockfamily.dev/docs](https://lockfamily.dev/docs/). |
-| [locksql](https://github.com/DavidGodefroid/locksql) | SQL databases: the agent queries, PII comes back masked; connections and writes wait for you. |
-| [lockmq](https://github.com/DavidGodefroid/lockmq) | RabbitMQ: masked queue inspection; connections, peeks and unmasked reads wait for you. |
-| [lockfile](https://github.com/DavidGodefroid/lockfile) | Files (S3, SFTP, disk): the agent asks yes/no questions about files it never reads. |
-| [lockhttp](https://github.com/DavidGodefroid/lockhttp) | Outbound HTTP(S): reads of trusted hosts pass; anything that sends data or reaches an unknown host waits for you. Credentials injected by the proxy, never seen by the agent. For agents inside lea only. |
-| [locklog](https://github.com/DavidGodefroid/locklog) | Logs: masked, bounded log search; the agent reads the logs, not the people in them. |
-| [lockssh](https://github.com/DavidGodefroid/lockssh) | Commands over SSH: allow-listed commands run at once, the rest waits for you; the SSH key never leaves the console. |
-| [lockhub](https://github.com/DavidGodefroid/lockhub) | The approval hub and its `lox` CLI: `lox run` approves outside the agent's harness, signs decisions, never sees values in clear. |
-| [lockkit](https://github.com/DavidGodefroid/lockkit) | The shared Go core of every Lock (console, policies, masking, signed tickets, audit, MCP wiring). |
-| [lea](https://github.com/DavidGodefroid/lea) | Runs many agents in containers, wired to the Locks. |
+| Repo | What it is | Releases |
+|---|---|---|
+| [lockfamily](https://github.com/DavidGodefroid/lockfamily) | The entry point: start here. The overview, the quick start, the `lox` and managed-configuration references, and every tool's docs at [lockfamily.dev/docs](https://lockfamily.dev/docs/). | [none of its own](https://github.com/DavidGodefroid/lockfamily/releases) |
+| [locksql](https://github.com/DavidGodefroid/locksql) | SQL databases: the agent queries, PII comes back masked; connections and writes wait for you. | [releases](https://github.com/DavidGodefroid/locksql/releases) |
+| [lockmq](https://github.com/DavidGodefroid/lockmq) | RabbitMQ: masked queue inspection; connections, peeks and unmasked reads wait for you. | [releases](https://github.com/DavidGodefroid/lockmq/releases) |
+| [lockfile](https://github.com/DavidGodefroid/lockfile) | Files (S3, SFTP, disk): the agent asks yes/no questions about files it never reads. | [releases](https://github.com/DavidGodefroid/lockfile/releases) |
+| [lockhttp](https://github.com/DavidGodefroid/lockhttp) | Outbound HTTP(S): reads of trusted hosts pass; anything that sends data or reaches an unknown host waits for you. Credentials injected by the proxy, never seen by the agent. For agents inside lea only. | [releases](https://github.com/DavidGodefroid/lockhttp/releases) |
+| [locklog](https://github.com/DavidGodefroid/locklog) | Logs: masked, bounded log search; the agent reads the logs, not the people in them. | [releases](https://github.com/DavidGodefroid/locklog/releases) |
+| [lockssh](https://github.com/DavidGodefroid/lockssh) | Commands over SSH: allow-listed commands run at once, the rest waits for you; the SSH key never leaves the console. | [releases](https://github.com/DavidGodefroid/lockssh/releases) |
+| [lockhub](https://github.com/DavidGodefroid/lockhub) | The approval hub and its `lox` CLI: `lox run` approves outside the agent's harness, signs decisions, never sees values in clear. | [releases](https://github.com/DavidGodefroid/lockhub/releases) |
+| [lockkit](https://github.com/DavidGodefroid/lockkit) | The shared Go core of every Lock (console, policies, masking, signed tickets, audit, MCP wiring). | [releases](https://github.com/DavidGodefroid/lockkit/releases) |
+| [lea](https://github.com/DavidGodefroid/lea) | Runs many agents in containers, wired to the Locks. | [releases](https://github.com/DavidGodefroid/lea/releases) |
+
+This repository has no releases of its own: `install.sh` installs the
+versions the Homebrew meta formula names
+([versions](docs/install.md#versions)). Each tool is released from its own
+repository.
 
 ## Contributing, security, license
 
