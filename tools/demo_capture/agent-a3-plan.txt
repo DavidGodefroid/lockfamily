@@ -1,0 +1,10 @@
+plan_id  6785f1dc774f3b4a
+profile  shop
+host     host.docker.internal
+db       shop
+class    WRITE
+verdict  OK
+explain  no EXPLAIN for UPDATE
+sql      UPDATE orders SET status = 'refunded' WHERE id = 4812
+next: show this plan to the user, then call locksql_run with plan_id 6785f1dc774f3b4a (one-shot, valid 10 min; it answers pending with a ticket the human decides in lockhub)
+
