@@ -48,7 +48,7 @@ rm -f "$first"
 # 1b. The opening (#56 to #59): a user gain first, the four start commands
 #     before line 40, one example before the family's vocabulary, the
 #     table of what holds where before Install, the limits in one section.
-check "opening: the first sentence after the badges is a user gain" "sed -n '/<\/p>/,\$p' README.md | grep -m1 '<b>' | grep -q '<b>Your AI agent works on your production database without ever holding the password.</b>'"
+check "opening: the first sentence after the badges is a user gain" "sed -n '/<\/p>/,\$p' README.md | grep -m1 '<b>' | grep -q '<b>Your AI agent works on your production database without holding the password.</b>'"
 n=0
 for c in 'brew trust davidgodefroid/tap' 'brew install davidgodefroid/tap/lockfamily' 'lox add locksql' 'lox run'; do
 	l=$(grep -n -m1 "^$c" README.md | cut -d: -f1)
@@ -56,13 +56,17 @@ for c in 'brew trust davidgodefroid/tap' 'brew install davidgodefroid/tap/lockfa
 	n=${l:-0}
 done
 check "opening: the first screen links to what holds where" "head -n 40 README.md | grep -q '#what-holds-where'"
+check "opening: the first screen names the confined-agent rule" "head -n 42 README.md | tr '\n' ' ' | grep -q 'hold against a compromised or prompt-injected agent only when it runs confined, in lea: \[what holds where\](#what-holds-where)'"
+check "opening: no absolute on the password" "! grep -q 'without ever holding' README.md"
 check "not presented as the family site and install.sh" "! grep -q 'The family site' README.md"
 # line TEXT: the first line of README.md that has TEXT, outside the header's HTML.
 line() { awk -v w="$1" '/^```sh$/ { body = 1 } body && index($0, w) { print NR; exit }' README.md; }
 ex=$(grep -n -m1 '^## One request, start to finish$' README.md | cut -d: -f1)
 ex_end=$(grep -n -m1 '^## What it is$' README.md | cut -d: -f1)
 check "example: present, before What it is" "[ -n '$ex' ] && [ -n '$ex_end' ] && [ '${ex:-0}' -lt '${ex_end:-0}' ]"
-for w in ' Lock ' 'Locks' ' hub' 'lea' 'facade'; do
+# lea is named once before the example, by the rule the first screen must
+# state (#56); the family's other words come after it.
+for w in ' Lock ' 'Locks' ' hub' 'facade'; do
 	l=$(line "$w")
 	check "example: before the first use of '$w'" "[ -n '$l' ] && [ '${l:-0}' -gt '${ex_end:-0}' ]"
 done
