@@ -3,9 +3,19 @@
 # a throwaway Postgres, one locksql lock added with `lox add`, `lox run` in a
 # 76-column tmux window, the agent's MCP calls sent by mcp_call.py, and
 # `tmux capture-pane -e` after each step. tools/demo_svg.py draws the demo
-# from the result. Assembled from the commands of that run; the names it
-# creates (demo61-*, ~/projects/shop) must be free. Needs lox, locksql,
-# docker, tmux, jq, python3 and script(1).
+# from the result. Needs lox, locksql, docker, tmux, jq, python3 and
+# script(1).
+#
+# This file was assembled afterwards from the commands of that run. It has
+# NOT been run end to end as one script: read it before you run it.
+#
+# It refuses to start when a name it would create exists (the workspace
+# ~/projects/shop, its runtime directory, the containers and the tmux
+# session demo61*), and at the end it removes only what it created.
+#
+# One substitution in the captures: in lox-audit.ansi, the local user name
+# of "lox run started by <user>" is replaced by "alice". Everything else is
+# as captured.
 #
 #   bash tools/demo_capture/capture.sh OUT_DIR
 set -eu
@@ -15,6 +25,17 @@ export WS=$HOME/projects/shop
 export XDG_RUNTIME_DIR=$HOME/.demo61-run   # a facade socket of its own, away from any other lox run
 TS=demo61
 PW=demo-pw-61                               # the throwaway database's password, typed in lox run only
+
+# Nothing that exists is reused, so nothing that exists is removed.
+for d in "$WS" "$XDG_RUNTIME_DIR"; do
+	[ ! -e "$d" ] || { echo "capture.sh: $d exists: move it away or change the name in this script" >&2; exit 1; }
+done
+if docker inspect demo61-pg >/dev/null 2>&1 || docker network inspect demo61-net >/dev/null 2>&1 || tmux has-session -t "$TS" 2>/dev/null; then
+	echo "capture.sh: a container, network or tmux session named demo61* exists" >&2
+	exit 1
+fi
+made_projects=0
+[ -d "$HOME/projects" ] || made_projects=1
 
 # 1. A fake shop database.
 docker network create --subnet 10.251.61.0/24 demo61-net >/dev/null
@@ -40,7 +61,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA public TO agent;
 SQL
 
 # 2. The lock: lox add, then the write tier in the profile.
-mkdir -p "$WS" && chmod 0755 "$WS" && mkdir -p -m 0700 "$XDG_RUNTIME_DIR" && cd "$WS" && git init -q
+mkdir -p "$HOME/projects" && mkdir -m 0755 "$WS" && mkdir -m 0700 "$XDG_RUNTIME_DIR" && cd "$WS" && git init -q
 lox add locksql --non-interactive --name shop --engine postgres --host host.docker.internal --port 5434 \
 	--database shop --user agent --credentials ask --tls disable </dev/null
 printf 'tier = "write"\n' >>.locksql/config.toml
@@ -80,7 +101,11 @@ call locksql_run "{\"plan_id\":\"$id\",\"ticket\":\"$ticket\"}" >"$OUT/agent-a5-
 snap s4
 
 # 5. lox audit, and the releases that ran.
-script -qec "stty cols 100; lox audit --no-pager" /dev/null | tr -d '\r' >"$OUT/lox-audit.ansi"
+# The local user name is replaced by a fixture name. The rule after it is
+# drawn to the terminal's width: if your name is not five letters long,
+# that line is no longer 100 cells wide.
+script -qec "stty cols 100; lox audit --no-pager" /dev/null | tr -d '\r' |
+	sed "s/m$(id -un)$(printf '\033')/malice$(printf '\033')/" >"$OUT/lox-audit.ansi"
 { lox --version && grep image: .lockfamily/lockfamily.yaml; } >"$OUT/versions.txt"
 
 # 6. Remove everything this script started.
@@ -89,6 +114,11 @@ P=$(jq -r .project .lockfamily/up.json)
 S=${XDG_STATE_HOME:-$HOME/.local/state}/lockfamily/$P
 docker compose -p "$P" --project-directory "$S" -f "$S/compose.yaml" down -v --remove-orphans
 rm -f "${XDG_STATE_HOME:-$HOME/.local/state}/lockfamily/facades/locks.d/$P.json"
-cd / && rm -rf "$S" "$WS" "$XDG_RUNTIME_DIR"
+# $S is this project's state, made by lox run above; $WS and the runtime
+# directory did not exist when this script started (checked at the top).
+cd /
+case $P in lockfamily-?*) rm -rf "$S" ;; *) echo "capture.sh: unexpected project name '$P': $S left in place" >&2 ;; esac
+rm -rf "$WS" "$XDG_RUNTIME_DIR"
+[ "$made_projects" = 0 ] || rmdir "$HOME/projects" 2>/dev/null || true
 tmux kill-session -t $TS
 docker rm -f demo61-pg >/dev/null && docker network rm demo61-net >/dev/null
