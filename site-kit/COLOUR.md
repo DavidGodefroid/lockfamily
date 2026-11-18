@@ -121,9 +121,10 @@ rewrites the block in `assets/tokens.css` (`--check` in the tests,
 - `--on-accent` is at least 4.5:1 on `--accent`.
 - `--accent` is at least 3:1 on the neutrals: enough for a rule, a border or
   a filled shape, **not** for text. Text in the accent is `--accent-ink`.
-- The status inks are 4.5:1 on `--paper`, `--paper-2` and `--card` only.
-  A status word on a tinted or stock ground sits on a `--card` chip or panel
-  (the ticket does this).
+- The status inks are 4.5:1 on `--paper`, `--paper-2`, `--card` and every
+  product's `--accent-tint` (a yes/no table may sit in a tinted section).
+  They are **not** safe on `--accent-stock`: a status word in the hero sits
+  on a `--card` panel (the ticket does this).
 - A wash sets `background-color` to its first stop as well as the gradient,
   so tools and tests read a real colour under the text.
 

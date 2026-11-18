@@ -98,6 +98,9 @@ class Tokens(unittest.TestCase):
                         self.assertGreaterEqual(contrast(fg, bg), 4.5, (theme, product, fg, bg))
                 for g in self.GROUNDS:
                     self.assertGreaterEqual(contrast(a['accent'], t[theme][g]), 3, (theme, product, g))
+                # A status word may sit in a tinted section (not on stock).
+                for fg in ('sign', 'stamp', 'auto', 'asked', 'mask', 'agent'):
+                    self.assertGreaterEqual(contrast(t[theme][fg], a['accent-tint']), 4.5, (theme, product, fg))
 
     def test_accents_documented(self):
         doc = read('site-kit/COLOUR.md')
