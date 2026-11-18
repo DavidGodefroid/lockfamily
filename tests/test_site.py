@@ -311,6 +311,25 @@ class Page(unittest.TestCase):
         for e in ('🤖', '🔑', '🗄', '📨', '📄', '⚙︎'):
             self.assertNotIn(e, self.html)
 
+    def test_social_card(self):
+        # A shared link shows an image (#55): og:image and twitter:card,
+        # an absolute URL, and the file is a 1200x630 PNG of this repo.
+        import struct
+        meta = dict(re.findall(r'<meta (?:property|name)="((?:og|twitter):[a-z:]+)" content="([^"]*)">', self.html))
+        url = 'https://lockfamily.dev/assets/og.png'
+        self.assertEqual(meta['og:image'], url)
+        self.assertEqual(meta['twitter:image'], url)
+        self.assertEqual(meta['twitter:card'], 'summary_large_image')
+        self.assertEqual((meta['og:image:type'], meta['og:image:width'], meta['og:image:height']), ('image/png', '1200', '630'))
+        self.assertEqual(meta['twitter:title'], meta['og:title'])
+        self.assertEqual(meta['twitter:description'], meta['og:description'])
+        self.assertTrue(meta['og:image:alt'] and meta['twitter:image:alt'] == meta['og:image:alt'])
+        with open(os.path.join(ROOT, 'assets/og.png'), 'rb') as fh:
+            head = fh.read(24)
+        self.assertEqual(head[:8], b'\x89PNG\r\n\x1a\n')
+        self.assertEqual(struct.unpack('>II', head[16:24]), (1200, 630))
+        self.assertLess(os.path.getsize(os.path.join(ROOT, 'assets/og.png')), 300 * 1024)
+
     def test_theme_color(self):
         t = tokens()
         self.assertIn('<meta name="theme-color" content="%s" media="(prefers-color-scheme: light)">'
