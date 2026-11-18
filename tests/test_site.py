@@ -58,11 +58,80 @@ class Tokens(unittest.TestCase):
             self.assertRegex(t['light'][name], r'^#[0-9a-f]{6}$', name)
             self.assertNotEqual(t['light'][name], t['dark'][name], name + ': dark is its own value')
 
+    ACCENT = ['accent', 'on-accent', 'accent-ink', 'accent-tint', 'accent-stock', 'accent-stock-2']
+
+    def accents(self):
+        """{'light': {product: {token: value}}, 'dark': {...}} from the
+        generated block of assets/tokens.css."""
+        css = read('assets/tokens.css')
+        block = css[css.index('/* accents:begin'):css.index('/* accents:end')]
+        light, dark = block.split('@media (prefers-color-scheme: dark)')
+        rule = re.compile(r'\[data-accent="([a-z]+)"\] \{([^}]*)\}')
+        decl = re.compile(r'--([a-z0-9-]+):\s*([^;]+);')
+        return {'light': {n: dict(decl.findall(b)) for n, b in rule.findall(light)},
+                'dark': {n: dict(decl.findall(b)) for n, b in rule.findall(dark)}}
+
+    def test_accents_generated(self):
+        # The block is what site-kit/tools/accents.py writes, and the
+        # family's own accent sits in the two :root blocks too.
+        import subprocess
+        out = subprocess.run([sys.executable, os.path.join(ROOT, 'site-kit/tools/accents.py'), '--check'],
+                             capture_output=True, text=True)
+        self.assertEqual(out.returncode, 0, out.stdout + out.stderr)
+        acc, t = self.accents(), tokens()
+        for theme in ('light', 'dark'):
+            self.assertEqual(sorted(acc[theme]), sorted(
+                ['lockfamily', 'locksql', 'lockmq', 'lockfile', 'lockhttp', 'locklog', 'lockssh', 'lea', 'lockhub', 'lockkit']))
+            for name in self.ACCENT:
+                self.assertEqual(t[theme][name], acc[theme]['lockfamily'][name], (theme, name))
+
+    def test_accents_wcag_aa(self):
+        # Every product, both themes: body text on every coloured ground,
+        # the label of a filled button, and the fill as a shape (3:1).
+        t = tokens()
+        for theme, products in self.accents().items():
+            for product, a in products.items():
+                self.assertNotEqual(a, self.accents()['dark' if theme == 'light' else 'light'][product], product)
+                self.assertGreaterEqual(contrast(a['on-accent'], a['accent']), 4.5, (theme, product))
+                for bg in [a['accent-tint'], a['accent-stock'], a['accent-stock-2']] + [t[theme][g] for g in self.GROUNDS]:
+                    for fg in (t[theme]['ink'], t[theme]['ink-2'], a['accent-ink']):
+                        self.assertGreaterEqual(contrast(fg, bg), 4.5, (theme, product, fg, bg))
+                for g in self.GROUNDS:
+                    self.assertGreaterEqual(contrast(a['accent'], t[theme][g]), 3, (theme, product, g))
+                # A status word may sit in a tinted section (not on stock).
+                for fg in ('sign', 'stamp', 'auto', 'asked', 'mask', 'agent'):
+                    self.assertGreaterEqual(contrast(t[theme][fg], a['accent-tint']), 4.5, (theme, product, fg))
+
+    def test_accents_documented(self):
+        doc = read('site-kit/COLOUR.md')
+        for theme, products in self.accents().items():
+            for product, a in products.items():
+                row = [ln for ln in doc.splitlines() if ln.startswith('| %s | `%s` | %s |' % (product, product, theme))]
+                self.assertEqual(len(row), 1, (product, theme))
+                for name in self.ACCENT:
+                    self.assertIn('`%s`' % a[name], row[0], (product, theme, name))
+
+    def test_one_accent_per_page(self):
+        # The home page and the kit never write an accent's hex: they use
+        # the tokens, and a page picks its product with data-accent.
+        css = read('assets/style.css') + read('site-kit/assets/lock-site.css') + read('docs-site/assets/docs.css')
+        for products in self.accents().values():
+            for a in products.values():
+                for name in ('accent', 'accent-tint', 'accent-stock', 'accent-stock-2'):
+                    self.assertNotIn(a[name], css, name)
+        self.assertIn('<html lang="en" data-accent="{{LOCK}}">', read('site-kit/snippets/head.html'))
+        html = read('index.html')
+        for name in ('locksql', 'lockmq', 'lockfile', 'lockhttp', 'locklog', 'lockssh', 'lea'):
+            self.assertIn('<li data-accent="%s">' % name, html)
+
     def test_not_the_generic_palette(self):
         # The old navy and violet are gone, from the tokens and the page.
         css = read('assets/tokens.css') + read('assets/style.css') + read('index.html')
         for old in ('#0b1020', '#8b5cf6', '#c4b5fd', '--glow-alpha', 'class="glow"', 'shimmer'):
             self.assertNotIn(old, css)
+        # Nor the first identity's beige and near-black carbon (#72).
+        for old in ('#f4efe4', '#16140f', 'blur(', 'background-clip: text'):
+            self.assertNotIn(old, css + read('site-kit/assets/lock-site.css'))
 
     def test_wcag_aa_text(self):
         for theme, t in tokens().items():
@@ -76,6 +145,7 @@ class Tokens(unittest.TestCase):
 
     def test_documented(self):
         doc = read('docs/identity.md')
+        self.assertIn('site-kit/COLOUR.md', doc)
         for theme, t in tokens().items():
             for name, value in t.items():
                 if value.startswith('#'):
@@ -253,7 +323,7 @@ class Page(unittest.TestCase):
 
     def test_docs(self):
         note = read('docs/design-note.md')
-        for w in ('signed ticket', 'rejected', 'Industrial', 'Terminal-native', 'chosen'):
+        for w in ('signed ticket', 'rejected', 'Industrial', 'Terminal-native', 'chosen', 'coloured stock'):
             self.assertIn(w, note)
         self.assertTrue(os.path.exists(os.path.join(ROOT, 'docs/mockups/directions.svg')))
         ET.fromstring(read('docs/mockups/directions.svg'))

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="lock family logo">
 <title>lock family</title>
 <desc>One padlock for the family: its body is a ticket stub, a keyhole on one side, the perforation on the other.</desc>
-<style>.i{stroke:#1d1b17}.f{fill:#1d1b17}.p{fill:#fffcf5}.d{stroke:#575146}@media (prefers-color-scheme:dark){.i{stroke:#ede6d6}.f{fill:#ede6d6}.p{fill:#25221b}.d{stroke:#b2a994}}</style>
+<style>.i{stroke:#1d1b17}.f{fill:#1d1b17}.p{fill:#fffcf5}.d{stroke:#575146}@media (prefers-color-scheme:dark){.i{stroke:#ede6d6}.f{fill:#ede6d6}.p{fill:#2f2c3a}.d{stroke:#bdb5a3}}</style>
 <path class="i" d="M40 58 V40 a24 24 0 0 1 48 0 V58" fill="none" stroke-width="9" stroke-linecap="round"/><path class="p i" d="M24 56 H104 a6 6 0 0 1 6 6 V76 a8 8 0 0 0 0 16 V106 a6 6 0 0 1 -6 6 H24 a6 6 0 0 1 -6 -6 V92 a8 8 0 0 0 0 -16 V62 a6 6 0 0 1 6 -6 Z" stroke-width="6" stroke-linejoin="round"/><path class="d" d="M86 66 V102" stroke-width="3" stroke-dasharray="1 6" stroke-linecap="round" fill="none"/><circle class="f" cx="54" cy="79" r="7"/><path class="f" d="M50.5 83 L48.5 97 H59.5 L57.5 83 Z"/>
 </svg>
