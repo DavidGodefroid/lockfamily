@@ -7,7 +7,10 @@
 
 Each image is the site kit's og template (site-kit/tools/og.html) with its
 placeholders filled and social.css added on top: same logo, name and tagline
-as the Lock sites' og.png, at GitHub's 1280x640, on the product's colour.
+as the Lock sites' og.png, at GitHub's 1280x640, in a frame of the product's
+accent. No colour is written here: the template's data-accent="<repo>"
+picks the product's tokens in assets/tokens.css (site-kit/COLOUR.md).
+--kit renders from another checkout's site-kit/ and assets/.
 
 The name and the tagline are read from each repository's README on
 origin/main (the banner's alt text, "<name>: <tagline>", or lea's centred
@@ -34,7 +37,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
-TEMPLATE = ROOT / "site-kit" / "tools" / "og.html"
 OUT = ROOT / "assets" / "social"
 W, H = 1280, 640
 MAX_BYTES = 1_000_000
@@ -44,71 +46,43 @@ PART = "Part of the Lock Family"
 
 # Per repository: the logo (assets/<logo>.svg), the label above the name,
 # the tagline as its README states it today and the part of it set in the
-# accent, the site shown bottom right, and the colours: `bg` fills the
-# frame, `key` is the accent of the tagline (AA on --card, checked below).
-# Provisional palette: lockfamily#72 defines the family's colours in
-# site-kit/COLOUR.md; when it lands, change bg/key here and render again.
+# accent, and the site shown bottom right. The colours are the repo's
+# data-accent tokens in assets/tokens.css, not kept here.
 REPOS = {
     "lockfamily": dict(logo="mark", label="Open source · Apache 2.0",
                        tagline="harness security for AI agents.",
-                       key="for AI agents.", site="lockfamily.dev",
-                       bg="#ffc93c", key_colour="#1f4a9c"),
+                       key="for AI agents.", site="lockfamily.dev"),
     "locksql": dict(logo="locksql", label=LOCK,
                     tagline="your agent writes the query, you hold the key.",
-                    key="you hold the key.", site="lockfamily.dev",
-                    bg="#5b8cff", key_colour="#1f4a9c"),
+                    key="you hold the key.", site="lockfamily.dev"),
     "lockmq": dict(logo="lockmq", label=LOCK,
                    tagline="your agent reads the queue, you hold the key.",
-                   key="you hold the key.", site="lockfamily.dev",
-                   bg="#ff8f3f", key_colour="#a04000"),
+                   key="you hold the key.", site="lockfamily.dev"),
     "lockfile": dict(logo="lockfile", label=LOCK,
                      tagline="your agent asks about the file. It never reads it.",
-                     key="It never reads it.", site="lockfamily.dev",
-                     bg="#35c26f", key_colour="#1c6b3a"),
+                     key="It never reads it.", site="lockfamily.dev"),
     "lockhttp": dict(logo="lockhttp", label=LOCK,
                      tagline="your agent browses. You hold the key.",
-                     key="You hold the key.", site="lockfamily.dev",
-                     bg="#38bdf8", key_colour="#075f8f"),
+                     key="You hold the key.", site="lockfamily.dev"),
     "locklog": dict(logo="locklog", label=LOCK,
                     tagline="your agent reads the logs, not the people in them.",
-                    key="not the people in them.", site="lockfamily.dev",
-                    bg="#a98bff", key_colour="#5b33b8"),
+                    key="not the people in them.", site="lockfamily.dev"),
     "lockssh": dict(logo="lockssh", label=LOCK,
                     tagline="your AI agent runs the command, you hold the key.",
-                    key="you hold the key.", site="lockfamily.dev",
-                    bg="#ff6f61", key_colour="#a8201a"),
+                    key="you hold the key.", site="lockfamily.dev"),
     "lea": dict(logo="lea", label=PART,
                 tagline="Many agents. None of your machine.",
-                key="None of your machine.", site="leadeck.dev",
-                bg="#ff7ab8", key_colour="#a3195b"),
+                key="None of your machine.", site="leadeck.dev"),
     "lockhub": dict(logo="mark", label=PART,
                     tagline="one hub approves for every Lock.",
-                    key="for every Lock.", site="lockfamily.dev",
-                    bg="#2fcbb4", key_colour="#0e6158"),
+                    key="for every Lock.", site="lockfamily.dev"),
     "lockkit": dict(logo="mark", label=PART,
                     tagline="the shared Go core of every Lock.",
-                    key="of every Lock.", site="lockfamily.dev",
-                    bg="#b4dc4a", key_colour="#45690a"),
+                    key="of every Lock.", site="lockfamily.dev"),
 }
-
-CARD = "#fffcf5"  # --card (paper): what the tagline accent sits on
-
 
 def die(msg):
     sys.exit(f"render.py: {msg}")
-
-
-def luminance(hex_colour):
-    def chan(v):
-        v /= 255
-        return v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4
-    r, g, b = (int(hex_colour[i:i + 2], 16) for i in (1, 3, 5))
-    return 0.2126 * chan(r) + 0.7152 * chan(g) + 0.0722 * chan(b)
-
-
-def contrast(a, b):
-    la, lb = sorted((luminance(a), luminance(b)), reverse=True)
-    return (la + 0.05) / (lb + 0.05)
 
 
 def readme_tagline(repo, clones):
@@ -161,15 +135,22 @@ def png_size(path):
     return struct.unpack(">II", data[16:24])
 
 
-def page_html(name, conf, repo):
+def page_html(name, conf, repo, kit):
     tagline = conf["tagline"]
     tagline = tagline[0].upper() + tagline[1:]
     key = conf["key"]
     if not tagline.endswith(key):
         die(f"{repo}: key {key!r} is not the end of the tagline {tagline!r}")
     first = tagline[:-len(key)].rstrip()
-    page = TEMPLATE.read_text(encoding="utf-8")
+    template = kit / "site-kit" / "tools" / "og.html"
+    tokens = (kit / "assets" / "tokens.css").read_text(encoding="utf-8")
+    page = template.read_text(encoding="utf-8")
+    if f'[data-accent="{repo}"]' not in tokens:
+        die(f"{kit}/assets/tokens.css has no accent for {repo} "
+            "(site-kit/COLOUR.md, lockfamily#72): render from a checkout "
+            "that has it, with --kit")
     for old, new in (
+        ('data-accent="{{LOCK}}"', f'data-accent="{repo}"'),
         ("{{LOCK}}", html.escape(name)),
         ("{{TAGLINE_FIRST}}", html.escape(first)),
         ("{{TAGLINE_KEY}}", html.escape(key)),
@@ -178,17 +159,12 @@ def page_html(name, conf, repo):
         ("A Lock of the Lock Family", html.escape(conf["label"])),
     ):
         if old not in page:
-            die(f"{TEMPLATE} has no {old!r} any more: update render.py")
+            die(f"{template} has no {old!r}: update render.py")
         page = page.replace(old, new)
-    extra = (f'<link rel="stylesheet" href="social.css">'
-             f'<style>:root{{--social-bg:{conf["bg"]};'
-             f'--social-key:{conf["key_colour"]}}}</style></head>')
-    return page.replace("</head>", extra, 1)
+    return page.replace("</head>", '<link rel="stylesheet" href="social.css"></head>', 1)
 
 
-def render(repo, conf, chrome, clones, offline, out):
-    if contrast(conf["key_colour"], CARD) < 4.5:
-        die(f"{repo}: key colour {conf['key_colour']} is under 4.5:1 on {CARD}")
+def render(repo, conf, chrome, clones, offline, out, kit):
     name = "Lock Family" if repo == "lockfamily" else repo
     if not offline:
         name, tagline = readme_tagline(repo, clones)
@@ -199,13 +175,13 @@ def render(repo, conf, chrome, clones, offline, out):
         tmp = Path(tmp)
         assets = tmp / "assets"
         assets.mkdir()
-        shutil.copy(ROOT / "assets" / "tokens.css", assets)
-        shutil.copy(ROOT / "site-kit" / "assets" / "lock-site.css", assets)
-        shutil.copytree(ROOT / "assets" / "fonts", assets / "fonts")
-        shutil.copy(ROOT / "assets" / f"{conf['logo']}.svg", assets / "logo.svg")
+        shutil.copy(kit / "assets" / "tokens.css", assets)
+        shutil.copy(kit / "site-kit" / "assets" / "lock-site.css", assets)
+        shutil.copytree(kit / "assets" / "fonts", assets / "fonts")
+        shutil.copy(kit / "assets" / f"{conf['logo']}.svg", assets / "logo.svg")
         shutil.copy(HERE / "social.css", tmp)
         page = tmp / "og.html"
-        page.write_text(page_html(name, conf, repo), encoding="utf-8")
+        page.write_text(page_html(name, conf, repo, kit), encoding="utf-8")
         png = out / f"{repo}.png"
         png.unlink(missing_ok=True)
         screenshot(chrome, page, png, W, H)
@@ -229,7 +205,7 @@ def sheet(chrome, out, target):
         page = Path(tmp) / "sheet.html"
         page.write_text(
             "<!doctype html><meta charset=utf-8><style>body{margin:0;padding:20px;"
-            "background:#fffcf5;display:grid;grid-template-columns:640px 640px;gap:20px}"
+            "background:#fbf7ee;display:grid;grid-template-columns:640px 640px;gap:20px}"
             "img{display:block}</style>" + cells, encoding="utf-8")
         rows = -(-len(REPOS) // 2)
         target = Path(target).resolve()
@@ -246,6 +222,8 @@ def main():
     ap.add_argument("--offline", action="store_true",
                     help="do not read the READMEs, use the taglines kept in render.py")
     ap.add_argument("--out", type=Path, default=OUT, help="default: assets/social")
+    ap.add_argument("--kit", type=Path, default=ROOT,
+                    help="checkout whose site-kit/ and assets/ are used (default: this one)")
     ap.add_argument("--chrome", help="Chrome or Chromium binary")
     ap.add_argument("--sheet", metavar="PNG",
                     help="also write a contact sheet of the images in --out")
@@ -257,7 +235,8 @@ def main():
     out = args.out.resolve()
     out.mkdir(parents=True, exist_ok=True)
     for repo in args.repos or REPOS:
-        render(repo, REPOS[repo], chrome, args.clones.resolve(), args.offline, out)
+        render(repo, REPOS[repo], chrome, args.clones.resolve(), args.offline, out,
+               args.kit.resolve())
     if args.sheet:
         sheet(chrome, out, args.sheet)
 
