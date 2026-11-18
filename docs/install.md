@@ -56,6 +56,40 @@ older than v3 on your PATH is used for nothing and left alone; only when no
 cosign is on your PATH at all is the downloaded one installed as
 `~/.local/bin/cosign`, once everything else is installed.
 
+## Verifying the installer
+
+`install.sh` verifies what it installs; the script itself is signed too.
+The Pages workflow of this repository (`.github/workflows/pages.yml`) signs
+it keyless with cosign on every deployment and serves the bundle beside it,
+at <https://lockfamily.dev/install.sh.sigstore.json>. To check the script
+before you run it, with cosign v3 or later:
+
+```sh
+curl -fsSLO https://lockfamily.dev/install.sh
+curl -fsSLO https://lockfamily.dev/install.sh.sigstore.json
+cosign verify-blob --bundle install.sh.sigstore.json \
+  --certificate-identity https://github.com/DavidGodefroid/lockfamily/.github/workflows/pages.yml@refs/heads/main \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  install.sh && sh install.sh
+```
+
+What the check proves: the script you downloaded is the one that workflow
+published from the `main` branch of this repository. Its limits:
+
+- the command above and the script come from the same GitHub account, so
+  the check does not protect against that account being taken over;
+- it says nothing about where your agent runs: the guarantees of the Locks
+  hold against a compromised or prompt-injected agent only when the agent
+  itself runs confined, as in lea
+  ([security model](https://lockfamily.dev/docs/security/));
+- `curl … | sh` without this check trusts the HTTPS connection to
+  lockfamily.dev alone.
+
+Without cosign at hand, Homebrew is the other verified route:
+`brew install davidgodefroid/tap/lockfamily` checks every download against
+its formula's sha256. The workflow verifies the bundle before it deploys,
+then fetches the published script and bundle and verifies them again.
+
 ## lox alone
 
 `--version vX.Y.Z` installs only `lox`, from that lockhub

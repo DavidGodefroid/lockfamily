@@ -78,6 +78,25 @@ to trust a third-party tap once). Without Homebrew, the same tools go into
 curl -fsSL https://lockfamily.dev/install.sh | sh
 ```
 
+Homebrew is the route that needs no trust in that pipe:
+`brew install davidgodefroid/tap/lockfamily` checks every download against
+its formula's sha256. To check the script yourself before you run it, with
+cosign v3 or later:
+
+```sh
+curl -fsSLO https://lockfamily.dev/install.sh
+curl -fsSLO https://lockfamily.dev/install.sh.sigstore.json
+cosign verify-blob --bundle install.sh.sigstore.json \
+  --certificate-identity https://github.com/DavidGodefroid/lockfamily/.github/workflows/pages.yml@refs/heads/main \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  install.sh && sh install.sh
+```
+
+The check proves one thing: the script is the one this repository's Pages
+workflow published from `main`. It says nothing about where your agent
+runs or how it is confined
+([verifying the installer](docs/install.md#verifying-the-installer)).
+
 ## Quick start
 
 1. In your project, set up one source at a time:

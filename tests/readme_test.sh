@@ -91,6 +91,23 @@ check "quick start: any agent, lea included" "has README.md '\`codex\`' && has R
 check "quick start: lox add, as install.sh's next step" "grep -q '^ *lox add locksql' README.md && has install.sh 'next step: lox add <lock> in your project, then lox run'"
 check "quick start: lox run" "grep -q '^ *lox run$' README.md"
 
+# 5b. The installer's own signature (#60): the Pages workflow signs
+#     install.sh and verifies it; the README and docs/install.md give the
+#     command with that workflow's identity, and name the Homebrew route.
+id='https://github.com/DavidGodefroid/lockfamily/.github/workflows/pages.yml@refs/heads/main'
+check "pages.yml signs the served install.sh" "has .github/workflows/pages.yml 'cosign sign-blob --yes --bundle _site/install.sh.sigstore.json _site/install.sh'"
+check "pages.yml may ask for the signing token" "has .github/workflows/pages.yml 'id-token: write # the OIDC token cosign signs install.sh with'"
+for f in README.md docs/install.md .github/workflows/pages.yml; do
+	check "$f: verify-blob with the Pages workflow's identity" "has '$f' 'cosign verify-blob --bundle' && has '$f' '--certificate-identity $id' && has '$f' '--certificate-oidc-issuer https://token.actions.githubusercontent.com'"
+done
+for f in README.md docs/install.md; do
+	check "$f: the bundle's URL" "has '$f' 'curl -fsSLO https://lockfamily.dev/install.sh.sigstore.json'"
+done
+under=$(sed -n '/^curl -fsSL https:\/\/lockfamily.dev\/install.sh | sh$/,/^## /p' README.md)
+case $under in *'brew install davidgodefroid/tap/lockfamily'*'cosign verify-blob'*) pass "README: Homebrew, then the check, under the curl line" ;; *) fail "README: Homebrew, then the check, under the curl line" ;; esac
+case $under in *'It says nothing about where your agent'*) pass "README: what the check does not prove" ;; *) fail "README: what the check does not prove" ;; esac
+check "pages.yml verifies the published script after the deployment" "has .github/workflows/pages.yml 'cmp -s install.sh /tmp/install.sh && cosign verify-blob'"
+
 # 6. Nothing lost: what left the README is in docs/. The strings are
 #    literal text of the docs, not expansions.
 # keeps FILE STRING
