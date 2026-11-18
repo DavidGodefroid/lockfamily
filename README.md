@@ -339,11 +339,12 @@ repository's own README and `docs/`; the docs of this repository are:
   repository takes which change and how to run the tests. Questions and
   ideas go to
   [Discussions](https://github.com/DavidGodefroid/lockfamily/discussions).
-- **Security.** Please do not publish the details of a vulnerability.
-  Follow the affected repository's `SECURITY.md` where it has one, or
-  GitHub's private "Report a vulnerability" where the repository enables
-  it; otherwise open an issue that only asks for a private contact, with
-  no detail. [Which repository has what](CONTRIBUTING.md#security).
+- **Security.** Please do not publish the details of a vulnerability:
+  report it privately on the repository it affects, with GitHub's
+  "Report a vulnerability"
+  (`https://github.com/DavidGodefroid/<repo>/security/advisories/new`),
+  and follow that repository's `SECURITY.md` where it has one
+  ([CONTRIBUTING.md](CONTRIBUTING.md#security)).
 - **License.** Apache-2.0, see [LICENSE](LICENSE).
 
 ## About this repo

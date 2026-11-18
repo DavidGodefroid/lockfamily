@@ -121,8 +121,10 @@ done
 for t in tests/install_test.sh tests/readme_test.sh tests/site_test.sh tests/flow_svg_test.sh tests/docs_test.sh; do
 	check "CONTRIBUTING.md: sh $t, which exists" "has CONTRIBUTING.md 'sh $t' && [ -f '$t' ]"
 done
-check "CONTRIBUTING.md: the security route" "has CONTRIBUTING.md 'Please do not publish the details of a vulnerability' && has CONTRIBUTING.md 'only asks for a' && has CONTRIBUTING.md 'Report a vulnerability'"
-check "README: the security route, as CONTRIBUTING.md has it" "has README.md '](CONTRIBUTING.md#security)' && ! has README.md 'contact the maintainer'"
+for f in CONTRIBUTING.md README.md docs-site/pages/security.md; do
+	check "$f: the security route is GitHub's private report" "has '$f' 'Please do not publish the details of a vulnerability' && has '$f' 'Report a vulnerability' && has '$f' 'https://github.com/DavidGodefroid/<repo>/security/advisories/new' && ! has '$f' 'contact the maintainer' && ! has '$f' 'private contact'"
+done
+check "README: links to the guide's security section" "has README.md '](CONTRIBUTING.md#security)'"
 check "CONTRIBUTING.md: site details stay out of the README's body" "has CONTRIBUTING.md 'static HTML'"
 
 # 4. Every relative link and anchor of README.md, CONTRIBUTING.md and

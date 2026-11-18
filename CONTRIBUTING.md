@@ -81,24 +81,13 @@ Generated files are not edited by hand: the logos come from
 ## Security
 
 Please do not publish the details of a vulnerability in an issue, a pull
-request or a discussion. What exists today, in this order:
-
-1. **The repository's `SECURITY.md`, where it has one:**
-   [locksql](https://github.com/DavidGodefroid/locksql/blob/main/SECURITY.md),
-   [lockmq](https://github.com/DavidGodefroid/lockmq/blob/main/SECURITY.md),
-   [lockhttp](https://github.com/DavidGodefroid/lockhttp/blob/main/SECURITY.md),
-   [locklog](https://github.com/DavidGodefroid/locklog/blob/main/SECURITY.md)
-   and
-   [lockssh](https://github.com/DavidGodefroid/lockssh/blob/main/SECURITY.md).
-   Follow it.
-2. **GitHub's private report, where the repository enables it:** the
-   "Report a vulnerability" button of the Security tab, today on
-   [locksql](https://github.com/DavidGodefroid/locksql/security/advisories/new)
-   and
-   [locklog](https://github.com/DavidGodefroid/locklog/security/advisories/new).
-3. **Anywhere else** (lockfamily, lockfile, lockhub, lockkit and lea have
-   neither today): open an issue on the repository that only asks for a
-   private contact. Give no detail of the vulnerability in it.
+request or a discussion. Report it privately on the repository it affects,
+with GitHub's "Report a vulnerability" (the Security tab):
+`https://github.com/DavidGodefroid/<repo>/security/advisories/new`, for
+this repository
+<https://github.com/DavidGodefroid/lockfamily/security/advisories/new>.
+Where the repository has a `SECURITY.md`, read it first: it says what to
+send.
 
 ## License
 
