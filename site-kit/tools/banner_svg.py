@@ -32,8 +32,8 @@ W, H = 1200, 300
 
 # The identity tokens (lockfamily assets/tokens.css), per theme.
 THEMES = {
-    'light': {'paper': '#f4efe4', 'card': '#fffcf5', 'ink': '#1d1b17', 'ink2': '#575146', 'rule': '#b9af98'},
-    'dark': {'paper': '#16140f', 'card': '#25221b', 'ink': '#ede6d6', 'ink2': '#b2a994', 'rule': '#4a4438'},
+    'light': {'paper': '#fbf7ee', 'card': '#fffcf5', 'ink': '#1d1b17', 'ink2': '#575146', 'rule': '#b9af98'},
+    'dark': {'paper': '#1f1d26', 'card': '#2f2c3a', 'ink': '#ede6d6', 'ink2': '#bdb5a3', 'rule': '#5a546c'},
 }
 
 FONTS = {
