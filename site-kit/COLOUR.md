@@ -13,20 +13,36 @@ stock, not black.
 
 ## Apply it to a product site
 
-1. Copy `assets/tokens.css` and `site-kit/assets/lock-site.css` from
-   lockfamily (identical bytes, as before), and the product's logo again
-   (`assets/<lock>.svg` to `site/assets/logo.svg`: its dark fill changed).
-2. Name the product once per page, on the root element:
-   `<html lang="en" data-accent="locksql">` (`site-kit/snippets/head.html`
-   does it from `{{LOCK}}`). That is the only place a site chooses its colour.
-   Without the attribute a page gets the family's cobalt.
-3. Change both `theme-color` metas to the new `--paper`: `#fbf7ee` (light),
-   `#1f1d26` (dark).
-4. Nothing else is required: the hero band, the tinted sections, the
-   buttons, the number tabs, the footer and the ticket's shadow come from
-   the stylesheet. Then look at every page in both schemes at 360, 768 and
-   1280 px and fix what the site adds on top of the kit (below).
-5. Re-render `og.png` from `site-kit/tools/og.html` (it uses the accent).
+The same six steps in every Lock repo (lea, locksql, lockmq, lockfile,
+lockhttp, locklog). Steps 1 to 3 are copies, byte for byte; nothing in them
+is edited in the Lock repo.
+
+1. **`site/assets/tokens.css`**: copy lockfamily `assets/tokens.css`.
+2. **`site/assets/lock-site.css`**: copy lockfamily
+   `site-kit/assets/lock-site.css`.
+3. **`site/assets/logo.svg`**: copy lockfamily `assets/<lock>.svg` again
+   (its dark fill follows the new `--card`).
+4. **Every page** (`index.html`, the inner pages, `404.html`):
+   - name the product on the root element,
+     `<html lang="en" data-accent="locksql">` (as `site-kit/snippets/head.html`
+     does from `{{LOCK}}`). This is the only place a site chooses its colour;
+     without it a page gets the family's cobalt;
+   - set both `theme-color` metas to the new `--paper`: `#fbf7ee` (light),
+     `#1f1d26` (dark).
+5. **`site/assets/og.png`** and **`apple-touch-icon.png`**: render them again
+   from `site-kit/tools/og.html` (KIT.md step 9). The template takes the
+   accent from `data-accent="{{LOCK}}"`; render with a light colour scheme.
+6. **README banners** (`docs/assets/banner-light.svg`, `banner-dark.svg`):
+   render them again with `site-kit/tools/banner_svg.py` (KIT.md, README).
+   The tool takes the accent from `--name` (or `--accent`): the stub is the
+   product's stock, the label its ink. Required: the old files carry the old
+   beige and carbon.
+
+Nothing else is required: the hero band, the tinted sections, the buttons,
+the number tabs, the footer and the ticket's shadow come from the
+stylesheet. Then look at every page in both schemes at 360, 768 and 1280 px
+and fix what the site adds on top of the kit (its own CSS, inline styles,
+images drawn for the old colours).
 
 `data-accent` also works on any element: on the family page each Lock's row
 carries its own (`<li data-accent="lockmq">`).
@@ -105,9 +121,10 @@ rewrites the block in `assets/tokens.css` (`--check` in the tests,
 - `--on-accent` is at least 4.5:1 on `--accent`.
 - `--accent` is at least 3:1 on the neutrals: enough for a rule, a border or
   a filled shape, **not** for text. Text in the accent is `--accent-ink`.
-- The status inks are 4.5:1 on `--paper`, `--paper-2` and `--card` only.
-  A status word on a tinted or stock ground sits on a `--card` chip or panel
-  (the ticket does this).
+- The status inks are 4.5:1 on `--paper`, `--paper-2`, `--card` and every
+  product's `--accent-tint` (a yes/no table may sit in a tinted section).
+  They are **not** safe on `--accent-stock`: a status word in the hero sits
+  on a `--card` panel (the ticket does this).
 - A wash sets `background-color` to its first stop as well as the gradient,
   so tools and tests read a real colour under the text.
 
