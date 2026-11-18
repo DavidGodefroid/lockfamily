@@ -294,11 +294,12 @@ class Page(unittest.TestCase):
             self.assertIn('>%s</button>' % name, qs, name)
             self.assertIn('https://github.com/DavidGodefroid/%s"' % name, footer, name)
         # The description is one sentence a search engine shows whole (#68):
-        # at most 160 characters, the same on the social card, and it says
-        # no more than the README's opening (no list of sources: lockhttp
-        # guards only agents inside lea, which does not fit here).
+        # at most 160 characters, the same on the social card, and the
+        # README's opening in its words, claiming no more (no list of
+        # sources: lockhttp guards only agents inside lea).
         self.assertLessEqual(len(meta), 160, len(meta))
-        for w in ('Harness security for AI agents', 'Lock', 'credentials', 'masks', 'lox run'):
+        for w in ('Harness security for AI agents', 'never holds the password',
+                  'personal data comes back masked', 'a write waits for your approval, outside the agent'):
             self.assertIn(w, meta)
         for w in ('HTTP', 'web', 'any agent', 'every'):
             self.assertNotIn(w, meta)
