@@ -368,6 +368,15 @@ class Page(unittest.TestCase):
         self.assertIn('href="https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-run.md#egress-each-lock-reaches-its-reviewed-endpoints-only"', hub)
         self.assertEqual(self.html.count('proxy_command'), 1)
 
+    def test_signed_installer(self):
+        # The curl | sh line says the script is signed and links how to
+        # check it first (#60); the section it links exists.
+        qs = self.html[self.html.index('id="quick-start"'):]
+        self.assertIn('The script itself is signed: <a href="https://github.com/DavidGodefroid/lockfamily/blob/main/'
+                      'docs/install.md#verifying-the-installer">check it with cosign before you run it</a>.', qs)
+        self.assertIn('\n## Verifying the installer\n', read('docs/install.md'))
+        self.assertIn('install.sh.sigstore.json', read('.github/workflows/pages.yml'))
+
     def test_managed_link(self):
         # The page links the managed configuration reference (#32), as it
         # links the full lox reference, and the target exists.
