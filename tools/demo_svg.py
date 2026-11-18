@@ -29,8 +29,14 @@ four step captions, the sentence the user types, the "● tool" lines that
 name each MCP call, and the "$ lox audit" prompt. The colours are the
 family's palette, mapped from the terminal's ANSI colours. Of the plan
 output only the sql, class and verdict lines are shown; long lines are
-wrapped at spaces. The agent ran on the host, not in lea:
-the tool calls were sent to `locksql mcp` by tools/demo_capture/mcp_call.py.
+wrapped at spaces.
+
+Two things to know. The agent window is not a model at work and not an
+agent in lea: the five tool calls were sent to `locksql mcp` on the host by
+a scripted MCP client, tools/demo_capture/mcp_call.py, and the window shows
+what they returned. And one word of the captures is substituted: the local
+user name in "lox run started by ..." (lox-audit.ansi) is "alice".
+Everything else is as captured.
 
 The animation is CSS only (no script), so it plays in GitHub's README and
 on lockfamily.dev; under prefers-reduced-motion it stops on the last frame.
