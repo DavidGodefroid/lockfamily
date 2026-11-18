@@ -84,6 +84,22 @@ Placeholders: `{{LOCK}}`, `{{TITLE}}`, `{{DESCRIPTION}}`, `{{URL}}`
 current page's link and drop the `data-nav` attributes. In the family strip,
 put `aria-current="true"` on the current Lock's `<li>` (CSS adds "this site").
 
+## Resync for the colour direction (#72)
+
+A site already on the kit re-copies or re-renders exactly this, in this
+order (details in [COLOUR.md](COLOUR.md), "Apply it to a product site"):
+
+| # | File in the Lock repo | From |
+|---|---|---|
+| 1 | `site/assets/tokens.css` | copy of lockfamily `assets/tokens.css` |
+| 2 | `site/assets/lock-site.css` | copy of lockfamily `site-kit/assets/lock-site.css` |
+| 3 | `site/assets/logo.svg` | copy of lockfamily `assets/<lock>.svg` |
+| 4 | every page's `<html>` and `theme-color` metas | `data-accent="<lock>"`; `#fbf7ee` and `#1f1d26` |
+| 5 | `site/assets/og.png`, `apple-touch-icon.png` | rendered from `site-kit/tools/og.html` |
+| 6 | `docs/assets/banner-light.svg`, `banner-dark.svg` | rendered by `site-kit/tools/banner_svg.py` |
+
+Fonts, `copy.js`, `anchors.js` and the snippets' markup do not change.
+
 ## Classes you will want
 
 - `.status.auto` / `.asked` / `.denied` / `.you`: a decision word in its
@@ -147,6 +163,10 @@ python3 path/to/lockfamily/site-kit/tools/banner_svg.py --name <lock> \
   --tagline "<one short sentence>" \
   --logo site/assets/logo.svg --fonts site/assets/fonts --out docs/assets
 ```
+
+The banner is in the product's accent (the stub on its stock, the label in
+its ink), taken from `--name`; `--accent <product>` names it when `--name`
+is not a product of [COLOUR.md](COLOUR.md).
 
 It draws the text as outlines from the family fonts, so GitHub (which shows
 README SVGs through `<img>`, without web fonts) renders it exactly; ~35 KB per

@@ -28,6 +28,9 @@ import re
 import sys
 from xml.sax.saxutils import escape
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import accents  # noqa: E402  (the product accents, next to this file)
+
 W, H = 1200, 300
 
 # The identity tokens (lockfamily assets/tokens.css), per theme.
@@ -35,6 +38,7 @@ THEMES = {
     'light': {'paper': '#fbf7ee', 'card': '#fffcf5', 'ink': '#1d1b17', 'ink2': '#575146', 'rule': '#b9af98'},
     'dark': {'paper': '#1f1d26', 'card': '#2f2c3a', 'ink': '#ede6d6', 'ink2': '#bdb5a3', 'rule': '#5a546c'},
 }
+# The accents are derived from the same neutrals, by accents.py.
 
 FONTS = {
     'display': ('zilla-slab-700.woff2', '"Zilla Slab", Rockwell, "Roboto Slab", Georgia, serif', 700),
@@ -140,8 +144,12 @@ def fit(measure, text, size, room, floor):
     return size
 
 
-def banner(theme, name, tagline, label, logo, fonts_dir, as_text):
-    t = THEMES[theme]
+def banner(theme, name, tagline, label, logo, fonts_dir, as_text, accent=None):
+    t = dict(THEMES[theme])
+    # The product's accent (COLOUR.md): the stub is its coloured stock, the
+    # perforation and the top rule its ink, the label its text colour.
+    key = accent or (name if name in accents.ACCENTS else 'lockfamily')
+    t.update(accents.derive(*accents.ACCENTS[key])[theme])
     style, drawing = logo_body(logo, theme)
     x_text, room = 300, W - 300 - 56
     out = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d" width="%d" height="%d" role="img" aria-label="%s">'
@@ -150,9 +158,11 @@ def banner(theme, name, tagline, label, logo, fonts_dir, as_text):
            '<style>%s</style>' % style,
            # The ticket: paper face, ink border, a perforation before the stub.
            '<rect x="1" y="1" width="%d" height="%d" rx="6" fill="%s" stroke="%s" stroke-width="2"/>' % (W - 2, H - 2, t['paper'], t['ink']),
-           '<path d="M268 24 V%d" stroke="%s" stroke-width="2" stroke-dasharray="6 6"/>' % (H - 24, t['rule']),
+           '<path d="M7 2 H268 V%d H7 a5 5 0 0 1 -5 -5 V7 a5 5 0 0 1 5 -5 Z" fill="%s"/>' % (H - 2, t['accent-stock']),
+           '<path d="M268 2 V%d" stroke="%s" stroke-width="2" stroke-dasharray="6 6"/>' % (H - 2, t['accent']),
+           '<path d="M268 5 H%d" stroke="%s" stroke-width="6"/>' % (W - 5, t['accent']),
            '<g class="lg" transform="translate(40 52) scale(1.53)">%s</g>' % drawing]
-    rows = [('mono', label.upper(), 92, 19, 2.4, t['ink2']),
+    rows = [('mono', label.upper(), 92, 19, 2.4, t['accent-ink']),
             ('display', name, 192, 112, 0.0, t['ink']),
             ('text', tagline, 260, 36, 0.0, t['ink'])]
     outliners = {}
@@ -185,11 +195,12 @@ def main(argv):
     p.add_argument('--fonts', default='site/assets/fonts', help='directory of the family woff2 fonts')
     p.add_argument('--out', default='docs/assets', help='output directory')
     p.add_argument('--text', action='store_true', help='write <text> with a font stack instead of outlines')
+    p.add_argument('--accent', choices=sorted(accents.ACCENTS), help="the product whose accent to use (default: --name, else the family's)")
     p.add_argument('--check', action='store_true', help='fail if the files on disk differ')
     a = p.parse_args(argv)
     bad = 0
     for theme in ('light', 'dark'):
-        svg = banner(theme, a.name, a.tagline, a.label, a.logo, a.fonts, a.text)
+        svg = banner(theme, a.name, a.tagline, a.label, a.logo, a.fonts, a.text, a.accent)
         dest = os.path.join(a.out, 'banner-%s.svg' % theme)
         if a.check:
             with open(dest, encoding='utf-8') as f:
