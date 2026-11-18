@@ -292,6 +292,7 @@ lox add locksql orders --profile orders
 lox run</code></pre>
         <ul class="panel-notes">
           <li>A database on this machine is <code>host.docker.internal</code>; on Linux it must listen on the Docker bridge, not only on 127.0.0.1.</li>
+          <li>A database behind an SSH host is reached through the profile's built-in ssh bastion (<code>[profiles.NAME.ssh]</code>); one that publishes no port must publish it. A profile's <code>proxy_command</code> is not supported under <code>lox run</code>, which stops before the review on such a lock. <a href="https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-run.md#egress-each-lock-reaches-its-reviewed-endpoints-only">Egress, and the ssh example</a></li>
           <li>For lea's agents, the lock names your uid (<code>allowed_uids: [1000]</code>, <code>id -u</code>, in <code>lockfamily.yaml</code>); <code>lox add</code> adds it when lea is installed.</li>
           <li>Then ask an agent: “how many orders were placed yesterday?”. <code>lox run</code> asks you once for the connection, then the read runs, masked; a write waits for your <kbd>y</kbd> every time.</li>
           <li><code>lox doctor</code> checks the setup, the egress allowlist included, and changes nothing. <a href="https://github.com/DavidGodefroid/lockhub/blob/main/docs/lox-run.md">How lox run, lea and host agents fit</a></li>
